@@ -1,0 +1,13 @@
+vlan: 253
+hostnames: stump geneva pyramid bantam ozarks superior holt redfish sawtooth emporia pontchartrain storm texoma
+usernames: mmartinez ajones msingh sdavis ljohnson bjones sali sjones sshah mjones ssharma ataylor rsmith
+passwords: linkinpark 444444 donald 456789 ihateyou iloveu kitty ashton cristian mexico 232323 aaron superstar
+started nfs server... hostname: stump username: mmartinez password: linkinpark
+started vulnerable tomcat server... hostname: geneva username: ajones password: 444444
+tomcat server manager... username: tomcat password: 444444
+started panubo/sshd server 1... hostname: pyramid username: msingh password: donald
+started maltyxx/sshd server... hostname: ozarks username: ljohnson password: ihateyou
+started httpd server... hostname: holt username: sali password: kitty
+started tomcat:9.0 server... hostname: sawtooth username: sshah password: cristian
+started tomcat:9.0 server 2... hostname: emporia username: mjones password: mexico
+started gists/nfs-server server... hostname: storm username: ataylor password: aaron

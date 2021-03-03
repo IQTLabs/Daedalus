@@ -1,0 +1,12 @@
+vlan: 171
+hostnames: spirit shasta zoar travis okeechobee pontchartrain redfish sinclair liberty elk sevuer peck
+usernames: mmiller dbrown bjohnson mjones mwilson msmith rjones mkhan dwilson jsingh aahmed cmiller
+passwords: heaven babyboy leanne sammie happy julian angela jorge cupcake nikita samantha bandit
+started nfs server... hostname: spirit username: mmiller password: heaven
+started vulnerable tomcat server... hostname: shasta username: dbrown password: babyboy
+tomcat server manager... username: tomcat password: babyboy
+started panubo/sshd server 1... hostname: zoar username: bjohnson password: leanne
+started maltyxx/sshd server... hostname: okeechobee username: mwilson password: happy
+started httpd server... hostname: redfish username: rjones password: angela
+started tomcat:9.0 server... hostname: liberty username: dwilson password: cupcake
+started gists/nfs-server server... hostname: peck username: cmiller password: bandit

@@ -1,0 +1,19 @@
+vlan: 137
+hostnames: rend sunapee action seeley sardis ute fairfax kickapoo tule hauser kissimmee geneva michigan seminole meade higgins cowan donner baron
+usernames: asmith jlee ataylor awilliams sjohnson jjackson kbrown mahmed jperez spatel bjohnson staylor jwilson dlee tnguyen kjohnson tsmith mgarcia clee
+passwords: mother 696969 johnny parola princesa 112233 dragon marcos hollywood barbie nirvana lolipop smokey martha winter booboo maria valerie valentina
+started nfs server... hostname: rend username: asmith password: mother
+started vulnerable tomcat server... hostname: sunapee username: jlee password: 696969
+tomcat server manager... username: tomcat password: 696969
+started panubo/sshd server 1... hostname: action username: ataylor password: johnny
+started panubo/sshd server 2... hostname: seeley username: awilliams password: parola
+started maltyxx/sshd server... hostname: sardis username: sjohnson password: princesa
+started maltyxx/sshd server 2... hostname: ute username: jjackson password: 112233
+started httpd server... hostname: fairfax username: kbrown password: dragon
+started httpd server 2... hostname: kickapoo username: mahmed password: marcos
+started tomcat:9.0 server... hostname: tule username: jperez password: hollywood
+started tomcat:9.0 server 2... hostname: hauser username: spatel password: barbie
+started tomcat:9.0 server 3... hostname: kissimmee username: bjohnson password: nirvana
+started gists/nfs-server server... hostname: geneva username: staylor password: lolipop
+started gists/nfs-server server 2... hostname: michigan username: jwilson password: smokey
+started gists/nfs-server server 3... hostname: seminole username: dlee password: martha

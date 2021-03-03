@@ -1,0 +1,13 @@
+vlan: 193
+hostnames: sinclair sardis caddo bluestone merritt harding greenbo bluewater degray shasta emporia okeechobee crater
+usernames: bjones jdavis mmiller sahmed athomas kmiller psmith mtaylor psingh ssharma mmartinez jmiller smiller
+passwords: destiny september williams ashley1 tintin sweetpea hawaii musica alexander alberto 147852 jenny jackass
+started nfs server... hostname: sinclair username: bjones password: destiny
+started vulnerable tomcat server... hostname: sardis username: jdavis password: september
+tomcat server manager... username: tomcat password: september
+started panubo/sshd server 1... hostname: caddo username: mmiller password: williams
+started maltyxx/sshd server... hostname: merritt username: athomas password: tintin
+started httpd server... hostname: greenbo username: psmith password: hawaii
+started tomcat:9.0 server... hostname: degray username: psingh password: alexander
+started tomcat:9.0 server 2... hostname: shasta username: ssharma password: alberto
+started gists/nfs-server server... hostname: okeechobee username: jmiller password: jenny

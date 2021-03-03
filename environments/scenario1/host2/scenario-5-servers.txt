@@ -1,0 +1,13 @@
+vlan: 133
+hostnames: kissimmee degray cumberland rico meade harding emporia crater eagle elk ute hauser cypress
+usernames: bbrown rsharma awilliams jthomas sthomas amartinez jwalker twilliams mwilson jrodriguez aahmed kmiller smiller
+passwords: james iubire michelle tokiohotel jeremy letmein justin familia 999999999 susana shakira 212121 242424
+started nfs server... hostname: kissimmee username: bbrown password: james
+started vulnerable tomcat server... hostname: degray username: rsharma password: iubire
+tomcat server manager... username: tomcat password: iubire
+started panubo/sshd server 1... hostname: cumberland username: awilliams password: michelle
+started maltyxx/sshd server... hostname: meade username: sthomas password: jeremy
+started httpd server... hostname: emporia username: jwalker password: justin
+started tomcat:9.0 server... hostname: eagle username: mwilson password: 999999999
+started tomcat:9.0 server 2... hostname: elk username: jrodriguez password: susana
+started gists/nfs-server server... hostname: hauser username: kmiller password: 212121

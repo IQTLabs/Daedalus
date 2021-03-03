@@ -1,0 +1,20 @@
+vlan: 158
+hostnames: sakakawea cumberland spirit kissimmee merritt saugatuck crater fallriver claytor peck fenton sinclair baron bluestone burke michigan rend gull alturas ute
+usernames: vkumar jwhite swilson cjones nsmith mlee jjohnson mjones sahmed jthompson mali djohnson alopez mdavis lsmith esmith sjohnson jperez mlopez jclark
+passwords: monkey1 iloveyou! denise chance school cecilia jesus1 babyblue mexico lipgloss eduardo liliana andres catherine lakers volleyball estrellita hotstuff trustno1 babygurl
+started nfs server... hostname: sakakawea username: vkumar password: monkey1
+started vulnerable tomcat server... hostname: cumberland username: jwhite password: iloveyou!
+tomcat server manager... username: tomcat password: iloveyou!
+started panubo/sshd server 1... hostname: spirit username: swilson password: denise
+started panubo/sshd server 2... hostname: kissimmee username: cjones password: chance
+started maltyxx/sshd server... hostname: merritt username: nsmith password: school
+started maltyxx/sshd server 2... hostname: saugatuck username: mlee password: cecilia
+started httpd server... hostname: crater username: jjohnson password: jesus1
+started httpd server 2... hostname: fallriver username: mjones password: babyblue
+started tomcat:9.0 server... hostname: claytor username: sahmed password: mexico
+started tomcat:9.0 server 2... hostname: peck username: jthompson password: lipgloss
+started tomcat:9.0 server 3... hostname: fenton username: mali password: eduardo
+started gists/nfs-server server... hostname: sinclair username: djohnson password: liliana
+started gists/nfs-server server 2... hostname: baron username: alopez password: andres
+started gists/nfs-server server 3... hostname: bluestone username: mdavis password: catherine
+started gists/nfs-server server 4... hostname: burke username: lsmith password: lakers
