@@ -1,0 +1,146 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+volumes:
+ mongodb_data:
+
+networks:
+  cpn:
+    external:
+      name: cpn
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - 'MONGO_INITDB_ROOT_USERNAME=${DB_USER}'
+      - 'MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}'
+    hostname: mongodb
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.5
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  webui:
+    image: open5gs:latest
+    depends_on:
+      - mongodb
+    environment:
+      - 'DB_URI=mongodb://${DB_USER}:${DB_PASS}@mongodb/open5gs?authSource=admin'
+      - DB_HOST=mongodb
+    container_name: webui
+    hostname: webui
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    command:
+      - "/usr/local/etc/run_webui.sh"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.6
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  mongodbloader:
+    image: mongo:latest
+    depends_on:
+      - webui
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    volumes:
+      - "./provisioning/db/run_db.sh:/tmp/run.sh:z"
+      - "./provisioning/db/imsi1.json:/tmp/imsi1.json:z"
+    entrypoint:
+      - /bin/sh
+      - /tmp/run.sh
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.19
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  hss:
+    image: open5gs:latest
+    depends_on:
+      - mongodb
+    container_name: hss
+    hostname: hss
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    command:
+      - "/usr/local/etc/run_hss.sh"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.10
+    restart: always
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  pcrf:
+    image: open5gs:latest
+    depends_on:
+      - mongodb
+      - hss
+    container_name: pcrf
+    hostname: pcrf
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    command:
+      - "/usr/local/etc/run_pcrf.sh"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.50
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  mme:
+    image: open5gs:latest
+    depends_on:
+      - hss
+    container_name: mme
+    hostname: mme
+    command:
+      - "/usr/local/etc/run_mme.sh"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.20
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  smf:
+    image: open5gs:latest
+    container_name: smf
+    hostname: smf
+    command:
+      - "/usr/local/etc/run_smf.sh"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.40
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  sgwc:
+    image: open5gs:latest
+    container_name: sgwc
+    hostname: sgwc
+    command:
+      - "/usr/local/etc/run_sgwc.sh"
+    volumes:
+      - "./config_cpn:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.30
+    labels:
+      - "dovesnap.faucet.mirror=true"

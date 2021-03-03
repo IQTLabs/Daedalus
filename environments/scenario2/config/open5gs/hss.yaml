@@ -1,0 +1,13 @@
+### haven't found a way to pass in user/pass yet
+db_uri: mongodb://mongoadmin:secret@mongodb/open5gs?authSource=admin
+
+logger:
+    file: /usr/local/var/log/open5gs/hss.log
+    trace:
+        app: 1
+        diameter: 1
+
+parameter:
+
+hss:
+    freeDiameter: /usr/local/etc/freeDiameter/hss.conf

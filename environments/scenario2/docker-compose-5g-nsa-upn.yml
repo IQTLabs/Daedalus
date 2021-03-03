@@ -1,0 +1,204 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+  rfn:
+    external:
+      name: rfn
+
+services:
+  sgwu:
+    image: open5gs:latest
+    container_name: sgwu
+    hostname: sgwu
+    command:
+      - "/usr/local/etc/run_sgwu.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    networks:
+      upn:
+        ipv4_address: 192.168.27.31
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  sgwu2:
+    image: open5gs:latest
+    container_name: sgwu2
+    hostname: sgwu2
+    command:
+      - "/usr/local/etc/run_sgwu2.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    networks:
+      upn:
+        ipv4_address: 192.168.27.32
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  upf:
+    image: open5gs:latest
+    container_name: upf
+    hostname: upf
+    command:
+      - "/usr/local/etc/run_upf.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      upn:
+        ipv4_address: 192.168.27.41
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  upf2:
+    image: open5gs:latest
+    container_name: upf2
+    hostname: upf2
+    command:
+      - "/usr/local/etc/run_upf2.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      upn:
+        ipv4_address: 192.168.27.42
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  enb:
+    image: srslte:latest
+    container_name: enb
+    depends_on:
+      - mme
+    cap_add:
+      - SYS_NICE
+    networks:
+      upn:
+        ipv4_address: 192.168.27.60
+      rfn:
+        ipv4_address: 192.168.28.60
+    volumes:
+      - ./config_upn/srsLTE:/config:z
+    entrypoint:
+      - srsenb
+    command:
+      - /config/enb.conf
+      - --enb.name=dummyENB01
+      - --enb.mcc=001
+      - --enb.mnc=01
+      - --enb.enb_id=0x18AF1
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.27.60
+      - --enb.s1c_bind_addr=192.168.27.60
+      - --enb_files.rr_config=/config/rr.conf
+      - --enb_files.sib_config=/config/sib.conf
+      - --enb_files.drb_config=/config/drb.conf
+  ue:
+    image: srslte:latest
+    container_name: ue
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    devices:
+      - /dev/net/tun
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.61
+    depends_on:
+      - enb
+    volumes:
+      - ./config_upn/srsLTE:/config:z
+    entrypoint:
+      - /root/start_srsue.sh
+    command:
+      - /config/ue.conf
+      - --usim.imsi=001010000000001
+      - --usim.k=c8eba87c1074edd06885cb0486718341
+      - --usim.algo=milenage
+      - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
+      - --nas.apn=internet
+      - --rf.dl_earfcn=2850
+      - --rf.device_args="tx_port=tcp://*:5554,rx_port=tcp://192.168.28.60:5555,id=ue,base_srate=1.92e6"
+  ue2:
+    image: srslte:latest
+    container_name: ue2
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    devices:
+      - /dev/net/tun
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.62
+    depends_on:
+      - enb
+    volumes:
+      - ./config_upn/srsLTE:/config:z
+    entrypoint:
+      - /root/start_srsue.sh
+    command:
+      - /config/ue.conf
+      - --usim.imsi=001010000000002
+      - --usim.k=c8eba87c1074edd06885cb0486718341
+      - --usim.algo=milenage
+      - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
+      - --nas.apn=internet2
+      - --rf.dl_earfcn=3050
+      - --rf.device_args="tx_port=tcp://*:5564,rx_port=tcp://192.168.28.60:5565,id=ue2,base_srate=1.92e6"
+  ue3:
+    image: srslte:latest
+    container_name: ue3
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    devices:
+      - /dev/net/tun
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.63
+    depends_on:
+      - enb
+    volumes:
+      - ./config_upn/srsLTE:/config:z
+    entrypoint:
+      - /root/start_srsue.sh
+    command:
+      - /config/ue.conf
+      - --usim.imsi=001010000000003
+      - --usim.k=c8eba87c1074edd06885cb0486718341
+      - --usim.algo=milenage
+      - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
+      - --nas.apn=internet
+      - --rf.dl_earfcn=3250
+      - --rf.device_args="tx_port=tcp://*:5574,rx_port=tcp://192.168.28.60:5575,id=ue3,base_srate=1.92e6"
+  ue4:
+    image: srslte:latest
+    container_name: ue4
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    devices:
+      - /dev/net/tun
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.64
+    depends_on:
+      - enb
+    volumes:
+      - ./config_upn/srsLTE:/config:z
+    entrypoint:
+      - /root/start_srsue.sh
+    command:
+      - /config/ue.conf
+      - --usim.imsi=001010000000004
+      - --usim.k=c8eba87c1074edd06885cb0486718341
+      - --usim.algo=milenage
+      - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
+      - --nas.apn=internet3
+      - --rf.dl_earfcn=3450
+      - --rf.device_args="tx_port=tcp://*:5584,rx_port=tcp://192.168.28.60:5585,id=ue4,base_srate=1.92e6"
