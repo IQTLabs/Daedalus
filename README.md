@@ -17,7 +17,7 @@ We have identified five key modes of attack. They are
 * denial and disruption: preventing or degrading services and access to the network by authorized users
 
 Alternatetively, each of these attack modes can be countered with one of the following defenese responses:
-* none - or do nothing
+* none: do nothing
 * denial and fire-walling: denying/blocking network access to the attacker
 * deception: trick the attacker to steal information of little to no value
 * degradation: reduce the attackers effectiveness by breaking up data so it is not available all in one place
