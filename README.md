@@ -14,15 +14,15 @@ We have identified five key modes of attack. They are
 * theft and exfiltration: unauthorized removal data/information
 * access and privilege escalation: gaining unauthorized access to the network
 * destruction: destruction of data, information or anything needed for the network to function
-* denial: preventing access to the network by authorized users
+* denial and disruption: preventing or degrading services and access to the network by authorized users
 
 Alternatetively, each of these attack modes can be countered with one of the following defenese responses:
 * none - or do nothing
-* denial and fire-walling: denying access to the attacker
-* deception: 
-* degradation:
-* quarantine and isolation:
-* throttling:
+* denial and fire-walling: denying/blocking network access to the attacker
+* deception: trick the attacker to steal information of little to no value
+* degradation: reduce the attackers effectiveness by breaking up data so it is not available all in one place
+* quarantine and isolation: contain the attack to a portion of the network that is easier to defend or has little value
+* throttling: significantly increase the amount of time the attacker needs to achieve objectives
 
 We use the Red-Team/Blue-Team approach where the red-team serves as the attacker and the blue-team as the defender. The red-team has minimal knowledge of blue-team defenses as it develops an attack strategy. The blue-team is passive in the attack exercises, only recording what is needed to reproduce the scenario. The goal is not to necessarily develop new exploits, but rather to use known exploits, tools and techniques to navigate the attack surface.
 
