@@ -9,5 +9,20 @@ We have developed a set of attack classes and defense responses designed to achi
 
 <img src = "images/daedalus-grid-5g.png" width=600>
 
+We have identified five key modes of attack. They are
+* reconaissance and discovery: gaining knowledge about a network 
+* theft and exfiltration: unauthorized removal data/information
+* access and privilege escalation: gaining unauthorized access to the network
+* destruction: destruction of data, information or anything needed for the network to function
+* denial: preventing access to the network by authorized users
+
+Alternatetively, each of these attack modes can be countered with one of the following defenese responses:
+* none - or do nothing
+* denial and fire-walling: denying access to the attacker
+* deception: 
+* degradation:
+* quarantine and isolation:
+* throttling:
+
 We use the Red-Team/Blue-Team approach where the red-team serves as the attacker and the blue-team as the defender. The red-team has minimal knowledge of blue-team defenses as it develops an attack strategy. The blue-team is passive in the attack exercises, only recording what is needed to reproduce the scenario. The goal is not to necessarily develop new exploits, but rather to use known exploits, tools and techniques to navigate the attack surface.
 
