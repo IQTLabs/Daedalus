@@ -12,32 +12,30 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      libsctp-dev \
      libconfig++-dev \
      curl \
-     iputils-ping \
      unzip \
      libzmq3-dev \
      build-essential \
      git \
      ca-certificates \
      iproute2 \
+     libpcsclite-dev \
+     lksctp-tools \
+     wget \
      tcpdump \
      net-tools \
+     iputils-ping \
      iperf \
-     iperf3 \
-     libpcsclite-dev \
-     lksctp-tools
+     iperf3
 WORKDIR /root
 COPY add_default_route.sh /root/add_default_route.sh
 COPY start_srsue.sh /root/start_srsue.sh
 
-RUN git clone https://github.com/srsLTE/srsLTE.git
+# pin all srsLTE stack reproducibility
+RUN git clone https://github.com/srsLTE/srsLTE.git -b release_20_10_1
 
 RUN mkdir -p /root/srsLTE/build
 RUN mkdir /config
-
 WORKDIR /root/srsLTE/build
-RUN cmake ../
-RUN make -j `nproc`
-RUN make install
-RUN ldconfig
+RUN cmake ../ && make -j && make install && ldconfig
 
 ENTRYPOINT ["/bin/sh"]

@@ -86,6 +86,10 @@ services:
       - ./config_upn/srsLTE:/config:z
     entrypoint:
       - srsenb
+    # TODO: tighten for bladeRF
+    # privileged: true
+    # devices:
+    #  - "/dev:/dev"
     command:
       - /config/enb.conf
       - --enb.name=dummyENB01
