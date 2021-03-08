@@ -30,6 +30,9 @@ WORKDIR /root
 COPY add_default_route.sh /root/add_default_route.sh
 COPY start_srsue.sh /root/start_srsue.sh
 
+# pin all srsLTE stack reproducibility
+RUN git clone https://github.com/srsLTE/srsLTE.git -b release_20_10_1
+
 RUN mkdir -p /root/srsLTE/build
 RUN mkdir /config
 WORKDIR /root/srsLTE/build
