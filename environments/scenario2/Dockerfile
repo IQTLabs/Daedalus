@@ -37,7 +37,7 @@ RUN apt-get update && \
         lksctp-tools && \
     apt-get clean
 RUN python3 -m pip install meson
-RUN git clone https://github.com/open5gs/open5gs.git
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.1.7
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 WORKDIR /
