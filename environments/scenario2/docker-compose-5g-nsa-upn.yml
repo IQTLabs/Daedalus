@@ -89,7 +89,7 @@ services:
     # TODO: tighten for bladeRF
     # privileged: true
     # devices:
-    #  - "/dev:/dev"
+    #  - "/dev/bus/usb:/dev/bus/usb"
     command:
       - /config/enb.conf
       - --enb.name=dummyENB01
