@@ -15,7 +15,7 @@ docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x6
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet 192.168.27.0/24 --gateway 192.168.27.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectupn -d ovs upn || exit 1
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
 
-cd srsLTE && docker build -t srslte . && cd ..
+cd srsLTE && docker build -t srslte . && docker build -t bladerf-srslte -f Dockerfile.bladeRF . && cd ..
 
 docker build -t open5gs . && docker-compose -f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml up -d --build
 
