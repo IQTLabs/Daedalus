@@ -1,0 +1,10 @@
+diff --git a/subprojects/freeDiameter.wrap b/subprojects/freeDiameter.wrap
+index 0669ac05..efacf056 100644
+--- a/subprojects/freeDiameter.wrap
++++ b/subprojects/freeDiameter.wrap
+@@ -1,4 +1,4 @@
+ [wrap-git]
+ directory = freeDiameter
+-url = https://github.com/open5gs/freeDiameter.git
++url = https://github.com/anarkiwi/open5gs-freeDiameter.git
+ revision = open5gs
