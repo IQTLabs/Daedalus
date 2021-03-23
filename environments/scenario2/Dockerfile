@@ -39,6 +39,8 @@ RUN apt-get update && \
 RUN python3 -m pip install meson
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.1.7
 WORKDIR /open5gs
+COPY open5gs-freedia.txt .
+RUN patch -p1 < open5gs-freedia.txt
 RUN meson build && ninja -C build install
 WORKDIR /
 
