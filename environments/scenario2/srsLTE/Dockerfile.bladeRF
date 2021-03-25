@@ -56,6 +56,6 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && mak
 RUN mkdir -p /root/srsLTE/build
 RUN mkdir /config
 WORKDIR /root/srsLTE/build
-RUN cmake ../ && make -j && make install && ldconfig
+RUN cmake ../ && make -j `nproc` && make install && ldconfig
 
 ENTRYPOINT ["/bin/sh"]
