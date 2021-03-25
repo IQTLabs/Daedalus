@@ -1,0 +1,37 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+services:
+  bladerf-enb:
+    image: bladerf-srslte:latest
+    container_name: bladerf-enb
+    depends_on:
+      - mme
+    cap_add:
+      - SYS_NICE
+    networks:
+      upn:
+        ipv4_address: 192.168.27.61
+    volumes:
+      - ./config_upn/bladerf-srsLTE:/config:z
+    entrypoint:
+      - srsenb
+    privileged: true
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    command:
+      - /config/enb.conf
+      - --enb.name=bladerf-dummyENB01
+      - --enb.mcc=001
+      - --enb.mnc=01
+      - --enb.enb_id=0x19AF1
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.27.61
+      - --enb.s1c_bind_addr=192.168.27.61
+      - --enb_files.rr_config=/config/rr.conf
+      - --enb_files.sib_config=/config/sib.conf
+      - --enb_files.drb_config=/config/drb.conf

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker-compose -f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml down
+docker-compose -f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml -f docker-compose-5g-nsa-upn-bladerf-enb.yml -f docker-compose-5g-nsa-upn-enb.yml -f docker-compose-5g-nsa-rfn-ue.yml down --remove-orphans
 docker network rm cpn
 docker network rm upn
 docker network rm rfn
