@@ -22,6 +22,9 @@ shift $((OPTIND-1))
 echo start bladeRF: $BLADERF
 echo start virtual UEs/eNB: $VUE
 
+cd srsLTE && docker build -t srslte . && docker build -t bladerf-srslte -f Dockerfile.bladeRF . && cd .. || exit 1
+docker build -t open5gs . || exit 1
+
 sudo ip link add tpmirrorint type veth peer name tpmirror
 sudo ip link set tpmirrorint up || exit 1
 sudo ip link set tpmirror up || exit 1
@@ -36,9 +39,6 @@ DOVESNAPOPTS="-o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654 -o 
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=nat --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet 192.168.27.0/24 --gateway 192.168.27.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectupn -d ovs upn || exit 1
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
-
-cd srsLTE && docker build -t srslte . && docker build -t bladerf-srslte -f Dockerfile.bladeRF . && cd .. || exit 1
-docker build -t open5gs . || exit 1
 
 DOCKERFILES="-f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml"
 
