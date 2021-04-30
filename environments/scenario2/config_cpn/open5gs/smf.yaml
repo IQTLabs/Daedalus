@@ -20,7 +20,7 @@ smf:
   pfcp:
     - addr: 192.168.26.40
     #- addr: ::1
-  pdn:
+  subnet:
     - addr: 10.10.0.1/16
       apn: internet
       dev: ogstun
