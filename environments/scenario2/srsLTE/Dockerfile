@@ -30,12 +30,11 @@ WORKDIR /root
 COPY add_default_route.sh /root/add_default_route.sh
 COPY start_srsue.sh /root/start_srsue.sh
 
-# pin all srsLTE stack reproducibility
-RUN git clone https://github.com/srsLTE/srsLTE.git -b release_20_10_1
+RUN git clone https://github.com/srsRAN/srsRAN.git -b release_21_04_pre
 
-RUN mkdir -p /root/srsLTE/build
+RUN mkdir -p /root/srsRAN/build
 RUN mkdir /config
-WORKDIR /root/srsLTE/build
+WORKDIR /root/srsRAN/build
 RUN cmake ../ && make -j `nproc` && make install && ldconfig
 
 ENTRYPOINT ["/bin/sh"]
