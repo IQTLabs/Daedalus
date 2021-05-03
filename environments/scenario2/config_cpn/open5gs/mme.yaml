@@ -7,9 +7,6 @@ logger:
       diameter: 1
       gtpv2: 1
 
-parameter:
-  no_ipv6: true
-
 mme:
   freeDiameter: /usr/local/etc/freeDiameter/mme.conf
   s1ap:
@@ -40,5 +37,3 @@ sgwc:
 smf:
   gtpc:
     - addr: 192.168.26.40
-#        #- ::1
-

@@ -5,9 +5,6 @@ logger:
         gtpv2: 1
         gtp: 1
 
-parameter:
-    no_ipv6: true
-
 sgwu:
     gtpu:
       addr: 192.168.27.31
