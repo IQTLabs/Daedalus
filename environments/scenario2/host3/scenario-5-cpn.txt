@@ -1,0 +1,7 @@
+vlan: 
+hostnames: crystal holt
+usernames: jclark asingh
+passwords: roxana PASSWORD
+VNC external password: Bovgajyid4
+started desktop entrypoint... hostname: crystal username: jclark password: roxana vnc: Bovgajyid4
+started dba... hostname: holt username: asingh password: PASSWORD vnc: Bovgajyid4

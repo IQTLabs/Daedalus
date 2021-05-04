@@ -1,0 +1,7 @@
+vlan: 
+hostnames: fallriver stump
+usernames: mtaylor ddavis
+passwords: brian javier
+VNC external password: Vohotfuc
+started desktop entrypoint... hostname: fallriver username: mtaylor password: brian vnc: Vohotfuc
+started dba... hostname: stump username: ddavis password: javier vnc: Vohotfuc

@@ -1,0 +1,24 @@
+version: '3'
+networks:
+  desktops:
+    external:
+      name: desktops
+services:
+  desktop:
+    image: dorowu/ubuntu-desktop-lxde-vnc
+    hostname: "${CONTAINER_NAME}"
+    security_opt:
+     - apparmor:erichough-nfs
+    cap_add:
+     - SYS_ADMIN
+    volumes:
+     - /dev/shm:/dev/shm
+    environment:
+     - "VNC_PASSWORD=${VNC_PASSWORD}"
+     - RESOLUTION=1280x800
+     - "USER=${SYSTEM_USER}"
+     - "PASSWORD=${USER_PW}"
+    networks:
+     - desktops
+    labels:
+     - "dovesnap.faucet.mirror=true"

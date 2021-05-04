@@ -1,0 +1,10 @@
+--- a/lib/include/srslte/adt/bounded_bitset.h
++++ b/lib/include/srslte/adt/bounded_bitset.h
+@@ -43,7 +43,7 @@ class bounded_bitset
+ public:
+   constexpr bounded_bitset() : buffer(), cur_size(0) {}
+ 
+-  constexpr explicit bounded_bitset(size_t cur_size_) : buffer(), cur_size(cur_size_) {}
++  explicit bounded_bitset(size_t cur_size_) : buffer(), cur_size(cur_size_) { sanitize_(); }
+ 
+   constexpr size_t max_size() const noexcept { return N; }
