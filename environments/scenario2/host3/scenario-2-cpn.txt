@@ -1,0 +1,7 @@
+vlan: 
+hostnames: rico locust
+usernames: asmith ssmith
+passwords: danielle katrina
+VNC external password: Pythris6
+started desktop entrypoint... hostname: rico username: asmith password: danielle vnc: Pythris6
+started dba... hostname: locust username: ssmith password: katrina vnc: Pythris6

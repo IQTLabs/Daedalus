@@ -1,0 +1,15 @@
+logger:
+    file: /usr/local/var/log/open5gs/sgwu2.log
+    trace:
+        app: 1
+        gtpv2: 1
+        gtp: 1
+
+parameter:
+    no_ipv6: true
+
+sgwu:
+    gtpu:
+      addr: 192.168.26.32
+    pfcp:
+      addr: 192.168.26.32

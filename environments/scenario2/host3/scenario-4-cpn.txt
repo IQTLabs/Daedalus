@@ -1,0 +1,7 @@
+vlan: 
+hostnames: trinity elk
+usernames: mwilson ssharma
+passwords: amistad miller
+VNC external password: MadUbativ
+started desktop entrypoint... hostname: trinity username: mwilson password: amistad vnc: MadUbativ
+started dba... hostname: elk username: ssharma password: miller vnc: MadUbativ

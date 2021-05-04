@@ -1,0 +1,7 @@
+vlan: 
+hostnames: higgins shasta
+usernames: sjones alee
+passwords: hardcore lilmama
+VNC external password: VotsIckIsp
+started desktop entrypoint... hostname: higgins username: sjones password: hardcore vnc: VotsIckIsp
+started dba... hostname: shasta username: alee password: lilmama vnc: VotsIckIsp

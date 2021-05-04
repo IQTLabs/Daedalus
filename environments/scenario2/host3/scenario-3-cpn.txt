@@ -1,0 +1,7 @@
+vlan: 
+hostnames: saugatuck fairfax
+usernames: cjones sahmed
+passwords: marissa 54321
+VNC external password: MinwecIb
+started desktop entrypoint... hostname: saugatuck username: cjones password: marissa vnc: MinwecIb
+started dba... hostname: fairfax username: sahmed password: 54321 vnc: MinwecIb

@@ -1,0 +1,20 @@
+version: '3'
+networks:
+  desktops:
+    external:
+      name: desktops
+services:
+  dba:
+    image: dba
+    build:
+     context: .
+    hostname: "${CONTAINER_NAME}"
+    environment:
+     - "VNC_PASSWORD=${VNC_PASSWORD}"
+     - RESOLUTION=1280x800
+     - "USER=${SYSTEM_USER}"
+     - "PASSWORD=${USER_PW}"
+    networks:
+     - desktops
+    labels:
+     - "dovesnap.faucet.mirror=true"
