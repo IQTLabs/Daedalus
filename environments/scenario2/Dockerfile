@@ -40,7 +40,7 @@ RUN python3 -m pip install meson
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get -y install nodejs
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.2.7
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.2.8
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
