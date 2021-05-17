@@ -43,6 +43,8 @@ RUN apt-get -y install nodejs
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.2.8
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
+RUN echo /open5gs/install/lib/x86_64-linux-gnu > /etc/ld.so.conf.d/open5gs.conf
+RUN ldconfig
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
 
