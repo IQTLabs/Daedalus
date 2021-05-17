@@ -30,7 +30,7 @@ WORKDIR /root
 COPY add_default_route.sh /root/add_default_route.sh
 COPY start_srsue.sh /root/start_srsue.sh
 
-RUN git clone https://github.com/srsRAN/srsRAN.git -b release_21_04_pre
+RUN git clone https://github.com/srsRAN/srsRAN.git -b release_21_04
 
 RUN mkdir -p /root/srsRAN/build
 RUN mkdir /config
