@@ -17,7 +17,7 @@ services:
       upn:
         ipv4_address: 192.168.27.61
     volumes:
-      - ./config_upn/bladerf-srsLTE:/config:z
+      - ./config_upn/srsLTE:/config:z
     entrypoint:
       - srsenb
     privileged: true
@@ -26,12 +26,13 @@ services:
     command:
       - /config/enb.conf
       - --enb.name=bladerf-ENB01
-      - --enb.mcc=001
-      - --enb.mnc=01
+      - --enb.n_prb=50
       - --enb.enb_id=0x61
       - --enb.mme_addr=192.168.26.20
       - --enb.gtp_bind_addr=192.168.27.61
       - --enb.s1c_bind_addr=192.168.27.61
-      - --enb_files.rr_config=/config/rr.conf
+      - --enb_files.rr_config=/config/bladeRF/rr.conf
       - --enb_files.sib_config=/config/sib.conf
       - --enb_files.drb_config=/config/drb.conf
+      - --rf.device_name=bladeRF
+      - --rf.device_args=""

@@ -28,9 +28,8 @@ services:
     command:
       - /config/enb.conf
       - --enb.name=dummyENB01
-      - --enb.mcc=001
-      - --enb.mnc=01
       - --enb.enb_id=0x60
+      - --enb.n_prb=6
       - --enb.mme_addr=192.168.26.20
       - --enb.gtp_bind_addr=192.168.27.60
       - --enb.s1c_bind_addr=192.168.27.60
