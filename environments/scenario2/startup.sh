@@ -48,10 +48,11 @@ docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x6
 DOCKERFILES="-f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml"
 
 if [[ "$BLADERF" -eq 1 ]] ; then
-	DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-bladerf-enb.yml"
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-bladerf-enb.yml"
 fi
 
 if [[ "$ETTUS" -eq 1 ]] ; then
+        uhd_find_devices
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-ettus-enb.yml"
 fi
 
@@ -62,13 +63,13 @@ fi
 docker-compose $DOCKERFILES up -d --build || exit 1
 
 if [[ "$VUE" -eq 1 ]] ; then
-	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route del default || exit 1
-	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via 192.168.27.1 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route del default || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via 192.168.27.1 || exit 1
 fi
 
 for c in upf upf2 ; do
-	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.all.send_redirects=0 || exit 1
-	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstun.send_redirects=0 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.all.send_redirects=0 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstun.send_redirects=0 || exit 1
 done
 sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstun2.send_redirects=0 || exit 1
 
