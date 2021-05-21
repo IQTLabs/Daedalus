@@ -4,25 +4,30 @@ BLADERF=0
 VUE=1
 
 # -b: run bladeRF enb
+# -e: run ettus enb
 # -V: DO NOT run virtual enb and UEs.
 # e.g., to run bladeRF only, ./startup.sh -bV
 
-while getopts "bV" o; do
+while getopts "beV" o; do
     case "${o}" in
         b)
-	    BLADERF=1
+            BLADERF=1
+            ;;
+        e)
+            ETTUS=1
             ;;
         V)
-	    VUE=0
+            VUE=0
             ;;
     esac
 done
 shift $((OPTIND-1))
 
 echo start bladeRF: $BLADERF
+echo start ettus: $ETTUS
 echo start virtual UEs/eNB: $VUE
 
-cd srsLTE && docker build -t srslte . && docker build -t bladerf-srslte -f Dockerfile.bladeRF . && cd .. || exit 1
+cd srsLTE && docker build -t srslte . && cd .. || exit 1
 docker build -t open5gs . || exit 1
 
 sudo ip link add tpmirrorint type veth peer name tpmirror
@@ -44,6 +49,10 @@ DOCKERFILES="-f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml"
 
 if [[ "$BLADERF" -eq 1 ]] ; then
 	DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-bladerf-enb.yml"
+fi
+
+if [[ "$ETTUS" -eq 1 ]] ; then
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-ettus-enb.yml"
 fi
 
 if [[ "$VUE" -eq 1 ]] ; then
