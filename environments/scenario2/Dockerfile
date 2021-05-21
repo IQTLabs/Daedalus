@@ -37,14 +37,14 @@ RUN apt-get update && \
         lksctp-tools && \
     apt-get clean
 RUN python3 -m pip install meson
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.1.7
-WORKDIR /open5gs
-RUN meson build && ninja -C build install
-WORKDIR /
-
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get -y install nodejs
 
-RUN cd /open5gs/webui && npm install && npm run build
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.2.9
+WORKDIR /open5gs
+RUN meson build && ninja -C build install
+RUN ldconfig
+WORKDIR /open5gs/webui
+RUN npm install && npm run build
 
 ENTRYPOINT ["/bin/sh"]

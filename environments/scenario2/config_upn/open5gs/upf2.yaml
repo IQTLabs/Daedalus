@@ -8,18 +8,13 @@ logger:
       gtpv2: 1
       gtp: 1
 
-parameter:
-  no_ipv6: true
-
 upf:
   gtpu:
     addr:
       - 192.168.27.42
-      #- ::1
   pfcp:
     - addr: 192.168.27.42
-    #- addr: ::1
-  pdn:
+  subnet:
     - addr: 10.11.0.1/16
       apn: internet2
     - addr: 10.12.0.1/16

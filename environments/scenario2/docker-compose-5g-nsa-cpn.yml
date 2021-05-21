@@ -24,6 +24,25 @@ services:
         ipv4_address: 192.168.26.5
     labels:
       - "dovesnap.faucet.mirror=true"
+  mongodbloader:
+    image: mongo:latest
+    depends_on:
+      - webui
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    volumes:
+      - "./provisioning/db/run_db.sh:/tmp/run.sh:z"
+      - "./provisioning/db/imsi1.json:/tmp/imsi1.json:z"
+    entrypoint:
+      - /bin/sh
+      - /tmp/run.sh
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.19
+    labels:
+      - "dovesnap.faucet.mirror=true"
   webui:
     image: open5gs:latest
     depends_on:
@@ -42,25 +61,6 @@ services:
     networks:
       cpn:
         ipv4_address: 192.168.26.6
-    labels:
-      - "dovesnap.faucet.mirror=true"
-  mongodbloader:
-    image: mongo:latest
-    depends_on:
-      - webui
-    environment:
-      - DB_HOST=mongodb
-      - 'DB_USER=${DB_USER}'
-      - 'DB_PASS=${DB_PASS}'
-    volumes:
-      - "./provisioning/db/run_db.sh:/tmp/run.sh:z"
-      - "./provisioning/db/imsi1.json:/tmp/imsi1.json:z"
-    entrypoint:
-      - /bin/sh
-      - /tmp/run.sh
-    networks:
-      cpn:
-        ipv4_address: 192.168.26.19
     labels:
       - "dovesnap.faucet.mirror=true"
   hss:
