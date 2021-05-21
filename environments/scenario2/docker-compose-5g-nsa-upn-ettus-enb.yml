@@ -6,18 +6,18 @@ networks:
     external:
       name: upn
 services:
-  bladerf-enb:
+  ettus-enb:
     image: srslte:latest
-    container_name: bladerf-enb
+    container_name: ettus-enb
     depends_on:
       - mme
     cap_add:
       - SYS_NICE
     networks:
       upn:
-        ipv4_address: 192.168.27.61
+        ipv4_address: 192.168.27.62
     volumes:
-      - ./config_upn/bladerf-srsLTE:/config:z
+      - ./config_upn/ettus-srsLTE:/config:z
     entrypoint:
       - srsenb
     privileged: true
@@ -25,13 +25,13 @@ services:
       - "/dev/bus/usb:/dev/bus/usb"
     command:
       - /config/enb.conf
-      - --enb.name=bladerf-ENB01
+      - --enb.name=ettus-ENB01
       - --enb.mcc=001
       - --enb.mnc=01
-      - --enb.enb_id=0x61
+      - --enb.enb_id=0x62
       - --enb.mme_addr=192.168.26.20
-      - --enb.gtp_bind_addr=192.168.27.61
-      - --enb.s1c_bind_addr=192.168.27.61
+      - --enb.gtp_bind_addr=192.168.27.62
+      - --enb.s1c_bind_addr=192.168.27.62
       - --enb_files.rr_config=/config/rr.conf
       - --enb_files.sib_config=/config/sib.conf
       - --enb_files.drb_config=/config/drb.conf
