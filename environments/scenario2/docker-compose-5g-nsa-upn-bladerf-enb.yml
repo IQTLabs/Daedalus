@@ -35,4 +35,3 @@ services:
       - --enb_files.sib_config=/config/sib.conf
       - --enb_files.drb_config=/config/drb.conf
       - --rf.device_name=bladeRF
-      - --rf.device_args=""
