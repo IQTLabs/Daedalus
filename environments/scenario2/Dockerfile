@@ -46,5 +46,6 @@ RUN meson build && ninja -C build install
 RUN ldconfig
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
+RUN ln -s /usr/local/lib/*/freeDiameter /freeDiameter
 
 ENTRYPOINT ["/bin/sh"]
