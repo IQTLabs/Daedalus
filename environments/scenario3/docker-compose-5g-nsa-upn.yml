@@ -1,0 +1,69 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+
+services:
+  sgwu:
+    image: open5gs:latest
+    container_name: sgwu
+    hostname: sgwu
+    command:
+      - "/usr/local/etc/run_sgwu.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    networks:
+      upn:
+        ipv4_address: 192.168.27.31
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  sgwu2:
+    image: open5gs:latest
+    container_name: sgwu2
+    hostname: sgwu2
+    command:
+      - "/usr/local/etc/run_sgwu2.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    networks:
+      upn:
+        ipv4_address: 192.168.27.32
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  upf:
+    image: open5gs:latest
+    container_name: upf
+    hostname: upf
+    command:
+      - "/usr/local/etc/run_upf.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      upn:
+        ipv4_address: 192.168.27.41
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  upf2:
+    image: open5gs:latest
+    container_name: upf2
+    hostname: upf2
+    command:
+      - "/usr/local/etc/run_upf2.sh"
+    volumes:
+      - "./config_upn:/usr/local/etc:z"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      upn:
+        ipv4_address: 192.168.27.42
+    labels:
+      - "dovesnap.faucet.mirror=true"
