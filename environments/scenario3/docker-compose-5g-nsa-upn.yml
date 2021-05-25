@@ -43,6 +43,7 @@ services:
       - "./config_upn:/usr/local/etc:z"
     cap_add:
       - NET_ADMIN
+    privileged: true
     devices:
       - /dev/net/tun
     networks:

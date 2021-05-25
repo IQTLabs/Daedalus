@@ -19,13 +19,13 @@ smf:
   subnet:
     - addr: 10.10.0.1/16
       apn: internet
-      dev: ogstun
+      dev: ogstap
     - addr: 10.11.0.1/16
       apn: internet2
-      dev: ogstun
+      dev: ogstap
     - addr: 10.12.0.1/16
       apn: internet3
-      dev: ogstun2
+      dev: ogstap2
   dns:
     - 8.8.8.8
     - 8.8.4.4
