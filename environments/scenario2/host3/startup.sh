@@ -25,8 +25,8 @@ sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add de
 
 for c in upf upf2 ; do
 	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.all.send_redirects=0
-	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstun.send_redirects=0
+	sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstap.send_redirects=0
 done
-sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstun2.send_redirects=0
+sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstap2.send_redirects=0
 
 docker-compose -f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml logs -f

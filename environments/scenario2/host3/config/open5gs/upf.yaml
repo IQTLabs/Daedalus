@@ -22,4 +22,5 @@ upf:
   pdn:
     - addr: 10.10.0.1/16
       apn: internet
+      dev: ogstap
     #- addr: cafe::1/64

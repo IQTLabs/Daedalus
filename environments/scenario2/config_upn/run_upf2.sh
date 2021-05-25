@@ -1,16 +1,18 @@
 #!/bin/sh
 
-ip tuntap add name ogstun mode tun
-ip addr add 10.11.0.1/16 dev ogstun
-ip link set ogstun up
-ip tuntap add name ogstun2 mode tun
-ip addr add 10.12.0.1/16 dev ogstun2
-ip link set ogstun2 up
+ip tuntap add name ogstap mode tap
+ip addr add 10.11.0.1/16 dev ogstap
+ip link set dev ogstap address 0e:00:00:00:00:ff
+ip link set ogstap up
+ip tuntap add name ogstap2 mode tap
+ip addr add 10.12.0.1/16 dev ogstap2
+ip link set dev ogstap2 address 0e:00:00:00:00:ff
+ip link set ogstap2 up
 
 # masquerade
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-iptables -I INPUT -i ogstun -j ACCEPT
-iptables -I INPUT -i ogstun2 -j ACCEPT
+iptables -I INPUT -i ogstap -j ACCEPT
+iptables -I INPUT -i ogstap2 -j ACCEPT
 
 mkdir -p /usr/local/var/log/open5gs
 touch /usr/local/var/log/open5gs/upf2.log
