@@ -22,4 +22,5 @@ upf:
   subnet:
     - addr: 10.11.0.1/16
       apn: internet2
+      dev: ogstap
     #- addr: cafe::1/64

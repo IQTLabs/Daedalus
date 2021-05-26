@@ -17,3 +17,4 @@ upf:
   subnet:
     - addr: 10.10.0.1/16
       apn: internet
+      dev: ogstap

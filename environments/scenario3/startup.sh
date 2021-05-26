@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BLADERF=0
+ETTUS=0
 VUE=1
 
 # -b: run bladeRF enb
@@ -69,8 +70,8 @@ fi
 
 for c in upf upf2 ; do
         sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.all.send_redirects=0 || exit 1
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstun.send_redirects=0 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstap.send_redirects=0 || exit 1
 done
-sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstun2.send_redirects=0 || exit 1
+sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstap2.send_redirects=0 || exit 1
 
 docker-compose $DOCKERFILES logs -f
