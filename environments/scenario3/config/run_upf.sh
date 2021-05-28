@@ -3,7 +3,6 @@
 ip tuntap add name ogstap mode tap
 ip addr add 10.10.0.1/16 dev ogstap
 #ip addr add cafe::1/16 dev ogstap
-ip link set dev ogstap address 0e:00:00:00:00:ff
 ip link set ogstap up
 
 # masquerade
