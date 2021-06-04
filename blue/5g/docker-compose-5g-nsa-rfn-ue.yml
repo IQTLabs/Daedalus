@@ -24,7 +24,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - /root/start_srsue.sh
     command:
@@ -49,7 +49,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - /root/start_srsue.sh
     command:
@@ -74,7 +74,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - /root/start_srsue.sh
     command:
@@ -99,7 +99,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - /root/start_srsue.sh
     command:

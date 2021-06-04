@@ -14,7 +14,7 @@ services:
     command:
       - "/usr/local/etc/run_sgwu.sh"
     volumes:
-      - "./config_upn:/usr/local/etc:z"
+      - "${CONFIG_UPN}:/usr/local/etc:z"
     networks:
       upn:
         ipv4_address: 192.168.27.31
@@ -27,7 +27,7 @@ services:
     command:
       - "/usr/local/etc/run_sgwu2.sh"
     volumes:
-      - "./config_upn:/usr/local/etc:z"
+      - "${CONFIG_UPN}:/usr/local/etc:z"
     networks:
       upn:
         ipv4_address: 192.168.27.32
@@ -40,7 +40,7 @@ services:
     command:
       - "/usr/local/etc/run_upf.sh"
     volumes:
-      - "./config_upn:/usr/local/etc:z"
+      - "${CONFIG_UPN}:/usr/local/etc:z"
     cap_add:
       - NET_ADMIN
     privileged: true
@@ -58,7 +58,7 @@ services:
     command:
       - "/usr/local/etc/run_upf2.sh"
     volumes:
-      - "./config_upn:/usr/local/etc:z"
+      - "${CONFIG_UPN}:/usr/local/etc:z"
     cap_add:
       - NET_ADMIN
     devices:

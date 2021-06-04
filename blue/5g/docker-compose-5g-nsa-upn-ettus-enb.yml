@@ -17,7 +17,7 @@ services:
       upn:
         ipv4_address: 192.168.27.62
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - srsenb
     privileged: true
