@@ -29,7 +29,7 @@ echo start ettus: $ETTUS
 echo start virtual UEs/eNB: $VUE
 
 cd srsLTE && docker build -t srslte . && cd .. || exit 1
-docker build -t open5gs . || exit 1
+cd open5gs && docker build -t open5gs . && cd .. || exit 1
 
 sudo ip link add tpmirrorint type veth peer name tpmirror
 sudo ip link set tpmirrorint up || exit 1

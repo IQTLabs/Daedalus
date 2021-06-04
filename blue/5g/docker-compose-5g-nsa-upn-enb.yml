@@ -22,7 +22,7 @@ services:
       rfn:
         ipv4_address: 192.168.28.60
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - srsenb
     command:

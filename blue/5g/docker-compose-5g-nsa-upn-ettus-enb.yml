@@ -17,7 +17,7 @@ services:
       upn:
         ipv4_address: 192.168.27.62
     volumes:
-      - ./config_upn/srsLTE:/config:z
+      - "${CONFIG_UPN}/srsLTE:/config:z"
     entrypoint:
       - srsenb
     privileged: true
@@ -31,7 +31,7 @@ services:
       - --enb.mme_addr=192.168.26.20
       - --enb.gtp_bind_addr=192.168.27.62
       - --enb.s1c_bind_addr=192.168.27.62
-      - --enb_files.rr_config=/config/ettus/rr.conf
+      - --enb_files.rr_config=/config/sdr-rr.conf
       - --enb_files.sib_config=/config/sib.conf
       - --enb_files.drb_config=/config/drb.conf
       - --rf.device_name=UHD

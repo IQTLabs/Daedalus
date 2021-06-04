@@ -33,8 +33,8 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     volumes:
-      - "./provisioning/db/run_db.sh:/tmp/run.sh:z"
-      - "./provisioning/db/imsi1.json:/tmp/imsi1.json:z"
+      - "${PROVISIONING}/db/run_db.sh:/tmp/run.sh:z"
+      - "${PROVISIONING}/db/imsi1.json:/tmp/imsi1.json:z"
     entrypoint:
       - /bin/sh
       - /tmp/run.sh
@@ -55,7 +55,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     command:
       - "/usr/local/etc/run_webui.sh"
     networks:
@@ -76,7 +76,7 @@ services:
     command:
       - "/usr/local/etc/run_hss.sh"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.10
@@ -97,7 +97,7 @@ services:
     command:
       - "/usr/local/etc/run_pcrf.sh"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.50
@@ -112,7 +112,7 @@ services:
     command:
       - "/usr/local/etc/run_mme.sh"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.20
@@ -125,7 +125,7 @@ services:
     command:
       - "/usr/local/etc/run_smf.sh"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.40
@@ -138,7 +138,7 @@ services:
     command:
       - "/usr/local/etc/run_sgwc.sh"
     volumes:
-      - "./config_cpn:/usr/local/etc:z"
+      - "${CONFIG_CPN}:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.30
