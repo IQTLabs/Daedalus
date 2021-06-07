@@ -7,5 +7,5 @@ docker network rm rfn
 cd dovesnap
 docker-compose -f docker-compose.yml -f docker-compose-standalone.yml down
 cd ..
-docker volume rm scenario2_mongodb_data
+docker volume rm 5g_mongodb_data
 docker volume rm dovesnap_ovs-data

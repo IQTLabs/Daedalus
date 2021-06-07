@@ -43,8 +43,8 @@ cd dovesnap && git pull && MIRROR_BRIDGE_OUT=tpmirrorint FAUCET_PREFIX=$TPFAUCET
 
 DOVESNAPOPTS="-o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654 -o ovs.bridge.mtu=9000 --ipam-opt com.docker.network.driver.mtu=9000 --internal"
 docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=nat --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
-docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet 192.168.27.0/24 --gateway 192.168.27.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectupn -d ovs upn || exit 1
-docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
+UPNIP=192.168.27
+docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet ${UPNIP}.0/24 --gateway ${UPNIP}.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectupn -d ovs upn || exit 1
 
 DOCKERFILES="-f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml"
 
@@ -58,6 +58,7 @@ if [[ "$ETTUS" -eq 1 ]] ; then
 fi
 
 if [[ "$VUE" -eq 1 ]] ; then
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-enb.yml -f docker-compose-5g-nsa-rfn-ue.yml"
 fi
 
@@ -65,13 +66,7 @@ docker-compose $DOCKERFILES up -d --build || exit 1
 
 if [[ "$VUE" -eq 1 ]] ; then
         sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route del default || exit 1
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via 192.168.27.1 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via ${UPNIP}.1 || exit 1
 fi
-
-for c in upf upf2 ; do
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.all.send_redirects=0 || exit 1
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstap.send_redirects=0 || exit 1
-done
-sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstap2.send_redirects=0 || exit 1
 
 docker-compose $DOCKERFILES logs -f
