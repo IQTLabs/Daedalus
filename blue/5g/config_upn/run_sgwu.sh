@@ -1,7 +1,7 @@
 #!/bin/bash
 
 host=$(hostname)
-echo "Launching ${hname}..."
+echo "Launching ${host}..."
 
 mkdir -p /usr/local/var/log/open5gs
 touch /usr/local/var/log/open5gs/${host}.log
