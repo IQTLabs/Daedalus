@@ -1,11 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-
-echo "Launching SGW-U..."
+host=$(hostname)
+echo "Launching ${host}..."
 
 mkdir -p /usr/local/var/log/open5gs
-touch /usr/local/var/log/open5gs/sgwu.log
+touch /usr/local/var/log/open5gs/${host}.log
+tail -f /usr/local/var/log/open5gs/${host}.log &
 
-tail -f /usr/local/var/log/open5gs/sgwu.log &
-
-open5gs-sgwud -c /usr/local/etc/open5gs/sgwu.yaml
+open5gs-sgwud -c /usr/local/etc/open5gs/${host}.yaml
