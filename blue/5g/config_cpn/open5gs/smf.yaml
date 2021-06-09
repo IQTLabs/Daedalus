@@ -1,0 +1,38 @@
+### For reference, see `nextepc.conf`
+
+logger:
+  file: /usr/local/var/log/open5gs/smf.log
+  trace:
+      app: 1
+      diameter: 1
+      gtpv2: 1
+      gtp: 1
+
+smf:
+  freeDiameter: /usr/local/etc/freeDiameter/smf.conf
+  gtpc:
+    - addr: 192.168.26.40
+  gtpu:
+    - addr: 192.168.26.40
+  pfcp:
+    - addr: 192.168.26.40
+  subnet:
+    - addr: 10.10.0.1/16
+      apn: internet
+      dev: ogstap
+    - addr: 10.11.0.1/16
+      apn: internet2
+      dev: ogstap
+    - addr: 10.12.0.1/16
+      apn: internet3
+      dev: ogstap2
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+
+upf:
+  pfcp:
+    - addr: 192.168.27.41
+      apn: internet
+    - addr: 192.168.27.42
+      apn: [internet2, internet3]

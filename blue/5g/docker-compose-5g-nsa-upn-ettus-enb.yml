@@ -1,0 +1,35 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+services:
+  ettus-enb:
+    image: srslte:latest
+    container_name: ettus-enb
+    depends_on:
+      - mme
+    cap_add:
+      - SYS_NICE
+    networks:
+      upn:
+        ipv4_address: 192.168.27.62
+    volumes:
+      - "${CONFIG_UPN}/srsLTE:/config:z"
+    entrypoint:
+      - srsenb
+    privileged: true
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    command:
+      - /config/enb.conf
+      - --enb_files.rr_config=/config/ettus-rr.conf
+      - --enb.name=ettus-ENB01
+      - --enb.n_prb=50
+      - --enb.enb_id=0x62
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.27.62
+      - --enb.s1c_bind_addr=192.168.27.62
+      - --rf.device_name=UHD

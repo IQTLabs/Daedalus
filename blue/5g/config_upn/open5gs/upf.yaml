@@ -1,0 +1,20 @@
+### For reference, see `nextepc.conf`
+
+logger:
+  file: /usr/local/var/log/open5gs/upf.log
+  trace:
+      app: 1
+      diameter: 1
+      gtpv2: 1
+      gtp: 1
+
+upf:
+  gtpu:
+    addr:
+      - 192.168.27.41
+  pfcp:
+    - addr: 192.168.27.41
+  subnet:
+    - addr: 10.10.0.1/16
+      apn: internet
+      dev: ogstap

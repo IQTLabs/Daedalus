@@ -1,0 +1,39 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+  rfn:
+    external:
+      name: rfn
+services:
+  enb:
+    image: srslte:latest
+    container_name: enb
+    depends_on:
+      - mme
+    cap_add:
+      - SYS_NICE
+    networks:
+      upn:
+        ipv4_address: 192.168.27.60
+      rfn:
+        ipv4_address: 192.168.28.60
+    volumes:
+      - "${CONFIG_UPN}/srsLTE:/config:z"
+    entrypoint:
+      - srsenb
+    command:
+      - /config/enb.conf
+      - --enb_files.rr_config=/config/virtual-rr.conf
+      - --enb.name=dummyENB01
+      - --enb.enb_id=0x60
+      - --enb.n_prb=6
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.27.60
+      - --enb.s1c_bind_addr=192.168.27.60
+      - --rf.device_name=zmq
+      - --rf.device_args=tx_port0=tcp://*:5555,rx_port0=tcp://192.168.28.61:5554,tx_port1=tcp://*:5565,rx_port1=tcp://192.168.28.62:5564,tx_port2=tcp://*:5575,rx_port2=tcp://192.168.28.63:5574,tx_port3=tcp://*:5585,rx_port3=tcp://192.168.28.64:5584,id=enb0,base_srate=1.92e6
+
