@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd srsLTE
-docker build -t srslte .
+cd srsRAN
+docker build -t srsran .
 cd ..
 
 docker build -t open5gs .

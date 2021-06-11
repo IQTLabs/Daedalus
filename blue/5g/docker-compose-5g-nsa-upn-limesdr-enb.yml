@@ -7,7 +7,7 @@ networks:
       name: upn
 services:
   limesdr-enb:
-    image: srslte:latest
+    image: srsran:latest
     container_name: limesdr-enb
     depends_on:
       - mme
@@ -17,7 +17,7 @@ services:
       upn:
         ipv4_address: 192.168.27.63
     volumes:
-      - "${CONFIG_UPN}/srsLTE/limesdr:/config:z"
+      - "${CONFIG_UPN}/srsRAN/limesdr:/config:z"
     entrypoint:
       - srsenb
     privileged: true
