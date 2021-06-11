@@ -9,8 +9,6 @@ services:
   bladerf-enb:
     image: srslte:latest
     container_name: bladerf-enb
-    depends_on:
-      - mme
     cap_add:
       - SYS_NICE
     networks:

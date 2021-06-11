@@ -12,8 +12,6 @@ services:
   enb:
     image: srslte:latest
     container_name: enb
-    depends_on:
-      - mme
     cap_add:
       - SYS_NICE
     networks:
