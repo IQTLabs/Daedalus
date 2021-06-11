@@ -9,8 +9,6 @@ services:
   limesdr-enb:
     image: srsran:latest
     container_name: limesdr-enb
-    depends_on:
-      - mme
     cap_add:
       - SYS_NICE
     networks:
