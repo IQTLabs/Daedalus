@@ -2,20 +2,26 @@
 
 BLADERF=0
 ETTUS=0
+LIMESDR=0
 VUE=1
+SRS_VERSION="release_21_04"
 
 # -b: run bladeRF enb
 # -e: run ettus enb
+# -l: run limesdr enb
 # -V: DO NOT run virtual enb and UEs.
 # e.g., to run bladeRF only, ./startup.sh -bV
 
-while getopts "beV" o; do
+while getopts "belV" o; do
     case "${o}" in
         b)
             BLADERF=1
             ;;
         e)
             ETTUS=1
+            ;;
+        l)
+            LIMESDR=1
             ;;
         V)
             VUE=0
@@ -26,9 +32,16 @@ shift $((OPTIND-1))
 
 echo start bladeRF: $BLADERF
 echo start ettus: $ETTUS
+echo start limesdr: $LIMESDR
 echo start virtual UEs/eNB: $VUE
 
-cd srsLTE && docker build -t srslte . && cd .. || exit 1
+if [[ "$LIMESDR" -eq 1 ]]; then
+	SRS_VERSION="release_19_12"
+fi
+
+echo building srsRAN version: $SRS_VERSION
+
+cd srsLTE && docker build -f Dockerfile.base -t srsran:base . && docker build --build-arg SRS_VERSION="$SRS_VERSION" -f Dockerfile.srs -t srslte . && cd .. || exit 1
 cd open5gs && docker build -t open5gs . && cd .. || exit 1
 
 sudo ip link add tpmirrorint type veth peer name tpmirror
@@ -55,6 +68,10 @@ fi
 if [[ "$ETTUS" -eq 1 ]] ; then
         uhd_find_devices
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-ettus-enb.yml"
+fi
+
+if [[ "$LIMESDR" -eq 1 ]] ; then
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-limesdr-enb.yml"
 fi
 
 if [[ "$VUE" -eq 1 ]] ; then

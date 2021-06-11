@@ -1,0 +1,39 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+networks:
+  upn:
+    external:
+      name: upn
+services:
+  limesdr-enb:
+    image: srslte:latest
+    container_name: limesdr-enb
+    depends_on:
+      - mme
+    cap_add:
+      - SYS_NICE
+    networks:
+      upn:
+        ipv4_address: 192.168.27.63
+    volumes:
+      - "${CONFIG_UPN}/srsLTE/limesdr:/config:z"
+    entrypoint:
+      - srsenb
+    privileged: true
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    command:
+      - /config/enb.conf
+      - --enb.name=limesdr-ENB01
+      - --enb.n_prb=50
+      - --enb.tac=1
+      - --enb.mcc=001
+      - --enb.mnc=01
+      - --enb.enb_id=0x63
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.27.63
+      - --enb.s1c_bind_addr=192.168.27.63
+      - --rf.device_name=soapy
+      - --rf.device_args=auto
+      - --rf.dl_earfcn=900

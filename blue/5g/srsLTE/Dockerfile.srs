@@ -1,0 +1,10 @@
+FROM srsran:base
+MAINTAINER Charlie Lewis <clewis@iqt.org>
+ARG SRS_VERSION=release_21_04
+WORKDIR /root
+RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION}
+
+RUN mkdir -p /root/srsRAN/build
+RUN mkdir /config
+WORKDIR /root/srsRAN/build
+RUN cmake ../ && make -j `nproc` && make install && ldconfig
