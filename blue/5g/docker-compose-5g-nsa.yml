@@ -213,7 +213,7 @@ services:
     ipv4_address: 192.168.26.42
 
   enb:
-    image: srslte:latest
+    image: srsran:latest
     container_name: enb
     depends_on:
       - mme
@@ -225,7 +225,7 @@ services:
       rf_network:
     ipv4_address: 192.168.28.60
     volumes:
-      - ./config/srsLTE:/config:z
+      - ./config/srsRAN:/config:z
     entrypoint:
       - srsenb
     command:
@@ -241,7 +241,7 @@ services:
       - --enb_files.sib_config=/config/sib.conf
       - --enb_files.drb_config=/config/drb.conf
   ue:
-    image: srslte:latest
+    image: srsran:latest
     container_name: ue
     cap_add:
       - NET_ADMIN
@@ -254,7 +254,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config/srsLTE:/config:z
+      - ./config/srsRAN:/config:z
     entrypoint:
       - srsue
     command:
@@ -267,7 +267,7 @@ services:
       - --rf.dl_earfcn=2850
       - --rf.device_args="tx_port=tcp://*:5554,rx_port=tcp://192.168.28.60:5555,id=ue,base_srate=1.92e6"
   ue2:
-    image: srslte:latest
+    image: srsran:latest
     container_name: ue2
     cap_add:
       - NET_ADMIN
@@ -280,7 +280,7 @@ services:
     depends_on:
       - enb
     volumes:
-      - ./config/srsLTE:/config:z
+      - ./config/srsRAN:/config:z
     entrypoint:
       - srsue
     command:

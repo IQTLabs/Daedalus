@@ -54,7 +54,7 @@ fi
 
 echo building srsRAN version: $SRS_VERSION
 
-cd srsLTE && docker build -f Dockerfile.base -t srsran:base . && docker build --build-arg SRS_VERSION="$SRS_VERSION" -f Dockerfile.srs -t srslte . && cd .. || exit 1
+cd srsRAN && docker build -f Dockerfile.base -t srsran:base . && docker build --build-arg SRS_VERSION="$SRS_VERSION" -f Dockerfile.srs -t srsran . && cd .. || exit 1
 cd open5gs && docker build -t open5gs . && cd .. || exit 1
 
 sudo ip link add tpmirrorint type veth peer name tpmirror

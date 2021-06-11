@@ -10,7 +10,7 @@ networks:
       name: rfn
 services:
   enb:
-    image: srslte:latest
+    image: srsran:latest
     container_name: enb
     cap_add:
       - SYS_NICE
@@ -20,7 +20,7 @@ services:
       rfn:
         ipv4_address: 192.168.28.60
     volumes:
-      - "${CONFIG_UPN}/srsLTE:/config:z"
+      - "${CONFIG_UPN}/srsRAN:/config:z"
     entrypoint:
       - srsenb
     command:

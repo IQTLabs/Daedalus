@@ -7,7 +7,7 @@ networks:
       name: upn
 services:
   ettus-enb:
-    image: srslte:latest
+    image: srsran:latest
     container_name: ettus-enb
     cap_add:
       - SYS_NICE
@@ -15,7 +15,7 @@ services:
       upn:
         ipv4_address: 192.168.27.62
     volumes:
-      - "${CONFIG_UPN}/srsLTE:/config:z"
+      - "${CONFIG_UPN}/srsRAN:/config:z"
     entrypoint:
       - srsenb
     privileged: true
