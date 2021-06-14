@@ -34,4 +34,4 @@ services:
       - --enb.s1c_bind_addr=192.168.27.63
       - --rf.device_name=soapy
       - --rf.device_args=auto
-      - --rf.dl_earfcn=900
+      - --rf.dl_earfcn=${LIMESDR_EARFCN}

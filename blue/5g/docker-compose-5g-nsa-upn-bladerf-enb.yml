@@ -30,3 +30,4 @@ services:
       - --enb.gtp_bind_addr=192.168.27.61
       - --enb.s1c_bind_addr=192.168.27.61
       - --rf.device_name=bladeRF
+      - --rf.dl_earfcn=${BLADERF_EARFCN}

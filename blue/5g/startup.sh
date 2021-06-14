@@ -1,14 +1,18 @@
 #!/bin/bash
 
 BLADERF=0
+BLADERF_EARFCN=2700
 ETTUS=0
+ETTUS_EARFCN=1800
 LIMESDR=0
+LIMESDR_EARFCN=900
 VUE=1
 SRS_VERSION="release_21_04"
 ENB=1
 CPN=1
 UPN=1
 
+# -b, -e, -l take an optional parameter, to override EARFCN
 # -b: run bladeRF enb
 # -e: run ettus enb
 # -l: run limesdr enb
@@ -17,16 +21,20 @@ UPN=1
 # -U: DO NOT run the UPN
 # e.g., to run bladeRF only, ./startup.sh -bV
 
-while getopts "belVCU" o; do
+
+while getopts "b:e:l:VCU" o; do
     case "${o}" in
         b)
             BLADERF=1
+            if [ "${OPTARG}" != "" ] ; then BLADERF_EARFCN=${OPTARG} ; fi
             ;;
         e)
             ETTUS=1
+            if [ "${OPTARG}" != "" ] ; then ETTUS_EARFCN=${OPTARG} ; fi
             ;;
         l)
             LIMESDR=1
+            if [ "${OPTARG}" != "" ] ; then LIMESDR_EARFCN=${OPTARG} ; fi
             ;;
         V)
             VUE=0
@@ -83,15 +91,18 @@ fi
 
 
 if [[ "$BLADERF" -eq 1 ]] ; then
+        export BLADERF_EARFCN
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-bladerf-enb.yml"
 fi
 
 if [[ "$ETTUS" -eq 1 ]] ; then
+        export ETTUS_EARFCN
         uhd_find_devices
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-ettus-enb.yml"
 fi
 
 if [[ "$LIMESDR" -eq 1 ]] ; then
+        export LIMESDR_EARFCN
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-limesdr-enb.yml"
 fi
 

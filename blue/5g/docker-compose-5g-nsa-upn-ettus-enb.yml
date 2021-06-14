@@ -31,3 +31,4 @@ services:
       - --enb.gtp_bind_addr=192.168.27.62
       - --enb.s1c_bind_addr=192.168.27.62
       - --rf.device_name=UHD
+      - --rf.dl_earfcn=${ETTUS_EARFCN}
