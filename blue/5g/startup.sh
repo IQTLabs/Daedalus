@@ -85,7 +85,7 @@ DOVESNAPOPTS="-o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654 -o 
 DOCKERFILES=""
 
 if [[ "$CPN" -eq 1 ]] ; then
-        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=nat --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=routed --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-cpn.yml"
 fi
 
@@ -100,7 +100,7 @@ if [[ "$VUE" -eq 1 ]] ; then
 fi
 
 if [[ "$ENB" -eq 1 ]] ; then
-        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=nat --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectenb -d ovs enb || exit 1
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=routed --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectenb -d ovs enb || exit 1
 fi
 
 if [[ "$BLADERF" -eq 1 ]] ; then
