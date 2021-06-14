@@ -8,7 +8,7 @@ LIMESDR=0
 LIMESDR_EARFCN=900
 VUE=1
 SRS_VERSION="release_21_04"
-ENB=1
+ENB=0
 CPN=1
 UPN=1
 
@@ -26,14 +26,17 @@ while getopts "b:e:l:VCU" o; do
     case "${o}" in
         b)
             BLADERF=1
+            ENB=1
             if [ "${OPTARG}" != "" ] ; then BLADERF_EARFCN=${OPTARG} ; fi
             ;;
         e)
             ETTUS=1
+            ENB=1
             if [ "${OPTARG}" != "" ] ; then ETTUS_EARFCN=${OPTARG} ; fi
             ;;
         l)
             LIMESDR=1
+            ENB=1
             if [ "${OPTARG}" != "" ] ; then LIMESDR_EARFCN=${OPTARG} ; fi
             ;;
         V)
@@ -49,12 +52,15 @@ while getopts "b:e:l:VCU" o; do
 done
 shift $((OPTIND-1))
 
+if [[ "$VUE" -eq 1 ]] ; then ENB=1 ; fi
+
 echo start bladeRF: $BLADERF
 echo start ettus: $ETTUS
 echo start limesdr: $LIMESDR
 echo start virtual UEs/eNB: $VUE
 echo start CPN: $CPN
 echo start UPN: $UPN
+echo start ENB: $ENB
 
 if [[ "$LIMESDR" -eq 1 ]]; then
 	SRS_VERSION="release_19_12"
@@ -84,38 +90,40 @@ if [[ "$CPN" -eq 1 ]] ; then
 fi
 
 if [[ "$UPN" -eq 1 ]] ; then
-        UPNIP=192.168.27
-        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet ${UPNIP}.0/24 --gateway ${UPNIP}.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectupn -d ovs upn || exit 1
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet 192.168.27.0/24 --gateway 192.168.27.1 --ipam-opt com.docker.network.bridge.name=upn -d ovs upn || exit 1
         DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn.yml"
 fi
 
+if [[ "$VUE" -eq 1 ]] ; then
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-enb.yml -f docker-compose-5g-nsa-rfn-ue.yml"
+fi
+
+if [[ "$ENB" -eq 1 ]] ; then
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=nat --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectenb -d ovs enb || exit 1
+fi
 
 if [[ "$BLADERF" -eq 1 ]] ; then
         export BLADERF_EARFCN
-        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-bladerf-enb.yml"
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-bladerf-enb.yml"
 fi
 
 if [[ "$ETTUS" -eq 1 ]] ; then
         export ETTUS_EARFCN
         uhd_find_devices
-        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-ettus-enb.yml"
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-ettus-enb.yml"
 fi
 
 if [[ "$LIMESDR" -eq 1 ]] ; then
         export LIMESDR_EARFCN
-        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-limesdr-enb.yml"
-fi
-
-if [[ "$VUE" -eq 1 ]] ; then
-        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
-        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-upn-enb.yml -f docker-compose-5g-nsa-rfn-ue.yml"
+        DOCKERFILES="$DOCKERFILES -f docker-compose-5g-nsa-limesdr-enb.yml"
 fi
 
 docker-compose $DOCKERFILES up -d --build || exit 1
 
 if [[ "$VUE" -eq 1 ]] ; then
         sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route del default || exit 1
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via ${UPNIP}.1 || exit 1
+        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via 192.168.29.1 || exit 1
 fi
 
 docker-compose $DOCKERFILES logs -f

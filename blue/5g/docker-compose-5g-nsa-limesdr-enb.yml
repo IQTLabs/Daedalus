@@ -2,9 +2,9 @@
 version: '2'
 
 networks:
-  upn:
+  enb:
     external:
-      name: upn
+      name: enb
 services:
   limesdr-enb:
     image: srsran:latest
@@ -13,7 +13,7 @@ services:
       - SYS_NICE
     networks:
       upn:
-        ipv4_address: 192.168.27.63
+        ipv4_address: 192.168.29.63
     volumes:
       - "${CONFIG_UPN}/srsRAN/limesdr:/config:z"
     entrypoint:
@@ -30,8 +30,8 @@ services:
       - --enb.mnc=01
       - --enb.enb_id=0x63
       - --enb.mme_addr=192.168.26.20
-      - --enb.gtp_bind_addr=192.168.27.63
-      - --enb.s1c_bind_addr=192.168.27.63
+      - --enb.gtp_bind_addr=192.168.29.63
+      - --enb.s1c_bind_addr=192.168.29.63
       - --rf.device_name=soapy
       - --rf.device_args=auto
       - --rf.dl_earfcn=${LIMESDR_EARFCN}
