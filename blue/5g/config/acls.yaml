@@ -2,6 +2,17 @@ acls:
   protectcpn:
     rules:
     - rule:
+      eth_type: 0x806
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.0.0/16
+      ipv4_dst: 192.168.26.20
+      actions:
+        allow: 1
+    - rule:
       eth_type: 0x800
       ip_proto: 17
       ipv4_src: 192.168.0.0/16
@@ -17,17 +28,6 @@ acls:
       ipv4_dst: 192.168.26.40
       udp_src: 8805
       udp_dst: 8805
-      actions:
-        allow: 1
-    - rule:
-      eth_type: 0x800
-      ip_proto: 132
-      ipv4_src: 192.168.0.0/16
-      ipv4_dst: 192.168.26.20
-      actions:
-        allow: 1
-    - rule:
-      eth_type: 0x806
       actions:
         allow: 1
     - rule:
@@ -48,16 +48,40 @@ acls:
         allow: 1
     - rule:
       eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.26.0/24
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
       ip_proto: 17
-      ipv4_src: 192.168.26.0/16
+      ipv4_src: 192.168.29.0/24
+      udp_src: 2152
+      udp_dst: 2152
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.27.1
+      udp_src: 2152
+      udp_dst: 2152
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.29.0/24
       udp_src: 8805
       udp_dst: 8805
       actions:
         allow: 1
     - rule:
       eth_type: 0x800
-      ip_proto: 132
-      ipv4_src: 192.168.26.0/16
+      ip_proto: 17
+      ipv4_src: 192.168.26.0/24
+      udp_src: 8805
+      udp_dst: 8805
       actions:
         allow: 1
     - rule:
@@ -73,6 +97,12 @@ acls:
         allow: 0
     - rule:
       eth_type: 0x800
+      ip_proto: 17
+      udp_dst: 2152
+      actions:
+        allow: 0
+    - rule:
+      eth_type: 0x800
       ip_proto: 132
       actions:
         allow: 0
@@ -84,6 +114,35 @@ acls:
     - rule:
       eth_type: 0x800
       ipv4_dst: 192.168.27.42
+      actions:
+        allow: 1
+    - rule:
+      actions:
+        allow: 0
+  protectenb:
+    rules:
+    - rule:
+      eth_type: 0x806
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.26.0/24
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 17
+      udp_src: 8805
+      udp_dst: 8805
+      actions:
+        allow: 1
+    - rule:
+      eth_type: 0x800
+      ip_proto: 17
+      udp_src: 2152
+      udp_dst: 2152
       actions:
         allow: 1
     - rule:

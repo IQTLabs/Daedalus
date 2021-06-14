@@ -1,11 +1,8 @@
 #!/bin/bash
 
-docker-compose -f docker-compose-5g-nsa-cpn.yml -f docker-compose-5g-nsa-upn.yml -f docker-compose-5g-nsa-upn-bladerf-enb.yml -f docker-compose-5g-nsa-upn-enb.yml -f docker-compose-5g-nsa-rfn-ue.yml down --remove-orphans
-docker network rm cpn
-docker network rm upn
-docker network rm rfn
-cd dovesnap
-docker-compose -f docker-compose.yml -f docker-compose-standalone.yml down
-cd ..
-docker volume rm 5g_mongodb_data
-docker volume rm dovesnap_ovs-data
+DC_YAML=""
+for dc in docker-compose-5g-nsa-* ; do echo $dc ; DC_YAML="$DC_YAML -f $dc" ; done
+docker-compose $DC_YAML down --remove-orphans
+for network in cpn upn enb rfn ; do docker network rm $network ; done
+cd dovesnap && docker-compose -f docker-compose.yml -f docker-compose-standalone.yml down && cd ..
+for volume in 5g_mongodb_data dovesnap_ovs-data ; do docker volume rm $volume ; done
