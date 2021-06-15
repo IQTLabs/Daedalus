@@ -12,32 +12,40 @@ ENB=0
 CPN=1
 UPN=1
 
-# -b, -e, -l take an optional parameter, to override EARFCN
 # -b: run bladeRF enb
+# -B <n>: bladeRF EARFCN
 # -e: run ettus enb
+# -E <n>: ettus EARFCN
 # -l: run limesdr enb
+# -L <n>: limesdr EARFCN
 # -V: DO NOT run virtual enb and UEs.
 # -C: DO NOT run the CPN
 # -U: DO NOT run the UPN
 # e.g., to run bladeRF only, ./startup.sh -bV
 
 
-while getopts "b:e:l:VCU" o; do
+while getopts "bB:eE:lL:VCU" o; do
     case "${o}" in
         b)
             BLADERF=1
             ENB=1
-            if [ "${OPTARG}" != "" ] ; then BLADERF_EARFCN=${OPTARG} ; fi
+            ;;
+        B)
+            BLADERF_EARFCN=${OPTARG}
             ;;
         e)
             ETTUS=1
             ENB=1
-            if [ "${OPTARG}" != "" ] ; then ETTUS_EARFCN=${OPTARG} ; fi
+            ;;
+        E)
+            ETTUS_EARFCN=${OPTARG}
             ;;
         l)
             LIMESDR=1
             ENB=1
-            if [ "${OPTARG}" != "" ] ; then LIMESDR_EARFCN=${OPTARG} ; fi
+            ;;
+        L)
+            LIMESDR_EARFCN=${OPTARG}
             ;;
         V)
             VUE=0
