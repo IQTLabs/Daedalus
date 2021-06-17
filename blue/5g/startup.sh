@@ -87,7 +87,7 @@ TPFAUCETPREFIX=/tmp/tpfaucet
 sudo rm -rf $TPFAUCETPREFIX && mkdir -p $TPFAUCETPREFIX/etc/faucet && cp config/*yaml $TPFAUCETPREFIX/etc/faucet || exit 1
 
 git clone https://github.com/iqtlabs/dovesnap || echo "... ok."
-cd dovesnap && git pull && MIRROR_BRIDGE_OUT=tpmirrorint FAUCET_PREFIX=$TPFAUCETPREFIX docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build && cd .. || exit 1
+cd dovesnap && git checkout main && git pull && git fetch --all --tags && git checkout tags/v0.21.0 && MIRROR_BRIDGE_OUT=tpmirrorint FAUCET_PREFIX=$TPFAUCETPREFIX docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build && cd .. || exit 1
 
 DOVESNAPOPTS="-o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654 -o ovs.bridge.mtu=9000 --ipam-opt com.docker.network.driver.mtu=9000 --internal"
 DOCKERFILES=""
