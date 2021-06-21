@@ -2,6 +2,20 @@ acls:
   protectcpn:
     rules:
     - rule:
+      description: CPN ARP
+      eth_type: 0x806
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/UPN S1AP to MME
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.0.0/16
+      ipv4_dst: 192.168.26.20
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/UPN PFCP to SGWC
       eth_type: 0x800
       ip_proto: 17
       ipv4_src: 192.168.0.0/16
@@ -11,6 +25,7 @@ acls:
       actions:
         allow: 1
     - rule:
+      description: eNB/UPN PFCP to SMF
       eth_type: 0x800
       ip_proto: 17
       ipv4_src: 192.168.0.0/16
@@ -20,17 +35,7 @@ acls:
       actions:
         allow: 1
     - rule:
-      eth_type: 0x800
-      ip_proto: 132
-      ipv4_src: 192.168.0.0/16
-      ipv4_dst: 192.168.26.20
-      actions:
-        allow: 1
-    - rule:
-      eth_type: 0x806
-      actions:
-        allow: 1
-    - rule:
+      description: CPN web UI
       eth_type: 0x800
       ip_proto: 6
       ipv4_dst: 192.168.26.6
@@ -43,47 +48,149 @@ acls:
   protectupn:
     rules:
     - rule:
+      description: UPN ARP
       eth_type: 0x806
       actions:
         allow: 1
     - rule:
+      description: UPN/CPN S1AP
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.26.20
+      ipv4_dst: 192.168.27.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: UPN/eNB GTP-U
       eth_type: 0x800
       ip_proto: 17
-      ipv4_src: 192.168.26.0/16
+      ipv4_src: 192.168.29.0/24
+      ipv4_dst: 192.168.27.0/24
+      udp_src: 2152
+      udp_dst: 2152
+      actions:
+        allow: 1
+    - rule:
+      description: UPN GTP-U (NAT)
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.27.1
+      ipv4_dst: 192.168.27.0/24
+      udp_src: 2152
+      udp_dst: 2152
+      actions:
+        allow: 1
+    - rule:
+      description: UPN/eNB PFCP
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.29.0/24
+      ipv4_dst: 192.168.27.0/24
       udp_src: 8805
       udp_dst: 8805
       actions:
         allow: 1
     - rule:
+      description: UPN PFCP to SGWC
       eth_type: 0x800
-      ip_proto: 132
-      ipv4_src: 192.168.26.0/16
+      ip_proto: 17
+      ipv4_src: 192.168.26.30
+      ipv4_dst: 192.168.27.0/24
+      udp_src: 8805
+      udp_dst: 8805
       actions:
         allow: 1
     - rule:
+      description: UPN PFCP to SMF
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.26.40
+      ipv4_dst: 192.168.27.0/24
+      udp_src: 8805
+      udp_dst: 8805
+      actions:
+        allow: 1
+    - rule:
+      description: deny other 192.168.0.0/16
       eth_type: 0x800
       ipv4_src: 192.168.0.0/16
       actions:
         allow: 0
     - rule:
       eth_type: 0x800
-      ip_proto: 17
-      udp_dst: 8805
-      actions:
-        allow: 0
-    - rule:
-      eth_type: 0x800
       ip_proto: 132
       actions:
         allow: 0
     - rule:
       eth_type: 0x800
+      ip_proto: 17
+      udp_dst: 2152
+      actions:
+        allow: 0
+    - rule:
+      eth_type: 0x800
+      ip_proto: 17
+      udp_dst: 8805
+      actions:
+        allow: 0
+    - rule:
+      description: UPF UE traffic
+      eth_type: 0x800
       ipv4_dst: 192.168.27.41
       actions:
         allow: 1
     - rule:
+      description: UPF2 UE traffic
       eth_type: 0x800
       ipv4_dst: 192.168.27.42
+      actions:
+        allow: 1
+    - rule:
+      actions:
+        allow: 0
+  protectenb:
+    rules:
+    - rule:
+      description: eNB ARP
+      eth_type: 0x806
+      actions:
+        allow: 1
+    - rule:
+      description: eNB S1AP to MME
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.26.20
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/UPN GTP-U
+      eth_type: 0x800
+      ip_proto: 17
+      udp_src: 2152
+      udp_dst: 2152
+      ipv4_src: 192.168.27.0/24
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/UPN GTP-U (NAT)
+      eth_type: 0x800
+      ip_proto: 17
+      udp_src: 2152
+      udp_dst: 2152
+      ipv4_src: 192.168.29.1
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/PFCP
+      eth_type: 0x800
+      ip_proto: 17
+      udp_src: 8805
+      udp_dst: 8805
+      ipv4_src: 192.168.27.0/24
+      ipv4_dst: 192.168.29.0/24
       actions:
         allow: 1
     - rule:
@@ -92,5 +199,6 @@ acls:
   protectrfn:
     rules:
     - rule:
+      description: RFN is flat, deny external
       actions:
         allow: 0

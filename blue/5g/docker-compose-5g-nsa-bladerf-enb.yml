@@ -2,9 +2,9 @@
 version: '2'
 
 networks:
-  upn:
+  enb:
     external:
-      name: upn
+      name: enb
 services:
   bladerf-enb:
     image: srsran:latest
@@ -12,8 +12,8 @@ services:
     cap_add:
       - SYS_NICE
     networks:
-      upn:
-        ipv4_address: 192.168.27.61
+      enb:
+        ipv4_address: 192.168.29.61
     volumes:
       - "${CONFIG_UPN}/srsRAN:/config:z"
     entrypoint:
@@ -27,6 +27,7 @@ services:
       - --enb.n_prb=50
       - --enb.enb_id=0x61
       - --enb.mme_addr=192.168.26.20
-      - --enb.gtp_bind_addr=192.168.27.61
-      - --enb.s1c_bind_addr=192.168.27.61
+      - --enb.gtp_bind_addr=192.168.29.61
+      - --enb.s1c_bind_addr=192.168.29.61
       - --rf.device_name=bladeRF
+      - --rf.dl_earfcn=${BLADERF_EARFCN}

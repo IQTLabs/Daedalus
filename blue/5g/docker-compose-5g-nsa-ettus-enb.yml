@@ -2,23 +2,23 @@
 version: '2'
 
 networks:
-  upn:
+  enb:
     external:
-      name: upn
+      name: enb
 services:
   ettus-enb:
     image: srsran:latest
     container_name: ettus-enb
     cap_add:
       - SYS_NICE
+      - SYS_RAWIO
     networks:
-      upn:
-        ipv4_address: 192.168.27.62
+      enb:
+        ipv4_address: 192.168.29.62
     volumes:
       - "${CONFIG_UPN}/srsRAN:/config:z"
     entrypoint:
       - srsenb
-    privileged: true
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
     command:
@@ -28,6 +28,7 @@ services:
       - --enb.n_prb=50
       - --enb.enb_id=0x62
       - --enb.mme_addr=192.168.26.20
-      - --enb.gtp_bind_addr=192.168.27.62
-      - --enb.s1c_bind_addr=192.168.27.62
+      - --enb.gtp_bind_addr=192.168.29.62
+      - --enb.s1c_bind_addr=192.168.29.62
       - --rf.device_name=UHD
+      - --rf.dl_earfcn=${ETTUS_EARFCN}
