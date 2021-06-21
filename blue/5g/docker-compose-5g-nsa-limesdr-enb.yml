@@ -12,7 +12,7 @@ services:
     cap_add:
       - SYS_NICE
     networks:
-      upn:
+      enb:
         ipv4_address: 192.168.29.63
     volumes:
       - "${CONFIG_UPN}/srsRAN/limesdr:/config:z"
