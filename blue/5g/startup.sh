@@ -12,19 +12,35 @@ ENB=0
 CPN=1
 UPN=1
 
-# -b: run bladeRF enb
-# -B <n>: bladeRF EARFCN
-# -e: run ettus enb
-# -E <n>: ettus EARFCN
-# -l: run limesdr enb
-# -L <n>: limesdr EARFCN
-# -V: DO NOT run virtual enb and UEs.
-# -C: DO NOT run the CPN
-# -U: DO NOT run the UPN
-# e.g., to run bladeRF only, ./startup.sh -bV
+print_help()
+{
+	# Display help
+	echo "5G startup script for running various 5G combinations automatically"
+	echo
+	echo "./startup.sh [-behlVCU]"
+	echo "./startup.sh [-B|E|L] <EARAFCN>"
+        echo
+	echo "Options:"
+	echo
+	echo "-b     run bladeRF eNB"
+	echo "-B <n> bladeRF EARFCN"
+        echo "-e:    run Ettus eNB"
+        echo "-E <n> ettus EARFCN"
+	echo "-h     print this help"
+        echo "-l     run LimeSDR eNB"
+        echo "-L <n> LimeSDR EARFCN"
+        echo "-V     DO NOT run virtual eNB and UEs."
+        echo "-C     DO NOT run the CPN"
+        echo "-U     DO NOT run the UPN"
+	echo
+        echo "For example, to run bladeRF only:"
+        echo "./startup.sh -bV"
+	echo
+        echo "No arguments will run virtual eNB and UEs by default"
+	echo
+}
 
-
-while getopts "bB:eE:lL:VCU" o; do
+while getopts "bB:eE:lL:VCUh" o; do
     case "${o}" in
         b)
             BLADERF=1
@@ -40,6 +56,10 @@ while getopts "bB:eE:lL:VCU" o; do
         E)
             ETTUS_EARFCN=${OPTARG}
             ;;
+        h)
+            print_help
+	    exit 0
+	    ;;
         l)
             LIMESDR=1
             ENB=1
