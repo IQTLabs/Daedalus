@@ -29,6 +29,7 @@ RUN apt-get update && \
         mongodb-clients \
         netbase \
         net-tools \
+        openvswitch-switch \
         ninja-build \
         pkg-config \
         python3-pip \
