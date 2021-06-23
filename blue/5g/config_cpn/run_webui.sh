@@ -8,4 +8,4 @@ until mongo  --host ${DB_HOST} --eval "print(\"waited for connection\")" 2>&1 >/
 
 echo "Launching WebUI..."
 
-npm run start --prefix /open5gs/webui
+NODE_ENV=dev npm run dev --prefix /open5gs/webui
