@@ -1,0 +1,34 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  ran:
+    external:
+      name: ran
+services:
+  ettus-enb:
+    image: srsran:latest
+    container_name: ettus-enb
+    cap_add:
+      - SYS_NICE
+      - SYS_RAWIO
+    networks:
+      ran:
+        ipv4_address: 192.168.29.62
+    volumes:
+      - "../configs/srsRAN:/config:z"
+    entrypoint:
+      - srsenb
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    command:
+      - /config/enb.conf
+      - --enb_files.rr_config=/config/ettus-rr.conf
+      - --enb.name=ettus-ENB01
+      - --enb.n_prb=${PRB}
+      - --enb.enb_id=0x62
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.29.62
+      - --enb.s1c_bind_addr=192.168.29.62
+      - --rf.device_name=UHD
+      - --rf.dl_earfcn=${ETTUS_EARFCN}

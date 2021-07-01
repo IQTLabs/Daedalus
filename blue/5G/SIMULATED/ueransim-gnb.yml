@@ -1,0 +1,23 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+networks:
+  ran:
+    external:
+      name: ran
+services:
+  gnb:
+    image: ueransim:latest
+    container_name: gnb
+    cap_add:
+      - SYS_NICE
+    networks:
+      ran:
+        ipv4_address: 192.168.29.65
+    volumes:
+      - "../configs/UERANSIM:/config:z"
+    entrypoint:
+      - /UERANSIM/build/nr-gnb
+    command:
+      - -c
+      - /config/gnb.yaml
