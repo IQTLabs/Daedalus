@@ -1,0 +1,53 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+volumes:
+ mongodb_data:
+
+networks:
+  cpn:
+    external:
+      name: cpn
+
+services:
+  smf:
+    image: open5gs:latest
+    container_name: smf
+    hostname: smf
+    command:
+      - "/scripts/run_smf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.40
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  nrf:
+    image: open5gs:latest
+    container_name: nrf
+    hostname: nrf
+    command:
+      - "/scripts/run_nrf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.61
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  amf:
+    image: open5gs:latest
+    container_name: amf
+    hostname: amf
+    depends_on:
+      - nrf
+    command:
+      - "/scripts/run_amf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.60
+    labels:
+      - "dovesnap.faucet.mirror=true"
