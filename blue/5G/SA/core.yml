@@ -36,12 +36,120 @@ services:
         ipv4_address: 192.168.26.61
     labels:
       - "dovesnap.faucet.mirror=true"
+  ausf:
+    image: open5gs:latest
+    container_name: ausf
+    hostname: ausf
+    depends_on:
+      - nrf
+    command:
+      - "/scripts/run_ausf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.70
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  nssf:
+    image: open5gs:latest
+    container_name: nssf
+    hostname: nssf
+    depends_on:
+      - nrf
+    command:
+      - "/scripts/run_nssf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.92
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  udm:
+    image: open5gs:latest
+    container_name: udm
+    hostname: udm
+    depends_on:
+      - nrf
+    command:
+      - "/scripts/run_udm.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.80
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  bsf:
+    image: open5gs:latest
+    container_name: bsf
+    hostname: bsf
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    depends_on:
+      - nrf
+      - mongodb
+    command:
+      - "/scripts/run_bsf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.91
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  pcf:
+    image: open5gs:latest
+    container_name: pcf
+    hostname: pcf
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    depends_on:
+      - nrf
+      - mongodb
+    command:
+      - "/scripts/run_pcf.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.93
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  udr:
+    image: open5gs:latest
+    container_name: udr
+    hostname: udr
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    depends_on:
+      - nrf
+      - mongodb
+    command:
+      - "/scripts/run_udr.sh"
+    volumes:
+      - "../configs:/usr/local/etc:z"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.90
+    labels:
+      - "dovesnap.faucet.mirror=true"
   amf:
     image: open5gs:latest
     container_name: amf
     hostname: amf
     depends_on:
       - nrf
+      - ausf
+      - udr
+      - udm
     command:
       - "/scripts/run_amf.sh"
     volumes:
