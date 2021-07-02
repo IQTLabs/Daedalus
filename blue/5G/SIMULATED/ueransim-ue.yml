@@ -10,7 +10,10 @@ services:
     image: ueransim:latest
     container_name: ue1
     cap_add:
+      - NET_ADMIN
       - SYS_NICE
+    devices:
+      - /dev/net/tun
     networks:
       ran:
         ipv4_address: 192.168.29.100

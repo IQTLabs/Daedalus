@@ -10,9 +10,10 @@ LIMESDR=0
 LIMESDR_EARFCN=900
 VUE=1
 SRS_VERSION="release_21_04"
-ENB=0
+RAN=0
 CPN=1
 UPN=1
+GNB=0
 
 export PRB
 
@@ -30,6 +31,7 @@ print_help()
 	echo "-B <n> bladeRF EARFCN"
         echo "-e:    run Ettus eNB"
         echo "-E <n> ettus EARFCN"
+	echo "-g     run UERANSIM gNB and UEs"
 	echo "-h     print this help"
         echo "-l     run LimeSDR eNB"
         echo "-L <n> LimeSDR EARFCN"
@@ -44,18 +46,18 @@ print_help()
 	echo
 }
 
-while getopts "bB:eE:lL:VCUh" o; do
+while getopts "bB:eE:lL:VCUgh" o; do
     case "${o}" in
         b)
             BLADERF=1
-            ENB=1
+            RAN=1
             ;;
         B)
             BLADERF_EARFCN=${OPTARG}
             ;;
         e)
             ETTUS=1
-            ENB=1
+            RAN=1
             ;;
         E)
             ETTUS_EARFCN=${OPTARG}
@@ -66,8 +68,12 @@ while getopts "bB:eE:lL:VCUh" o; do
 	    ;;
         l)
             LIMESDR=1
-            ENB=1
+            RAN=1
             ;;
+	g)
+            GNB=1
+            RAN=1
+	    ;;
         L)
             LIMESDR_EARFCN=${OPTARG}
             ;;
@@ -84,7 +90,7 @@ while getopts "bB:eE:lL:VCUh" o; do
 done
 shift $((OPTIND-1))
 
-if [[ "$VUE" -eq 1 ]] ; then ENB=1 ; fi
+if [[ "$VUE" -eq 1 ]] ; then RAN=1 ; fi
 
 echo start bladeRF: $BLADERF
 echo start ettus: $ETTUS
@@ -92,7 +98,7 @@ echo start limesdr: $LIMESDR
 echo start virtual UEs/eNB: $VUE
 echo start CPN: $CPN
 echo start UPN: $UPN
-echo start ENB: $ENB
+echo start GNB: $GNB
 
 if [[ "$LIMESDR" -eq 1 ]]; then
 	SRS_VERSION="release_19_12"
@@ -132,8 +138,12 @@ if [[ "$VUE" -eq 1 ]] ; then
         DOCKERFILES="$DOCKERFILES -f SIMULATED/srsran-enb.yml -f SIMULATED/srsran-ue.yml"
 fi
 
-if [[ "$ENB" -eq 1 ]] ; then
-        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=routed --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=upn -o ovs.bridge.nat_acl=protectran -d ovs ran || exit 1
+if [[ "$GNB" -eq 1 ]] ; then
+        DOCKERFILES="$DOCKERFILES -f SA/core.yml -f SIMULATED/ueransim-gnb.yml -f SIMULATED/ueransim-ue.yml"
+fi
+
+if [[ "$RAN" -eq 1 ]] ; then
+        docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=routed --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=ran -o ovs.bridge.nat_acl=protectran -d ovs ran || exit 1
 fi
 
 if [[ "$BLADERF" -eq 1 ]] ; then
