@@ -1,3 +1,6 @@
+logger:
+    file: /usr/local/var/log/open5gs/nrf.log
+
 nrf:
     sbi:
       addr:

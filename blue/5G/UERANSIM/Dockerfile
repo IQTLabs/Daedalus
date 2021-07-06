@@ -10,8 +10,11 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      iproute2 \
      libsctp-dev \
      lksctp-tools \
+     tcpdump \
+     iputils-ping \
      make
 RUN git clone https://github.com/aligungr/UERANSIM
 WORKDIR /UERANSIM
 RUN make
+COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]

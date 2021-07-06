@@ -1,4 +1,9 @@
 acls:
+  allowall:
+    rules:
+    - rule:
+      actions:
+        allow: 1
   protectcpn:
     rules:
     - rule:
@@ -12,6 +17,14 @@ acls:
       ip_proto: 132
       ipv4_src: 192.168.0.0/16
       ipv4_dst: 192.168.26.20
+      actions:
+        allow: 1
+    - rule:
+      description: eNB/UPN S1AP to AMF
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.0.0/16
+      ipv4_dst: 192.168.26.60
       actions:
         allow: 1
     - rule:
@@ -156,10 +169,18 @@ acls:
       actions:
         allow: 1
     - rule:
-      description: RAN S1AP to MME
+      description: RAN SCTP to MME
       eth_type: 0x800
       ip_proto: 132
       ipv4_src: 192.168.26.20
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: RAN SCTP to AMF
+      eth_type: 0x800
+      ip_proto: 132
+      ipv4_src: 192.168.26.60
       ipv4_dst: 192.168.29.0/24
       actions:
         allow: 1
