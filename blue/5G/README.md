@@ -1,3 +1,5 @@
+# NOTE: docker-compose 1.29.1 or later is required.
+
 # startup
 ```
 ./startup.sh -h

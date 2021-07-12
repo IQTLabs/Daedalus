@@ -142,6 +142,7 @@ services:
     labels:
       - "dovesnap.faucet.mirror=true"
   amf:
+    restart: always
     image: open5gs:latest
     container_name: amf
     hostname: amf

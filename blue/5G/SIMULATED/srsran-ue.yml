@@ -23,7 +23,7 @@ services:
     volumes:
       - "../configs/srsRAN:/config:z"
     entrypoint:
-      - /root/start_srsue.sh
+      - /scripts/start_srsue.sh
     command:
       - /config/ue.conf
       - --usim.imsi=001010000000001
@@ -48,7 +48,7 @@ services:
     volumes:
       - "../configs/srsRAN:/config:z"
     entrypoint:
-      - /root/start_srsue.sh
+      - /scripts/start_srsue.sh
     command:
       - /config/ue.conf
       - --usim.imsi=001010000000002
@@ -73,7 +73,7 @@ services:
     volumes:
       - "../configs/srsRAN:/config:z"
     entrypoint:
-      - /root/start_srsue.sh
+      - /scripts/start_srsue.sh
     command:
       - /config/ue.conf
       - --usim.imsi=001010000000003
@@ -98,7 +98,7 @@ services:
     volumes:
       - "../configs/srsRAN:/config:z"
     entrypoint:
-      - /root/start_srsue.sh
+      - /scripts/start_srsue.sh
     command:
       - /config/ue.conf
       - --usim.imsi=001010000000004

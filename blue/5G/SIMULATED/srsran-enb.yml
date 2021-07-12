@@ -22,7 +22,7 @@ services:
     volumes:
       - "../configs/srsRAN:/config:z"
     entrypoint:
-      - srsenb
+      - /scripts/run_rfn_enb.sh
     command:
       - /config/enb.conf
       - --enb_files.rr_config=/config/virtual-rr.conf

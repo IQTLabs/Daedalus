@@ -14,6 +14,7 @@ RAN=0
 CPN=1
 UPN=1
 GNB=0
+RFN=0
 
 export PRB
 
@@ -73,6 +74,7 @@ while getopts "bB:eE:lL:VCUgh" o; do
 	g)
             GNB=1
             RAN=1
+	    RFN=1
 	    ;;
         L)
             LIMESDR_EARFCN=${OPTARG}
@@ -90,7 +92,7 @@ while getopts "bB:eE:lL:VCUgh" o; do
 done
 shift $((OPTIND-1))
 
-if [[ "$VUE" -eq 1 ]] ; then RAN=1 ; fi
+if [[ "$VUE" -eq 1 ]] ; then RAN=1 ; RFN=1 ; fi
 
 echo start bladeRF: $BLADERF
 echo start ettus: $ETTUS
@@ -99,6 +101,8 @@ echo start virtual UEs/eNB: $VUE
 echo start CPN: $CPN
 echo start UPN: $UPN
 echo start GNB: $GNB
+echo start RAN: $RAN
+echo start RFN: $RFN
 
 if [[ "$LIMESDR" -eq 1 ]]; then
 	SRS_VERSION="release_19_12"
@@ -118,14 +122,16 @@ TPFAUCETPREFIX=/tmp/tpfaucet
 sudo rm -rf $TPFAUCETPREFIX && mkdir -p $TPFAUCETPREFIX/etc/faucet && cp configs/faucet/* $TPFAUCETPREFIX/etc/faucet || exit 1
 
 git clone https://github.com/iqtlabs/dovesnap || echo "... ok."
-cd dovesnap && git checkout main && git pull && git fetch --all --tags && git checkout $(git describe --tags --abbrev=0) && MIRROR_BRIDGE_OUT=tpmirrorint FAUCET_PREFIX=$TPFAUCETPREFIX docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build && cd .. || exit 1
+cd dovesnap && git checkout main && git pull && git fetch --all --tags && git checkout $(git describe --tags --abbrev=0) && MIRROR_BRIDGE_OUT=tpmirrorint FAUCET_PREFIX=$TPFAUCETPREFIX docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d && cd .. || exit 1
 
 DOVESNAPOPTS="-o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654 -o ovs.bridge.mtu=9000 --ipam-opt com.docker.network.driver.mtu=9000 --internal"
 DOCKERFILES=""
 
 if [[ "$CPN" -eq 1 ]] ; then
         docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=routed --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
-        DOCKERFILES="$DOCKERFILES -f NSA/epc.yml"
+        # TODO: due to SBI dependencies, would require different configs for some of the same components
+        # (e.g) SMF for NSA vs. SA. Run hybrid until can dynamically generate core configs depending on NSA/SA.
+        DOCKERFILES="$DOCKERFILES -f NSA/epc.yml -f SA/core.yml"
 fi
 
 if [[ "$UPN" -eq 1 ]] ; then
@@ -133,17 +139,20 @@ if [[ "$UPN" -eq 1 ]] ; then
         DOCKERFILES="$DOCKERFILES -f NSA/upn.yml"
 fi
 
-if [[ "$VUE" -eq 1 ]] ; then
+if [[ "$RFN" -eq 1 ]] ; then
         docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=28 -o ovs.bridge.dpid=0x640 -o ovs.bridge.mode=flat --subnet 192.168.28.0/24 --ipam-opt com.docker.network.bridge.name=rfn -o ovs.bridge.nat_acl=protectrfn -d ovs rfn || exit
-        DOCKERFILES="$DOCKERFILES -f SIMULATED/srsran-enb.yml -f SIMULATED/srsran-ue.yml"
-fi
-
-if [[ "$GNB" -eq 1 ]] ; then
-        DOCKERFILES="$DOCKERFILES -f SA/core.yml -f SIMULATED/ueransim-gnb.yml -f SIMULATED/ueransim-ue.yml"
 fi
 
 if [[ "$RAN" -eq 1 ]] ; then
         docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=29 -o ovs.bridge.dpid=0x650 -o ovs.bridge.mode=routed --subnet 192.168.29.0/24 --gateway 192.168.29.1 --ipam-opt com.docker.network.bridge.name=ran -o ovs.bridge.nat_acl=protectran -d ovs ran || exit 1
+fi
+
+if [[ "$VUE" -eq 1 ]] ; then
+        DOCKERFILES="$DOCKERFILES -f SIMULATED/srsran-enb.yml -f SIMULATED/srsran-ue.yml"
+fi
+
+if [[ "$GNB" -eq 1 ]] ; then
+        DOCKERFILES="$DOCKERFILES -f SIMULATED/ueransim-gnb.yml -f SIMULATED/ueransim-ue.yml"
 fi
 
 if [[ "$BLADERF" -eq 1 ]] ; then
@@ -163,11 +172,6 @@ if [[ "$LIMESDR" -eq 1 ]] ; then
 fi
 
 docker-compose $DOCKERFILES up -d --build || exit 1
-
-if [[ "$VUE" -eq 1 ]] ; then
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route del default || exit 1
-        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} enb) ip route add default via 192.168.29.1 || exit 1
-fi
-
 echo "$DOCKERFILES" > /tmp/d5g-dockerfiles.txt
+
 docker-compose $DOCKERFILES logs -f
