@@ -2,9 +2,9 @@
 version: '2'
 
 networks:
-  ran:
+  rfn:
     external:
-      name: ran 
+      name: rfn
 services:
   ue1:
     image: ueransim:latest
@@ -15,12 +15,12 @@ services:
     devices:
       - /dev/net/tun
     networks:
-      ran:
-        ipv4_address: 192.168.29.100
+      rfn:
+        ipv4_address: 192.168.28.101
     volumes:
       - "../configs/UERANSIM:/config:z"
     entrypoint:
-      - /UERANSIM/build/nr-ue
+      - /scripts/run_ue.sh
     command:
       - -c
       - /config/ue.yaml

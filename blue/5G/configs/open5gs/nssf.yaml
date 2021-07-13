@@ -115,10 +115,11 @@ nssf:
       - addr: 192.168.26.92
         port: 7777
     nsi:
-      - addr: 192.168.26.92
+      - addr: 192.168.26.61
         port: 7777
         s_nssai:
           sst: 1
+          sd: 0
 
 #
 # nrf:

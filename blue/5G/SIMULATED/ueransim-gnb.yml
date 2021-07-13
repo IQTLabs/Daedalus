@@ -2,6 +2,9 @@
 version: '2'
 
 networks:
+  rfn:
+    external:
+      name: rfn
   ran:
     external:
       name: ran
@@ -11,13 +14,16 @@ services:
     container_name: gnb
     cap_add:
       - SYS_NICE
+      - NET_ADMIN
     networks:
       ran:
         ipv4_address: 192.168.29.65
+      rfn:
+        ipv4_address: 192.168.28.100
     volumes:
       - "../configs/UERANSIM:/config:z"
     entrypoint:
-      - /UERANSIM/build/nr-gnb
+      - /scripts/run_rfn_gnb.sh
     command:
       - -c
       - /config/gnb.yaml
