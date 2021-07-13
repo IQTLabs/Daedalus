@@ -131,12 +131,12 @@ if [[ "$CPN" -eq 1 ]] ; then
         docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=26 -o ovs.bridge.dpid=0x620 -o ovs.bridge.mode=routed --subnet 192.168.26.0/24 --gateway 192.168.26.1 --ipam-opt com.docker.network.bridge.name=cpn -o ovs.bridge.nat_acl=protectcpn -d ovs cpn || exit 1
         # TODO: due to SBI dependencies, would require different configs for some of the same components
         # (e.g) SMF for NSA vs. SA. Run hybrid until can dynamically generate core configs depending on NSA/SA.
-        DOCKERFILES="$DOCKERFILES -f NSA/epc.yml -f SA/core.yml"
+        DOCKERFILES="$DOCKERFILES -f core/epc.yml -f core/core.yml"
 fi
 
 if [[ "$UPN" -eq 1 ]] ; then
         docker network create $DOVESNAPOPTS -o ovs.bridge.vlan=27 -o ovs.bridge.dpid=0x630 -o ovs.bridge.mode=nat --subnet 192.168.27.0/24 --gateway 192.168.27.1 --ipam-opt com.docker.network.bridge.name=upn -d ovs upn || exit 1
-        DOCKERFILES="$DOCKERFILES -f NSA/upn.yml"
+        DOCKERFILES="$DOCKERFILES -f core/upn.yml"
 fi
 
 if [[ "$RFN" -eq 1 ]] ; then
