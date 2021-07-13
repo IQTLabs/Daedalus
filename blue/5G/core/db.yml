@@ -1,0 +1,45 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+volumes:
+ mongodb_data:
+
+networks:
+  cpn:
+    external:
+      name: cpn
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - 'MONGO_INITDB_ROOT_USERNAME=${DB_USER}'
+      - 'MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}'
+    hostname: mongodb
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.5
+    labels:
+      - "dovesnap.faucet.mirror=true"
+  mongodbloader:
+    image: mongo:latest
+    depends_on:
+      - mongodb
+    environment:
+      - DB_HOST=mongodb
+      - 'DB_USER=${DB_USER}'
+      - 'DB_PASS=${DB_PASS}'
+    volumes:
+      - "../configs/imsis.json:/tmp/imsis.json:z"
+      - "../open5gs/scripts/run_db.sh:/scripts/run_db.sh:z"
+    entrypoint:
+      - /bin/sh
+      - /scripts/run_db.sh
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.19
+    labels:
+      - "dovesnap.faucet.mirror=true"

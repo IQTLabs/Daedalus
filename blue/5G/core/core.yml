@@ -10,19 +10,6 @@ networks:
       name: cpn
 
 services:
-  smf:
-    image: open5gs:latest
-    container_name: smf
-    hostname: smf
-    command:
-      - "/scripts/run_smf.sh"
-    volumes:
-      - "../configs:/usr/local/etc:z"
-    networks:
-      cpn:
-        ipv4_address: 192.168.26.40
-    labels:
-      - "dovesnap.faucet.mirror=true"
   nrf:
     image: open5gs:latest
     container_name: nrf

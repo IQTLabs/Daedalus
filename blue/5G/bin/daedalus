@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+
+import argparse
+import logging
+import os
+import shlex
+
+from plumbum import FG
+from plumbum import local
+from plumbum.cmd import cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
+from PyInquirer import prompt
+from PyInquirer import Separator
+
+from examples import custom_style_2
+
+
+level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
+             'DEBUG': 10}
+level = level_int.get(os.getenv('LOGLEVEL', 'INFO').upper(), 0)
+logging.basicConfig(level=level)
+
+
+class Daedalus():
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_version="release_21_04"):
+        if srsran:
+            base_args = ["build", "-t", "srsran:base", "-f", "Dockerfile.base", "."]
+            srs_args = ["build", "-t", "srsran", "-f", "Dockerfile.srs", "--build-arg", f'SRS_VERSION={srsran_version}', "."]
+            with local.cwd(local.cwd / 'srsRAN'):
+                docker.bound_command(base_args) & FG
+                docker.bound_command(srs_args) & FG
+        if ueransim:
+            args = ["build", "-t", "ueransim", "."]
+            with local.cwd(local.cwd / 'UERANSIM'):
+                docker.bound_command(args) & FG
+        if open5gs:
+            args = ["build", "-t", "open5gs", "."]
+            with local.cwd(local.cwd / 'open5gs'):
+                docker.bound_command(args) & FG
+        return
+
+    @staticmethod
+    def start_dovesnap():
+        RELEASE = "v0.22.0"
+        TPFAUCETPREFIX = "/tmp/tpfaucet"
+        sudo[ip["link", "add", "tpmirrorint", "type", "veth", "peer", "name", "tpmirror"]](retcode=(0,2))
+        sudo[ip["link", "set", "tpmirrorint", "up"]]()
+        sudo[ip["link", "set", "tpmirror", "up"]]()
+        sudo[rm["-rf", f'{TPFAUCETPREFIX}']]()
+        sudo[rm["-rf", local.cwd // "IQTLabs-dovesnap-*"]]()
+        mkdir["-p", f'{TPFAUCETPREFIX}/etc/faucet']()
+        cp["configs/faucet/faucet.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
+        cp["configs/faucet/acls.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
+        curl["-LJO", f'https://github.com/iqtlabs/dovesnap/tarball/{RELEASE}']()
+        tar["-xvf", local.cwd // "*.tar.gz"]()
+        rm[local.cwd // "*.tar.gz"]()
+        args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "up", "-d"]
+        dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
+        with local.env(MIRROR_BRIDGE_OUT="tpmirrorint", FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
+            with local.cwd(dovesnap_dir[0]):
+                docker_compose.bound_command(args) & FG
+
+    @staticmethod
+    def create_networks():
+        dovesnap_opts = ["network", "create", "-o", "ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654", "-o", "ovs.bridge.mtu=9000", "--ipam-opt", "com.docker.network.driver.mtu=9000", "--internal"]
+        cpn_opts = ["-o", "ovs.bridge.vlan=26", "-o", "ovs.bridge.dpid=0x620", "-o", "ovs.bridge.mode=routed", "--subnet", "192.168.26.0/24", "--gateway", "192.168.26.1", "--ipam-opt", "com.docker.network.bridge.name=cpn", "-o", "ovs.bridge.nat_acl=protectcpn", "-d", "ovs", "cpn"]
+        upn_opts = ["-o", "ovs.bridge.vlan=27", "-o", "ovs.bridge.dpid=0x630", "-o", "ovs.bridge.mode=nat", "--subnet", "192.168.27.0/24", "--gateway", "192.168.27.1", "--ipam-opt", "com.docker.network.bridge.name=upn", "-d", "ovs", "upn"]
+        rfn_opts = ["-o", "ovs.bridge.vlan=28", "-o", "ovs.bridge.dpid=0x640", "-o", "ovs.bridge.mode=flat", "--subnet", "192.168.28.0/24", "--ipam-opt", "com.docker.network.bridge.name=rfn", "-o", "ovs.bridge.nat_acl=protectrfn", "-d", "ovs", "rfn"]
+        ran_opts = ["-o", "ovs.bridge.vlan=29", "-o", "ovs.bridge.dpid=0x650", "-o", "ovs.bridge.mode=routed", "--subnet", "192.168.29.0/24", "--gateway", "192.168.29.1", "--ipam-opt", "com.docker.network.bridge.name=ran", "-o", "ovs.bridge.nat_acl=protectran", "-d", "ovs", "ran"]
+        docker.bound_command(dovesnap_opts + cpn_opts) & FG
+        docker.bound_command(dovesnap_opts + upn_opts) & FG
+        docker.bound_command(dovesnap_opts + rfn_opts) & FG
+        docker.bound_command(dovesnap_opts + ran_opts) & FG
+
+    @staticmethod
+    def start_environment(compose_files):
+        if len(compose_files) > 0:
+            compose_up = compose_files + ["up", "-d", "--build"]
+            compose_logs = compose_files + ["logs", "-f"]
+            docker_compose.bound_command(compose_up) & FG
+            docker_compose.bound_command(compose_logs) & FG
+        else:
+            logging.warning('No services to start, quitting.')
+
+    @staticmethod
+    def execute_prompt(questions):
+        answers = prompt(questions, style=custom_style_2)
+        return answers
+
+    @staticmethod
+    def main_questions():
+        return [
+            {
+                'type': 'checkbox',
+                'name': 'services',
+                'message': 'What services would you like to start?',
+                'choices': [
+                    {'name': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                     'checked': True},
+                    {'name': 'Open5GS User Plane Network (UPF, SGWU)',
+                     'checked': True},
+                    {'name': 'Subscriber Database (MongoDB)',
+                     'checked': True},
+                    {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
+                    {'name': '5G UERANSIM gNodeB (gNB)'},
+                    {'name': '4G srsRAN eNodeB (eNB)'},
+                    {'name': '4G bladeRF eNodeB (eNB)'},
+                    {'name': '4G LimeSDR eNodeB (eNB)'},
+                    {'name': '4G Ettus USRP B2xx eNodeB (eNB)'},
+                    {'name': '4G srsRAN UE (UE)'},
+                    {'name': '5G UERANSIM UE (UE)'},
+                    {'name': 'Add UE IMSIs'},
+                    {'name': 'Subscriber WebUI'},
+                ],
+            },
+        ]
+
+    def main(self):
+        parser = argparse.ArgumentParser(
+            description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
+        args = parser.parse_args()
+        answers = self.execute_prompt(self.main_questions())
+        srsran_version = "release_21_04"
+        build_srsran = False
+        build_open5gs = False
+        build_ueransim = False
+        ask_prb = False
+        ask_earfcn = False
+        add_imsis = False
+        compose_files = []
+        if 'services' in answers:
+            selections = answers['services']
+            if '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)' in selections:
+                compose_files += ['-f', 'core/epc.yml']
+                build_open5gs = True
+            else:
+                logging.warning('No EPC was selected, this configuration is unlikely to work.')
+            if 'Open5GS User Plane Network (UPF, SGWU)' in selections:
+                compose_files += ['-f', 'core/upn.yml']
+                build_open5gs = True
+            if 'Subscriber Database (MongoDB)' in selections:
+                compose_files += ['-f', 'core/db.yml']
+            else:
+                logging.warning('No database was selected, this configuration is unlikely to work.')
+            if '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)' in selections:
+                compose_files += ['-f', 'core/core.yml']
+                build_open5gs = True
+            if '5G UERANSIM gNodeB (gNB)' in selections:
+                compose_files += ['-f', 'SIMULATED/ueransim-gnb.yml']
+                build_ueransim = True
+            if '4G srsRAN eNodeB (eNB)' in selections:
+                compose_files += ['-f', 'SIMULATED/srsran-enb.yml']
+                build_srsran = True
+            if '4G bladeRF eNodeB (eNB)' in selections:
+                compose_files += ['-f', 'SDR/bladerf.yml']
+                build_srsran = True
+                ask_prb = True
+                ask_earfcn = True
+            if '4G LimeSDR eNodeB (eNB)' in selections:
+                compose_files += ['-f', 'SDR/limesdr.yml']
+                build_srsran = True
+                srsran_version = "release_19_12"
+                ask_prb = True
+                ask_earfcn = True
+            if '4G Ettus USRP B2xx eNodeB (eNB)' in selections:
+                compose_files += ['-f', 'SDR/ettus.yml']
+                build_srsran = True
+                ask_prb = True
+                ask_earfcn = True
+            if '4G srsRAN UE (UE)' in selections:
+                compose_files += ['-f', 'SIMULATED/srsran-ue.yml']
+                build_srsran = True
+            if '5G UERANSIM UE (UE)' in selections:
+                compose_files += ['-f', 'SIMULATED/ueransim-ue.yml']
+                build_ueransim = True
+            if 'Add UE IMSIs' in selections:
+                add_imsis = True
+            if 'Subscriber WebUI' in selections:
+                compose_files += ['-f', 'core/ui.yml']
+                build_open5gs = True
+                
+        self.build_dockers(srsran=build_srsran, ueransim=build_ueransim, open5gs=build_open5gs, srsran_version=srsran_version)
+        self.start_dovesnap()
+        self.create_networks()
+        self.start_environment(compose_files)
+
+
+if __name__ == '__main__':
+    Daedalus().main()
