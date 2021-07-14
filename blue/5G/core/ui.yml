@@ -1,0 +1,28 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+networks:
+  cpn:
+    external:
+      name: cpn
+
+services:
+  webui:
+    image: open5gs:latest
+    depends_on:
+      - mongodb
+    environment:
+      - 'DB_URI=mongodb://${DB_USER}:${DB_PASS}@mongodb/open5gs?authSource=admin'
+      - DB_HOST=mongodb
+    container_name: webui
+    hostname: webui
+    ports:
+      - "3000:3000"
+    command:
+      - "/scripts/run_webui.sh"
+    networks:
+      cpn:
+        ipv4_address: 192.168.26.6
+    labels:
+      - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"

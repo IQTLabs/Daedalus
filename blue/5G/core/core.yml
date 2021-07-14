@@ -10,19 +10,6 @@ networks:
       name: cpn
 
 services:
-  smf:
-    image: open5gs:latest
-    container_name: smf
-    hostname: smf
-    command:
-      - "/scripts/run_smf.sh"
-    volumes:
-      - "../configs:/usr/local/etc:z"
-    networks:
-      cpn:
-        ipv4_address: 192.168.26.40
-    labels:
-      - "dovesnap.faucet.mirror=true"
   nrf:
     image: open5gs:latest
     container_name: nrf
@@ -36,6 +23,7 @@ services:
         ipv4_address: 192.168.26.61
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   ausf:
     image: open5gs:latest
     container_name: ausf
@@ -51,6 +39,7 @@ services:
         ipv4_address: 192.168.26.70
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   nssf:
     image: open5gs:latest
     container_name: nssf
@@ -66,6 +55,7 @@ services:
         ipv4_address: 192.168.26.92
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   udm:
     image: open5gs:latest
     container_name: udm
@@ -81,6 +71,7 @@ services:
         ipv4_address: 192.168.26.80
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   bsf:
     image: open5gs:latest
     container_name: bsf
@@ -101,6 +92,7 @@ services:
         ipv4_address: 192.168.26.91
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   pcf:
     image: open5gs:latest
     container_name: pcf
@@ -121,6 +113,7 @@ services:
         ipv4_address: 192.168.26.93
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   udr:
     image: open5gs:latest
     container_name: udr
@@ -141,6 +134,7 @@ services:
         ipv4_address: 192.168.26.90
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   amf:
     restart: always
     image: open5gs:latest
@@ -160,3 +154,4 @@ services:
         ipv4_address: 192.168.26.60
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"

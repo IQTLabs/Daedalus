@@ -22,6 +22,8 @@ services:
       - enb
     volumes:
       - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
     entrypoint:
       - /scripts/start_srsue.sh
     command:
@@ -47,6 +49,8 @@ services:
       - enb
     volumes:
       - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
     entrypoint:
       - /scripts/start_srsue.sh
     command:
@@ -72,6 +76,8 @@ services:
       - enb
     volumes:
       - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
     entrypoint:
       - /scripts/start_srsue.sh
     command:
@@ -97,6 +103,8 @@ services:
       - enb
     volumes:
       - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
     entrypoint:
       - /scripts/start_srsue.sh
     command:

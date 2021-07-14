@@ -20,6 +20,7 @@ services:
         ipv4_address: 192.168.27.31
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   sgwu2:
     image: open5gs:latest
     container_name: sgwu2
@@ -33,6 +34,7 @@ services:
         ipv4_address: 192.168.27.32
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   upf:
     image: open5gs:latest
     container_name: upf
@@ -55,6 +57,7 @@ services:
         ipv4_address: 192.168.27.41
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   upf2:
     image: open5gs:latest
     container_name: upf2
@@ -78,3 +81,4 @@ services:
         ipv4_address: 192.168.27.42
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
