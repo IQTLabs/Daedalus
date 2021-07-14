@@ -24,6 +24,7 @@ services:
         ipv4_address: 192.168.26.5
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   mongodbloader:
     image: mongo:latest
     depends_on:
@@ -43,3 +44,4 @@ services:
         ipv4_address: 192.168.26.19
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"

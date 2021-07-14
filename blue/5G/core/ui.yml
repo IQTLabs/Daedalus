@@ -25,3 +25,4 @@ services:
         ipv4_address: 192.168.26.6
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"

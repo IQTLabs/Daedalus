@@ -21,6 +21,8 @@ services:
       - srsenb
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
+    labels:
+      - "daedalus.namespace=primary"
     command:
       - /config/enb.conf
       - --enb_files.rr_config=/config/ettus-rr.conf

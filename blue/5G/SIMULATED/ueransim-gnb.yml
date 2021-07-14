@@ -22,6 +22,8 @@ services:
         ipv4_address: 192.168.28.100
     volumes:
       - "../configs/UERANSIM:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
     entrypoint:
       - /scripts/run_rfn_gnb.sh
     command:

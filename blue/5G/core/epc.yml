@@ -27,6 +27,7 @@ services:
     restart: always
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   pcrf:
     image: open5gs:latest
     depends_on:
@@ -47,6 +48,7 @@ services:
         ipv4_address: 192.168.26.50
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   mme:
     image: open5gs:latest
     depends_on:
@@ -62,6 +64,7 @@ services:
         ipv4_address: 192.168.26.20
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   smf:
     image: open5gs:latest
     container_name: smf
@@ -75,6 +78,7 @@ services:
         ipv4_address: 192.168.26.40
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
   sgwc:
     image: open5gs:latest
     container_name: sgwc
@@ -88,3 +92,4 @@ services:
         ipv4_address: 192.168.26.30
     labels:
       - "dovesnap.faucet.mirror=true"
+      - "daedalus.namespace=primary"
