@@ -7,7 +7,7 @@ import sys
 from daedalus import __file__, __version__
 import docker as dclient
 from plumbum import local, FG, TF
-from plumbum.cmd import cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
+from plumbum.cmd import chmod, cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
 from PyInquirer import prompt
 from PyInquirer import Separator
 
@@ -27,10 +27,14 @@ class Daedalus():
         previous_dir = os.getcwd()
         try:
             os.chdir(os.path.dirname(__file__).split('lib')[0] + "/5G")
+            # TODO find a better way to do this for writing out dovesnap files
+            sudo[chmod["-R", "777", "."]]()
         except Exception as e:
             logging.error(f'Unable to find config files, exiting because: {e}')
             sys.exit(1)
         self.main(raw_args=raw_args)
+        # TODO find a better way to do this for writing out dovesnap files
+        sudo[chmod["-R", "755", "."]]()
         os.chdir(previous_dir)
 
     @staticmethod
@@ -236,6 +240,7 @@ class Daedalus():
     @staticmethod
     def check_commands():
         logging.info('Checking necessary commands exist, if it fails, install the missing tool and try again.')
+        chmod['--version']()
         cp['--version']()
         curl['--version']()
         docker['--version']()
