@@ -1,3 +1,7 @@
+# v0.1.5 (2021-07-15)
+
+* Fixed permissions
+
 # v0.1.4 (2021-07-15)
 
 * Fixed data file path
