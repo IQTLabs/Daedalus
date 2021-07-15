@@ -1,16 +1,16 @@
 # NOTE: docker-compose 1.29.1 or later is required.
 
-# startup
+# install the daedalus tool from source
 ```
-./startup.sh -h
-```
-
-# shutdown
-```
-./shutdown.sh
+pip3 install .
 ```
 
-# test virtual UE connectivity
+# install the daedalus tool from PyPi
+```
+pip3 install daedalus
+```
+
+# once services are running, if using virtual UEs, test virtual UE connectivity
 ```
 docker exec -it ue ping 8.8.8.8
 ```
