@@ -6,7 +6,7 @@ import shlex
 from daedalus import __version__
 import docker as dclient
 from plumbum import local, FG, TF
-from plumbum.cmd import chmod, cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
+from plumbum.cmd import cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
 from PyInquirer import prompt
 from PyInquirer import Separator
 
@@ -24,9 +24,7 @@ class Daedalus():
     def __init__(self, raw_args=None):
         self.compose_files = []
         previous_dir = os.getcwd()
-        os.chdir("/opt/daedalus")
-        # TODO find a better way for dovesnap to write changes
-        sudo[chmod["-R", "777", local.cwd]]()
+        os.chdir("5G")
         self.main(raw_args=raw_args)
         os.chdir(previous_dir)
 
@@ -233,7 +231,6 @@ class Daedalus():
     @staticmethod
     def check_commands():
         logging.info('Checking necessary commands exist, if it fails, install the missing tool and try again.')
-        chmod['--version']()
         cp['--version']()
         curl['--version']()
         docker['--version']()
