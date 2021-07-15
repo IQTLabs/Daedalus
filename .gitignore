@@ -1,1 +1,5 @@
 blue/5G/IQTLabs-dovesnap-*
+build
+dist
+.eggs
+*.egg-info

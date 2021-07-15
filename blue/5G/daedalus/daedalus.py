@@ -1,13 +1,12 @@
-#!/usr/bin/env python3
-
 import argparse
 import logging
 import os
 import shlex
 
+from daedalus import __version__
 import docker as dclient
 from plumbum import local, FG, TF
-from plumbum.cmd import cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
+from plumbum.cmd import chmod, cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
 from PyInquirer import prompt
 from PyInquirer import Separator
 
@@ -22,8 +21,14 @@ logging.basicConfig(level=level)
 
 class Daedalus():
 
-    def __init__(self):
+    def __init__(self, raw_args=None):
         self.compose_files = []
+        previous_dir = os.getcwd()
+        os.chdir("/opt/daedalus")
+        # TODO find a better way for dovesnap to write changes
+        sudo[chmod["-R", "777", local.cwd]]()
+        self.main(raw_args=raw_args)
+        os.chdir(previous_dir)
 
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_version="release_21_04"):
@@ -45,7 +50,7 @@ class Daedalus():
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = "v0.22.0"
+        RELEASE = "v0.22.1"
         TPFAUCETPREFIX = "/tmp/tpfaucet"
         sudo[ip["link", "add", "tpmirrorint", "type", "veth", "peer", "name", "tpmirror"]](retcode=(0,2))
         sudo[ip["link", "set", "tpmirrorint", "up"]]()
@@ -56,8 +61,8 @@ class Daedalus():
         cp["configs/faucet/faucet.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
         cp["configs/faucet/acls.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
         curl["-LJO", f'https://github.com/iqtlabs/dovesnap/tarball/{RELEASE}']()
-        tar["-xvf", local.cwd // "*.tar.gz"]()
-        rm[local.cwd // "*.tar.gz"]()
+        tar["-xvf", local.cwd // "IQTLabs-dovesnap-*.tar.gz"]()
+        rm[local.cwd // "IQTLabs-dovesnap-*.tar.gz"]()
         args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "up", "-d"]
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         with local.env(MIRROR_BRIDGE_OUT="tpmirrorint", FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
@@ -96,6 +101,9 @@ class Daedalus():
     def remove_volumes():
         mongo_args = ["volume", "rm", "-f", "core_mongodb_data"]
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
+        # TODO volume still might exist even if the directory doesn't
+        if len(dovesnap_dir) == 0:
+            return
         dovesnap_name = dovesnap_dir[0].split('/')[-1]
         dovesnap_args = ["volume", "rm", "-f", f'{dovesnap_name.lower()}_ovs-data']
         logging.info('Removing volumes')
@@ -112,6 +120,8 @@ class Daedalus():
     def remove_dovesnap():
         args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "down", "--remove-orphans"]
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
+        if len(dovesnap_dir) == 0:
+            return
         with local.cwd(dovesnap_dir[0]):
             logging.debug('Removing Dovesnap services')
             try:
@@ -223,6 +233,7 @@ class Daedalus():
     @staticmethod
     def check_commands():
         logging.info('Checking necessary commands exist, if it fails, install the missing tool and try again.')
+        chmod['--version']()
         cp['--version']()
         curl['--version']()
         docker['--version']()
@@ -253,10 +264,13 @@ class Daedalus():
                 if 'Quit (services that were not removed will continue to run)' in selections:
                     running = False
 
-    def main(self):
-        parser = argparse.ArgumentParser(
+    def main(self, raw_args=None):
+        parser = argparse.ArgumentParser(prog='Daedalus',
             description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
-        args = parser.parse_args()
+        parser.add_argument('--version', '-V', action='version', version=f'%(prog)s {__version__}')
+        parser.add_argument('--verbose', '-v', choices=[
+                            'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
+        args = parser.parse_args(raw_args)
         self.check_commands()
         self.cleanup()
         answers = self.execute_prompt(self.main_questions())
@@ -325,7 +339,3 @@ class Daedalus():
             self.create_networks()
             self.start_services()
             self.loop()
-
-
-if __name__ == '__main__':
-    Daedalus().main()
