@@ -1,3 +1,7 @@
+# v0.1.2 (2021-07-15)
+
+* Fixed bug with bad version
+
 # v0.1.1 (2021-07-15)
 
 * Fixed bug with bad version
