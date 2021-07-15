@@ -2,8 +2,9 @@ import argparse
 import logging
 import os
 import shlex
+import sys
 
-from daedalus import __version__
+from daedalus import __file__, __version__
 import docker as dclient
 from plumbum import local, FG, TF
 from plumbum.cmd import cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
@@ -24,7 +25,11 @@ class Daedalus():
     def __init__(self, raw_args=None):
         self.compose_files = []
         previous_dir = os.getcwd()
-        os.chdir("5G")
+        try:
+            os.chdir(os.path.dirname(__file__).split('lib')[0] + "/5G")
+        except Exception as e:
+            logging.error(f'Unable to find config files, exiting because: {e}')
+            sys.exit(1)
         self.main(raw_args=raw_args)
         os.chdir(previous_dir)
 
