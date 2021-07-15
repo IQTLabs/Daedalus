@@ -1,3 +1,7 @@
+# v0.1.4 (2021-07-15)
+
+* Fixed data file path
+
 # v0.1.3 (2021-07-15)
 
 * Fixed data file path
