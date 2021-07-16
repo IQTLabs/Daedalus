@@ -1,3 +1,9 @@
+# v0.2.0 (2021-07-16)
+
+* Cleanup anonymous volumes from services when removing the services
+* Allow SMF to work with or without NRF
+* Lock MongoDB to a version
+
 # v0.1.5 (2021-07-15)
 
 * Fixed permissions

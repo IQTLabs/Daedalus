@@ -24,6 +24,7 @@ class Daedalus():
 
     def __init__(self, raw_args=None):
         self.compose_files = []
+        self.options = []
         previous_dir = os.getcwd()
         try:
             os.chdir(os.path.dirname(__file__).split('lib')[0] + "/5G")
@@ -91,8 +92,11 @@ class Daedalus():
     def start_services(self):
         if len(self.compose_files) > 0:
             compose_up = self.compose_files + ["up", "-d", "--build"]
+            SMF = ""
+            if 'core' in self.options:
+                SMF = '5GC'
             # TODO don't hardcode the env vars
-            with local.env(PRB="50", BLADERF_EARFCN="3400", ETTUS_EARFCN="1800", LIMESDR_EARFCN="900"): 
+            with local.env(PRB="50", BLADERF_EARFCN="3400", ETTUS_EARFCN="1800", LIMESDR_EARFCN="900", SMF=SMF):
                 docker_compose.bound_command(compose_up) & FG
         else:
             logging.warning('No services to start, quitting.')
@@ -105,27 +109,8 @@ class Daedalus():
             logging.warning('No services to log.')
 
     @staticmethod
-    def remove_volumes():
-        mongo_args = ["volume", "rm", "-f", "core_mongodb_data"]
-        dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
-        # TODO volume still might exist even if the directory doesn't
-        if len(dovesnap_dir) == 0:
-            return
-        dovesnap_name = dovesnap_dir[0].split('/')[-1]
-        dovesnap_args = ["volume", "rm", "-f", f'{dovesnap_name.lower()}_ovs-data']
-        logging.info('Removing volumes')
-        try:
-            docker.bound_command(mongo_args) & FG
-        except Exception as e:
-            logging.debug(f'{e}')
-        try:
-            docker.bound_command(dovesnap_args) & FG
-        except Exception as e:
-            logging.debug(f'{e}')
-
-    @staticmethod
     def remove_dovesnap():
-        args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "down", "--remove-orphans"]
+        args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "down", "--volumes", "--remove-orphans"]
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         if len(dovesnap_dir) == 0:
             return
@@ -166,7 +151,7 @@ class Daedalus():
     def remove_services(self):
         if len(self.compose_files) > 0:
             logging.debug('Removing Daedalus services')
-            compose_down = self.compose_files + ["down", "--remove-orphans"]
+            compose_down = self.compose_files + ["down", "--volumes", "--remove-orphans"]
             try:
                 docker_compose.bound_command(compose_down) & FG
             except Exception as e:
@@ -235,7 +220,6 @@ class Daedalus():
                 logging.debug(f'{e}')
         self.remove_networks()
         self.remove_dovesnap()
-        self.remove_volumes()
 
     @staticmethod
     def check_commands():
@@ -267,7 +251,6 @@ class Daedalus():
                     self.remove_services()
                     self.remove_networks()
                     self.remove_dovesnap()
-                    self.remove_volumes()
                 if 'Quit (services that were not removed will continue to run)' in selections:
                     running = False
 
@@ -292,38 +275,47 @@ class Daedalus():
             selections = answers['services']
             if '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)' in selections:
                 self.compose_files += ['-f', 'core/epc.yml']
+                self.options.append('epc')
                 build_open5gs = True
             else:
                 logging.warning('No EPC was selected, this configuration is unlikely to work.')
             if 'Open5GS User Plane Network (UPF, SGWU)' in selections:
                 self.compose_files += ['-f', 'core/upn.yml']
+                self.options.append('upn')
                 build_open5gs = True
             if 'Subscriber Database (MongoDB)' in selections:
                 self.compose_files += ['-f', 'core/db.yml']
+                self.options.append('db')
             else:
                 logging.warning('No database was selected, this configuration is unlikely to work.')
             if '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)' in selections:
                 self.compose_files += ['-f', 'core/core.yml']
+                self.options.append('core')
                 build_open5gs = True
             if '5G UERANSIM gNodeB (gNB)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/ueransim-gnb.yml']
+                self.options.append('ueransim-gnb')
                 build_ueransim = True
             if '4G srsRAN eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/srsran-enb.yml']
+                self.options.append('srsran-enb')
                 build_srsran = True
             if '4G bladeRF eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/bladerf.yml']
+                self.options.append('bladerf-enb')
                 build_srsran = True
                 ask_prb = True
                 ask_earfcn = True
             if '4G LimeSDR eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/limesdr.yml']
+                self.options.append('limesdr-enb')
                 build_srsran = True
                 srsran_version = "release_19_12"
                 ask_prb = True
                 ask_earfcn = True
             if '4G Ettus USRP B2xx eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/ettus.yml']
+                self.options.append('ettus-enb')
                 from plumbum.cmd import uhd_find_devices
                 uhd_find_devices()
                 build_srsran = True
@@ -331,14 +323,18 @@ class Daedalus():
                 ask_earfcn = True
             if '4G srsRAN UE (UE)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/srsran-ue.yml']
+                self.options.append('srsran-ue')
                 build_srsran = True
             if '5G UERANSIM UE (UE)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/ueransim-ue.yml']
+                self.options.append('ueransim-ue')
                 build_ueransim = True
             if 'Add UE IMSIs' in selections:
+                self.options.append('imsis')
                 add_imsis = True
             if 'Subscriber WebUI' in selections:
                 self.compose_files += ['-f', 'core/ui.yml']
+                self.options.append('webui')
                 build_open5gs = True
                 
             self.build_dockers(srsran=build_srsran, ueransim=build_ueransim, open5gs=build_open5gs, srsran_version=srsran_version)

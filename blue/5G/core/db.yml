@@ -11,7 +11,7 @@ networks:
 
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.6-bionic
     container_name: "mongodb"
     volumes:
       - mongodb_data:/data/db
