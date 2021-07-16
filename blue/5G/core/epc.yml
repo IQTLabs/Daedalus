@@ -71,6 +71,7 @@ services:
     hostname: smf
     command:
       - "/scripts/run_smf.sh"
+      - "${SMF}"
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
