@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      python3-pip \
      python3-mako \
      tcpdump \
-     wget 
+     wget
 RUN pip3 install -U requests
 WORKDIR /root
 COPY add_default_route.sh /root/add_default_route.sh

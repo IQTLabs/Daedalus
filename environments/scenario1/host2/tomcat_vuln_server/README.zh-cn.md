@@ -35,7 +35,7 @@ Tomcat7+权限分为：
     <role rolename="admin-gui"/>
     <role rolename="admin-script"/>
     <user username="tomcat" password="tomcat" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script" />
-    
+
 </tomcat-users>
 ```
 

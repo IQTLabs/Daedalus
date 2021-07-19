@@ -1,4 +1,4 @@
-vlan: 
+vlan:
 hostnames: fallriver stump
 usernames: mtaylor ddavis
 passwords: brian javier

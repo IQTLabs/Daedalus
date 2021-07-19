@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-
-import os
-import sys
 import errno
+import os
 import subprocess
+import sys
 
-from fuse import FUSE, FuseOSError, Operations
+from fuse import FUSE
+from fuse import FuseOSError
+from fuse import Operations
 
 
 class Confused(Operations):
@@ -30,6 +31,7 @@ class Confused(Operations):
 
     def access(self, path, mode):
         full_path, fake_path = self._full_paths(path)
+
         def _access(p):
             if not os.access(p, mode):
                 raise FuseOSError(errno.EACCES)
@@ -47,7 +49,7 @@ class Confused(Operations):
         full_path, fake_path = self._full_paths(path)
         st = self._fake_wrap(full_path, fake_path, os.lstat)
         return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                     'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
+                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
 
     def readdir(self, path, fh):
         full_path, fake_path = self._full_paths(path)
@@ -55,7 +57,8 @@ class Confused(Operations):
         if os.path.isdir(fake_path):
             dirents.extend(os.listdir(fake_path))
         if os.path.isdir(full_path):
-            dirents.extend([r for r in os.listdir(full_path) if r not in dirents])
+            dirents.extend([r for r in os.listdir(
+                full_path) if r not in dirents])
         for r in dirents:
             yield r
 
@@ -81,8 +84,8 @@ class Confused(Operations):
         full_path, fake_path = self._full_paths(path)
         stv = self._fake_wrap(full_path, fake_path, os.statvfs)
         return dict((key, getattr(stv, key)) for key in ('f_bavail', 'f_bfree',
-            'f_blocks', 'f_bsize', 'f_favail', 'f_ffree', 'f_files', 'f_flag',
-            'f_frsize', 'f_namemax'))
+                                                         'f_blocks', 'f_bsize', 'f_favail', 'f_ffree', 'f_files', 'f_flag',
+                                                         'f_frsize', 'f_namemax'))
 
     def unlink(self, path):
         full_path, fake_path = self._full_paths(path)
@@ -132,6 +135,7 @@ class Confused(Operations):
 
     def truncate(self, path, length, fh=None):
         full_path, fake_path = self._full_paths(path)
+
         def _truncate_file(p):
             with open(p, 'r+') as f:
                 f.truncate(length)
@@ -153,6 +157,7 @@ def main(mountpoint, root, fakeroot, argvs):
         FUSE(ops, mountpoint, nothreads=True, foreground=False)
     else:
         FUSE(ops, mountpoint, nothreads=True, foreground=True)
+
 
 if __name__ == '__main__':
     main(sys.argv[2], sys.argv[1], sys.argv[3], sys.argv[4:])

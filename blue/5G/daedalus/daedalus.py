@@ -4,15 +4,27 @@ import os
 import shlex
 import sys
 
-from daedalus import __file__, __version__
-from daedalus.validators import NumberValidator
 import docker as dclient
-from plumbum import local, FG, TF
-from plumbum.cmd import chmod, cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
+from daedalus import __file__
+from daedalus import __version__
+from daedalus.validators import NumberValidator
+from examples import custom_style_2
+from plumbum import FG
+from plumbum import local
+from plumbum import TF
+from plumbum.cmd import chmod
+from plumbum.cmd import cp
+from plumbum.cmd import curl
+from plumbum.cmd import docker
+from plumbum.cmd import docker_compose
+from plumbum.cmd import ip
+from plumbum.cmd import ls
+from plumbum.cmd import mkdir
+from plumbum.cmd import rm
+from plumbum.cmd import sudo
+from plumbum.cmd import tar
 from PyInquirer import prompt
 from PyInquirer import Separator
-
-from examples import custom_style_2
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -28,69 +40,80 @@ class Daedalus():
         self.options = []
         previous_dir = os.getcwd()
         try:
-            os.chdir(os.path.dirname(__file__).split('lib')[0] + "/5G")
+            os.chdir(os.path.dirname(__file__).split('lib')[0] + '/5G')
             # TODO find a better way to do this for writing out dovesnap files
-            sudo[chmod["-R", "777", "."]]()
+            sudo[chmod['-R', '777', '.']]()
         except Exception as e:
             logging.error(f'Unable to find config files, exiting because: {e}')
             sys.exit(1)
         self.main(raw_args=raw_args)
         # TODO find a better way to do this for writing out dovesnap files
-        sudo[chmod["-R", "755", "."]]()
+        sudo[chmod['-R', '755', '.']]()
         os.chdir(previous_dir)
 
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
         if srsran:
-            srsran_version = "release_21_04"
-            base_args = ["build", "-t", "srsran:base", "-f", "Dockerfile.base", "."]
-            srs_args = ["build", "-t", "srsran", "-f", "Dockerfile.srs", "--build-arg", f'SRS_VERSION={srsran_version}', "."]
+            srsran_version = 'release_21_04'
+            base_args = ['build', '-t', 'srsran:base',
+                         '-f', 'Dockerfile.base', '.']
+            srs_args = ['build', '-t', 'srsran', '-f', 'Dockerfile.srs',
+                        '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(base_args) & FG
                 docker.bound_command(srs_args) & FG
         if srsran_lime:
-            srsran_version = "release_19_12"
-            srs_args = ["build", "-t", "srsran-lime", "-f", "Dockerfile.srs", "--build-arg", f'SRS_VERSION={srsran_version}', "."]
+            srsran_version = 'release_19_12'
+            srs_args = ['build', '-t', 'srsran-lime', '-f', 'Dockerfile.srs',
+                        '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(srs_args) & FG
         if ueransim:
-            args = ["build", "-t", "ueransim", "."]
+            args = ['build', '-t', 'ueransim', '.']
             with local.cwd(local.cwd / 'UERANSIM'):
                 docker.bound_command(args) & FG
         if open5gs:
-            args = ["build", "-t", "open5gs", "."]
+            args = ['build', '-t', 'open5gs', '.']
             with local.cwd(local.cwd / 'open5gs'):
                 docker.bound_command(args) & FG
         return
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = "v0.22.1"
-        TPFAUCETPREFIX = "/tmp/tpfaucet"
-        sudo[ip["link", "add", "tpmirrorint", "type", "veth", "peer", "name", "tpmirror"]](retcode=(0,2))
-        sudo[ip["link", "set", "tpmirrorint", "up"]]()
-        sudo[ip["link", "set", "tpmirror", "up"]]()
-        sudo[rm["-rf", f'{TPFAUCETPREFIX}']]()
-        sudo[rm["-rf", local.cwd // "IQTLabs-dovesnap-*"]]()
-        mkdir["-p", f'{TPFAUCETPREFIX}/etc/faucet']()
-        cp["configs/faucet/faucet.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
-        cp["configs/faucet/acls.yaml", f'{TPFAUCETPREFIX}/etc/faucet/']()
-        curl["-LJO", f'https://github.com/iqtlabs/dovesnap/tarball/{RELEASE}']()
-        tar["-xvf", local.cwd // "IQTLabs-dovesnap-*.tar.gz"]()
-        rm[local.cwd // "IQTLabs-dovesnap-*.tar.gz"]()
-        args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "up", "-d"]
+        RELEASE = 'v0.22.1'
+        TPFAUCETPREFIX = '/tmp/tpfaucet'
+        sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
+                'peer', 'name', 'tpmirror']](retcode=(0, 2))
+        sudo[ip['link', 'set', 'tpmirrorint', 'up']]()
+        sudo[ip['link', 'set', 'tpmirror', 'up']]()
+        sudo[rm['-rf', f'{TPFAUCETPREFIX}']]()
+        sudo[rm['-rf', local.cwd // 'IQTLabs-dovesnap-*']]()
+        mkdir['-p', f'{TPFAUCETPREFIX}/etc/faucet']()
+        cp['configs/faucet/faucet.yaml', f'{TPFAUCETPREFIX}/etc/faucet/']()
+        cp['configs/faucet/acls.yaml', f'{TPFAUCETPREFIX}/etc/faucet/']()
+        curl['-LJO',
+             f'https://github.com/iqtlabs/dovesnap/tarball/{RELEASE}']()
+        tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
+        rm[local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
+        args = ['-f', 'docker-compose.yml', '-f',
+                'docker-compose-standalone.yml', 'up', '-d']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
-        with local.env(MIRROR_BRIDGE_OUT="tpmirrorint", FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
+        with local.env(MIRROR_BRIDGE_OUT='tpmirrorint', FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
             with local.cwd(dovesnap_dir[0]):
                 docker_compose.bound_command(args) & FG
 
     @staticmethod
     def create_networks():
-        dovesnap_opts = ["network", "create", "-o", "ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654", "-o", "ovs.bridge.mtu=9000", "--ipam-opt", "com.docker.network.driver.mtu=9000", "--internal"]
-        cpn_opts = ["-o", "ovs.bridge.vlan=26", "-o", "ovs.bridge.dpid=0x620", "-o", "ovs.bridge.mode=routed", "--subnet", "192.168.26.0/24", "--gateway", "192.168.26.1", "--ipam-opt", "com.docker.network.bridge.name=cpn", "-o", "ovs.bridge.nat_acl=protectcpn", "-d", "ovs", "cpn"]
-        upn_opts = ["-o", "ovs.bridge.vlan=27", "-o", "ovs.bridge.dpid=0x630", "-o", "ovs.bridge.mode=nat", "--subnet", "192.168.27.0/24", "--gateway", "192.168.27.1", "--ipam-opt", "com.docker.network.bridge.name=upn", "-d", "ovs", "upn"]
-        rfn_opts = ["-o", "ovs.bridge.vlan=28", "-o", "ovs.bridge.dpid=0x640", "-o", "ovs.bridge.mode=flat", "--subnet", "192.168.28.0/24", "--ipam-opt", "com.docker.network.bridge.name=rfn", "-o", "ovs.bridge.nat_acl=protectrfn", "-d", "ovs", "rfn"]
-        ran_opts = ["-o", "ovs.bridge.vlan=29", "-o", "ovs.bridge.dpid=0x650", "-o", "ovs.bridge.mode=routed", "--subnet", "192.168.29.0/24", "--gateway", "192.168.29.1", "--ipam-opt", "com.docker.network.bridge.name=ran", "-o", "ovs.bridge.nat_acl=protectran", "-d", "ovs", "ran"]
+        dovesnap_opts = ['network', 'create', '-o', 'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
+                         '-o', 'ovs.bridge.mtu=9000', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
+        cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
+                    '--gateway', '192.168.26.1', '--ipam-opt', 'com.docker.network.bridge.name=cpn', '-o', 'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
+        upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630', '-o', 'ovs.bridge.mode=nat', '--subnet',
+                    '192.168.27.0/24', '--gateway', '192.168.27.1', '--ipam-opt', 'com.docker.network.bridge.name=upn', '-d', 'ovs', 'upn']
+        rfn_opts = ['-o', 'ovs.bridge.vlan=28', '-o', 'ovs.bridge.dpid=0x640', '-o', 'ovs.bridge.mode=flat', '--subnet',
+                    '192.168.28.0/24', '--ipam-opt', 'com.docker.network.bridge.name=rfn', '-o', 'ovs.bridge.nat_acl=protectrfn', '-d', 'ovs', 'rfn']
+        ran_opts = ['-o', 'ovs.bridge.vlan=29', '-o', 'ovs.bridge.dpid=0x650', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.29.0/24',
+                    '--gateway', '192.168.29.1', '--ipam-opt', 'com.docker.network.bridge.name=ran', '-o', 'ovs.bridge.nat_acl=protectran', '-d', 'ovs', 'ran']
         docker.bound_command(dovesnap_opts + cpn_opts) & FG
         docker.bound_command(dovesnap_opts + upn_opts) & FG
         docker.bound_command(dovesnap_opts + rfn_opts) & FG
@@ -98,8 +121,8 @@ class Daedalus():
 
     def start_services(self):
         if len(self.compose_files) > 0:
-            compose_up = self.compose_files + ["up", "-d", "--build"]
-            SMF = ""
+            compose_up = self.compose_files + ['up', '-d', '--build']
+            SMF = ''
             if 'core' in self.options:
                 SMF = '5GC'
             # TODO handle multiple SDRs of the same type
@@ -110,14 +133,15 @@ class Daedalus():
 
     def follow_logs(self):
         if len(self.compose_files) > 0:
-            compose_logs = self.compose_files + ["logs", "-f"]
+            compose_logs = self.compose_files + ['logs', '-f']
             docker_compose.bound_command(compose_logs) & TF(None, FG=True)
         else:
             logging.warning('No services to log.')
 
     @staticmethod
     def remove_dovesnap():
-        args = ["-f", "docker-compose.yml", "-f", "docker-compose-standalone.yml", "down", "--volumes", "--remove-orphans"]
+        args = ['-f', 'docker-compose.yml', '-f', 'docker-compose-standalone.yml',
+                'down', '--volumes', '--remove-orphans']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         if len(dovesnap_dir) == 0:
             return
@@ -130,10 +154,10 @@ class Daedalus():
 
     @staticmethod
     def remove_networks():
-        cpn_args = ["network", "rm", "cpn"]
-        upn_args = ["network", "rm", "upn"]
-        rfn_args = ["network", "rm", "rfn"]
-        ran_args = ["network", "rm", "ran"]
+        cpn_args = ['network', 'rm', 'cpn']
+        upn_args = ['network', 'rm', 'upn']
+        rfn_args = ['network', 'rm', 'rfn']
+        ran_args = ['network', 'rm', 'ran']
         try:
             logging.info('Removing cpn network')
             docker.bound_command(cpn_args) & FG
@@ -158,7 +182,8 @@ class Daedalus():
     def remove_services(self):
         if len(self.compose_files) > 0:
             logging.debug('Removing Daedalus services')
-            compose_down = self.compose_files + ["down", "--volumes", "--remove-orphans"]
+            compose_down = self.compose_files + \
+                ['down', '--volumes', '--remove-orphans']
             try:
                 docker_compose.bound_command(compose_down) & FG
             except Exception as e:
@@ -214,7 +239,8 @@ class Daedalus():
                 'name': 'earfcn',
                 'message': f'What EARFCN code for DL for {enb} would you like?',
                 'default': '3400',
-                'validate': NumberValidator, # TODO should also validate the EARFCN wasn't already used
+                # TODO should also validate the EARFCN wasn't already used
+                'validate': NumberValidator,
                 'filter': lambda val: int(val),
             },
         ]
@@ -235,13 +261,15 @@ class Daedalus():
         ]
 
     def cleanup(self):
-        logging.info('Cleaning up any previously running Daedalus environments...')
+        logging.info(
+            'Cleaning up any previously running Daedalus environments...')
         client = dclient.from_env()
-        containers = client.containers.list(filters={"label": "daedalus.namespace=primary"})
+        containers = client.containers.list(
+            filters={'label': 'daedalus.namespace=primary'})
 
         for container in containers:
             try:
-                logging.debug(f'Removing container: {container.name}') 
+                logging.debug(f'Removing container: {container.name}')
                 container.remove(force=True)
             except Exception as e:
                 logging.debug(f'{e}')
@@ -250,7 +278,8 @@ class Daedalus():
 
     @staticmethod
     def check_commands():
-        logging.info('Checking necessary commands exist, if it fails, install the missing tool and try again.')
+        logging.info(
+            'Checking necessary commands exist, if it fails, install the missing tool and try again.')
         chmod['--version']()
         cp['--version']()
         curl['--version']()
@@ -261,7 +290,7 @@ class Daedalus():
         mkdir['--version']()
         rm['--version']()
         sudo['--version']()
-        tar['--version']() 
+        tar['--version']()
 
     def loop(self):
         running = True
@@ -283,8 +312,9 @@ class Daedalus():
 
     def main(self, raw_args=None):
         parser = argparse.ArgumentParser(prog='Daedalus',
-            description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
-        parser.add_argument('--version', '-V', action='version', version=f'%(prog)s {__version__}')
+                                         description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
+        parser.add_argument('--version', '-V', action='version',
+                            version=f'%(prog)s {__version__}')
         parser.add_argument('--verbose', '-v', choices=[
                             'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
         args = parser.parse_args(raw_args)
@@ -303,7 +333,8 @@ class Daedalus():
                 self.options.append('epc')
                 build_open5gs = True
             else:
-                logging.warning('No EPC was selected, this configuration is unlikely to work.')
+                logging.warning(
+                    'No EPC was selected, this configuration is unlikely to work.')
             if 'Open5GS User Plane Network (UPF, SGWU)' in selections:
                 self.compose_files += ['-f', 'core/upn.yml']
                 self.options.append('upn')
@@ -312,7 +343,8 @@ class Daedalus():
                 self.compose_files += ['-f', 'core/db.yml']
                 self.options.append('db')
             else:
-                logging.warning('No database was selected, this configuration is unlikely to work.')
+                logging.warning(
+                    'No database was selected, this configuration is unlikely to work.')
             if '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)' in selections:
                 self.compose_files += ['-f', 'core/core.yml']
                 self.options.append('core')
@@ -336,7 +368,8 @@ class Daedalus():
                 try:
                     uhd_find_devices()
                 except Exception as e:
-                    logging.error('No UHD device found, but you chose Ettus. It is unlikely to work as expected.')
+                    logging.error(
+                        'No UHD device found, but you chose Ettus. It is unlikely to work as expected.')
                 build_srsran = True
             if '4G LimeSDR eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/limesdr.yml']
@@ -357,7 +390,7 @@ class Daedalus():
                 self.compose_files += ['-f', 'core/ui.yml']
                 self.options.append('webui')
                 build_open5gs = True
-                
+
             # defaults
             self.bladerf_prb = '50'
             self.ettus_prb = '50'
@@ -383,7 +416,8 @@ class Daedalus():
                             self.limesdr_earfcn = str(answers['earfcn'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_earfcn = str(answers['earfcn'])
-            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim, open5gs=build_open5gs, srsran_lime=srsran_lime)
+            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
+                               open5gs=build_open5gs, srsran_lime=srsran_lime)
             self.start_dovesnap()
             self.create_networks()
             self.start_services()

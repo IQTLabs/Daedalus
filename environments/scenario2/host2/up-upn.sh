@@ -26,4 +26,3 @@ for c in upf upf2 ; do
 		        sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} $c) sysctl -w net.ipv4.conf.ogstun.send_redirects=0
 		done
 		sudo nsenter -n -t $(docker inspect --format {{.State.Pid}} upf2) sysctl -w net.ipv4.conf.ogstun2.send_redirects=0
-

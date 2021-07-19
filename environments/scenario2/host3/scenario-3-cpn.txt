@@ -1,4 +1,4 @@
-vlan: 
+vlan:
 hostnames: saugatuck fairfax
 usernames: cjones sahmed
 passwords: marissa 54321
