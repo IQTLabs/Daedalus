@@ -26,7 +26,7 @@ services:
       - /config/enb.conf
       - --enb_files.rr_config=/config/blade-rr.conf
       - --enb.name=bladerf-ENB01
-      - --enb.n_prb=${PRB}
+      - --enb.n_prb=${BLADERF_PRB}
       - --enb.enb_id=0x61
       - --enb.mme_addr=192.168.26.20
       - --enb.gtp_bind_addr=192.168.29.61

@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   limesdr-enb:
-    image: srsran:latest
+    image: srsran-lime:latest
     container_name: limesdr-enb
     cap_add:
       - SYS_NICE
@@ -26,7 +26,7 @@ services:
     command:
       - /config/enb.conf
       - --enb.name=limesdr-ENB01
-      - --enb.n_prb=${PRB}
+      - --enb.n_prb=${LIME_PRB}
       - --enb.tac=1
       - --enb.mcc=001
       - --enb.mnc=01

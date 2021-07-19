@@ -5,6 +5,7 @@ import shlex
 import sys
 
 from daedalus import __file__, __version__
+from daedalus.validators import NumberValidator
 import docker as dclient
 from plumbum import local, FG, TF
 from plumbum.cmd import chmod, cp, curl, docker, docker_compose, ip, ls, mkdir, rm, sudo, tar
@@ -39,12 +40,18 @@ class Daedalus():
         os.chdir(previous_dir)
 
     @staticmethod
-    def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_version="release_21_04"):
+    def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
         if srsran:
+            srsran_version = "release_21_04"
             base_args = ["build", "-t", "srsran:base", "-f", "Dockerfile.base", "."]
             srs_args = ["build", "-t", "srsran", "-f", "Dockerfile.srs", "--build-arg", f'SRS_VERSION={srsran_version}', "."]
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(base_args) & FG
+                docker.bound_command(srs_args) & FG
+        if srsran_lime:
+            srsran_version = "release_19_12"
+            srs_args = ["build", "-t", "srsran-lime", "-f", "Dockerfile.srs", "--build-arg", f'SRS_VERSION={srsran_version}', "."]
+            with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(srs_args) & FG
         if ueransim:
             args = ["build", "-t", "ueransim", "."]
@@ -95,8 +102,8 @@ class Daedalus():
             SMF = ""
             if 'core' in self.options:
                 SMF = '5GC'
-            # TODO don't hardcode the env vars
-            with local.env(PRB="50", BLADERF_EARFCN="3400", ETTUS_EARFCN="1800", LIMESDR_EARFCN="900", SMF=SMF):
+            # TODO handle multiple SDRs of the same type
+            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, SMF=SMF):
                 docker_compose.bound_command(compose_up) & FG
         else:
             logging.warning('No services to start, quitting.')
@@ -181,14 +188,34 @@ class Daedalus():
                     {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
                     {'name': '5G UERANSIM gNodeB (gNB)'},
                     {'name': '4G srsRAN eNodeB (eNB)'},
-                    {'name': '4G bladeRF eNodeB (eNB)'},
-                    {'name': '4G LimeSDR eNodeB (eNB)'},
+                    {'name': '4G BladeRF eNodeB (eNB)'},
                     {'name': '4G Ettus USRP B2xx eNodeB (eNB)'},
+                    {'name': '4G LimeSDR eNodeB (eNB)'},
                     {'name': '4G srsRAN UE (UE)'},
                     {'name': '5G UERANSIM UE (UE)'},
                     {'name': 'Add UE IMSIs'},
                     {'name': 'Subscriber WebUI'},
                 ],
+            },
+        ]
+
+    @staticmethod
+    def sdr_questions(enb):
+        return [
+            {
+                'type': 'list',
+                'name': 'prb',
+                'message': f'Number of Physical Resource Blocks (PRB) for {enb}',
+                'choices': ['6', '15', '25', '50', '75', '100'],
+                'default': '50',
+            },
+            {
+                'type': 'input',
+                'name': 'earfcn',
+                'message': f'What EARFCN code for DL for {enb} would you like?',
+                'default': '3400',
+                'validate': NumberValidator, # TODO should also validate the EARFCN wasn't already used
+                'filter': lambda val: int(val),
             },
         ]
 
@@ -264,12 +291,10 @@ class Daedalus():
         self.check_commands()
         self.cleanup()
         answers = self.execute_prompt(self.main_questions())
-        srsran_version = "release_21_04"
         build_srsran = False
+        srsran_lime = False
         build_open5gs = False
         build_ueransim = False
-        ask_prb = False
-        ask_earfcn = False
         add_imsis = False
         if 'services' in answers:
             selections = answers['services']
@@ -300,27 +325,23 @@ class Daedalus():
                 self.compose_files += ['-f', 'SIMULATED/srsran-enb.yml']
                 self.options.append('srsran-enb')
                 build_srsran = True
-            if '4G bladeRF eNodeB (eNB)' in selections:
+            if '4G BladeRF eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/bladerf.yml']
                 self.options.append('bladerf-enb')
                 build_srsran = True
-                ask_prb = True
-                ask_earfcn = True
-            if '4G LimeSDR eNodeB (eNB)' in selections:
-                self.compose_files += ['-f', 'SDR/limesdr.yml']
-                self.options.append('limesdr-enb')
-                build_srsran = True
-                srsran_version = "release_19_12"
-                ask_prb = True
-                ask_earfcn = True
             if '4G Ettus USRP B2xx eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/ettus.yml']
                 self.options.append('ettus-enb')
                 from plumbum.cmd import uhd_find_devices
-                uhd_find_devices()
+                try:
+                    uhd_find_devices()
+                except Exception as e:
+                    logging.error('No UHD device found, but you chose Ettus. It is unlikely to work as expected.')
                 build_srsran = True
-                ask_prb = True
-                ask_earfcn = True
+            if '4G LimeSDR eNodeB (eNB)' in selections:
+                self.compose_files += ['-f', 'SDR/limesdr.yml']
+                self.options.append('limesdr-enb')
+                srsran_lime = True
             if '4G srsRAN UE (UE)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/srsran-ue.yml']
                 self.options.append('srsran-ue')
@@ -337,7 +358,32 @@ class Daedalus():
                 self.options.append('webui')
                 build_open5gs = True
                 
-            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim, open5gs=build_open5gs, srsran_version=srsran_version)
+            # defaults
+            self.bladerf_prb = '50'
+            self.ettus_prb = '50'
+            self.limesdr_prb = '50'
+            self.bladerf_earfcn = '3400'
+            self.ettus_earfcn = '1800'
+            self.limesdr_earfcn = '900'
+            sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
+            for sdr in sdrs:
+                if sdr in self.options:
+                    answers = self.execute_prompt(self.sdr_questions(sdr))
+                    if 'prb' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.limesdr_prb = str(answers['prb'])
+                        if sdr == 'ettus-enb':
+                            self.limesdr_prb = str(answers['prb'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_prb = str(answers['prb'])
+                    if 'earfcn' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.limesdr_earfcn = str(answers['earfcn'])
+                        if sdr == 'ettus-enb':
+                            self.limesdr_earfcn = str(answers['earfcn'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_earfcn = str(answers['earfcn'])
+            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim, open5gs=build_open5gs, srsran_lime=srsran_lime)
             self.start_dovesnap()
             self.create_networks()
             self.start_services()
