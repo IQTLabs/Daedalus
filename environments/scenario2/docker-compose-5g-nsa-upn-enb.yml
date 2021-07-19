@@ -38,4 +38,3 @@ services:
       - --enb_files.drb_config=/config/drb.conf
       - --rf.device_name=zmq
       - --rf.device_args=tx_port0=tcp://*:5555,rx_port0=tcp://192.168.28.61:5554,tx_port1=tcp://*:5565,rx_port1=tcp://192.168.28.62:5564,tx_port2=tcp://*:5575,rx_port2=tcp://192.168.28.63:5574,tx_port3=tcp://*:5585,rx_port3=tcp://192.168.28.64:5584,id=enb0,base_srate=1.92e6
-

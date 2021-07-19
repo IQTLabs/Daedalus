@@ -1,6 +1,6 @@
 # Tomcat7+ Weak Password && Backend Getshell Vulnerability
 
-[中文版本(Chinese version)](README.zh-cn.md) 
+[中文版本(Chinese version)](README.zh-cn.md)
 
 Tomcat version: 8.0
 
@@ -37,7 +37,7 @@ Permissions of users are configured in the ` conf/tomcat-users.xml ` file:
     <role rolename="admin-gui"/>
     <role rolename="admin-script"/>
     <user username="tomcat" password="tomcat" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script" />
-    
+
 </tomcat-users>
 ```
 
@@ -58,4 +58,3 @@ Open the tomcat management page `http://your-ip:8080/manager/html`，enter the w
 ![](1.png)
 
 Upload war package and then get shell directly.
-

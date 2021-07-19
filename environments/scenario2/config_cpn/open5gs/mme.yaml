@@ -1,6 +1,6 @@
 logger:
   file: /usr/local/var/log/open5gs/mme.log
-  trace: 
+  trace:
       app: 1
       s1ap: 1
       nas: 1

@@ -1,4 +1,4 @@
-vlan: 
+vlan:
 hostnames: higgins shasta
 usernames: sjones alee
 passwords: hardcore lilmama

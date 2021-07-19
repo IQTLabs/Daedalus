@@ -1,4 +1,4 @@
-vlan: 
+vlan:
 hostnames: crystal holt
 usernames: jclark asingh
 passwords: roxana PASSWORD

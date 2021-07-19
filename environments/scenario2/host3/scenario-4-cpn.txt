@@ -1,4 +1,4 @@
-vlan: 
+vlan:
 hostnames: trinity elk
 usernames: mwilson ssharma
 passwords: amistad miller

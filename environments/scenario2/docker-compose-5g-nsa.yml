@@ -13,8 +13,8 @@ networks:
     ipam:
       driver: default
       config:
-	- subnet: 192.168.26.0/24
-	  gateway: 192.168.26.1
+        - subnet: 192.168.26.0/24
+          gateway: 192.168.26.1
   rf_network:
     driver: bridge
     driver_opts:
@@ -23,8 +23,8 @@ networks:
     ipam:
       driver: default
       config:
-	- subnet: 192.168.28.0/24
-	  gateway: 192.168.28.1
+        - subnet: 192.168.28.0/24
+          gateway: 192.168.28.1
 
 services:
   mongodb:
@@ -75,7 +75,7 @@ services:
       - /tmp/run.sh
     networks:
       core_network:
-	ipv4_address: 192.168.26.19
+        ipv4_address: 192.168.26.19
 
   hss:
     image: open5gs:latest
@@ -93,7 +93,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.10
+        ipv4_address: 192.168.26.10
 
   pcrf:
     image: open5gs:latest
@@ -112,7 +112,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.50
+        ipv4_address: 192.168.26.50
 
   mme:
     image: open5gs:latest
@@ -126,7 +126,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.20
+        ipv4_address: 192.168.26.20
 
   smf:
     image: open5gs:latest
@@ -142,7 +142,7 @@ services:
       - /dev/net/tun
     networks:
       core_network:
-	ipv4_address: 192.168.26.40
+        ipv4_address: 192.168.26.40
 
   sgwc:
     image: open5gs:latest
@@ -154,7 +154,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.30
+        ipv4_address: 192.168.26.30
 
   sgwu:
     image: open5gs:latest
@@ -166,7 +166,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.31
+        ipv4_address: 192.168.26.31
 
   sgwu2:
     image: open5gs:latest
@@ -178,7 +178,7 @@ services:
       - "./config:/usr/local/etc:z"
     networks:
       core_network:
-	ipv4_address: 192.168.26.32
+        ipv4_address: 192.168.26.32
 
   upf:
     image: open5gs:latest
@@ -194,7 +194,7 @@ services:
       - /dev/net/tun
     networks:
       core_network:
-	ipv4_address: 192.168.26.41
+        ipv4_address: 192.168.26.41
 
   upf2:
     image: open5gs:latest
@@ -210,7 +210,7 @@ services:
       - /dev/net/tun
     networks:
       core_network:
-	ipv4_address: 192.168.26.42
+        ipv4_address: 192.168.26.42
 
   enb:
     image: srslte:latest
@@ -221,9 +221,9 @@ services:
       - SYS_NICE
     networks:
       core_network:
-	ipv4_address: 192.168.26.60
+        ipv4_address: 192.168.26.60
       rf_network:
-	ipv4_address: 192.168.28.60
+        ipv4_address: 192.168.28.60
     volumes:
       - ./config/srsLTE:/config:z
     entrypoint:

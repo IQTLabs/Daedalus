@@ -2,7 +2,7 @@
 +++ ssh_server_fork_patch.c»2018-10-19 13:44:07.000000000 +0800
 @@ -531,7 +531,7 @@
      ssh_event_add_session(event, session);
- 
+
      n = 0;
 -    while (sdata.authenticated == 0 || sdata.channel == NULL) {
 +    while (sdata.channel == NULL) {

@@ -1,5 +1,5 @@
-import random
 import os
+import random
 
 import numpy
 from essential_generators import DocumentGenerator
@@ -22,17 +22,17 @@ extensions = {}
 count = 0
 key = None
 with open('extensions.txt', 'r') as f:
-     for line in f.readlines():
-         if count == 0:
-             key = line.strip()
-             if key not in extensions:
-                 extensions[key] = []
-         else:
-             if line == '\n':
-                 count = -1
-             else:
-                 extensions[key].append(line.strip())
-         count += 1
+    for line in f.readlines():
+        if count == 0:
+            key = line.strip()
+            if key not in extensions:
+                extensions[key] = []
+        else:
+            if line == '\n':
+                count = -1
+            else:
+                extensions[key].append(line.strip())
+        count += 1
 
 filenames = []
 with open('filenames.txt', 'r') as f:
@@ -42,6 +42,7 @@ with open('filenames.txt', 'r') as f:
 os.chdir('bar')
 cwd = os.getcwd()
 kb = 1024
+
 
 def make_file(extension):
     print(f'extension: {extension}')
@@ -58,7 +59,7 @@ def make_file(extension):
         if extension in extensions[size]:
             if '-' in size:
                 vals = size.split('-')
-                magnitude = int(vals[random.randrange(0,2)])
+                magnitude = int(vals[random.randrange(0, 2)])
             else:
                 magnitude = int(size)
     maxval = 1
@@ -66,8 +67,10 @@ def make_file(extension):
     for i in range(0, magnitude):
         maxval *= int(a[i])
     print(f'maxval: {maxval}')
-    if maxval < 2: maxval = 2
-    elif maxval > 5000000000: maxval = 5000000000
+    if maxval < 2:
+        maxval = 2
+    elif maxval > 5000000000:
+        maxval = 5000000000
     size = random.randrange(1, maxval)
     print(f'actual size: {size}')
     if extension == 'txt':
@@ -84,6 +87,7 @@ def make_file(extension):
             file.write(bytearray(byte_arr))
     file.close()
 
+
 def make_dirs(depth=10):
     print(f'directory depth: {depth}')
     if depth == 0:
@@ -96,15 +100,18 @@ def make_dirs(depth=10):
             os.mkdir(dir_name)
             os.chdir(dir_name)
             magnitudes = list(extensions.keys())
-            pick_a = extensions[magnitudes[random.randrange(0,len(magnitudes))]]
-            pick_b = extensions[magnitudes[random.randrange(0,len(magnitudes))]]
+            pick_a = extensions[magnitudes[random.randrange(
+                0, len(magnitudes))]]
+            pick_b = extensions[magnitudes[random.randrange(
+                0, len(magnitudes))]]
             picks = list(set(pick_a + pick_b))
             print(f'creating {int(b[i])} files...')
             for x in range(0, int(b[i])):
-                make_file(picks[random.randrange(0,len(picks))])
+                make_file(picks[random.randrange(0, len(picks))])
             make_dirs(depth=depth-1)
         except OSError:
             pass
     return
+
 
 make_dirs()

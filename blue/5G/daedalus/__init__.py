@@ -1,5 +1,5 @@
-from pbr.version import VersionInfo
 import pkg_resources
+from pbr.version import VersionInfo
 
 pkg_resources.declare_namespace(__name__)
 
