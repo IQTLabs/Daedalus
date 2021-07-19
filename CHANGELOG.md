@@ -1,3 +1,10 @@
+# v0.3.0 (2021-07-19)
+
+* Enable configurable PRB and EARFCN per SDR
+* Allow LimeSDR and other SDRs to work together despite different versions of srsRAN
+* Updated Open5GS to 2.3.2
+* Added additional exception handling
+
 # v0.2.0 (2021-07-16)
 
 * Cleanup anonymous volumes from services when removing the services
