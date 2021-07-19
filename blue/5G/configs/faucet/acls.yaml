@@ -185,22 +185,18 @@ acls:
       actions:
         allow: 1
     - rule:
-      description: RAN/UPN GTP-U
+      description: RAN/UPN SGWU GTP-U
       eth_type: 0x800
       ip_proto: 17
-      udp_src: 2152
-      udp_dst: 2152
-      ipv4_src: 192.168.27.0/24
+      ipv4_src: 192.168.27.31
       ipv4_dst: 192.168.29.0/24
       actions:
         allow: 1
     - rule:
-      description: RAN/UPN GTP-U (NAT)
+      description: RAN/UPN SGWU2 GTP-U
       eth_type: 0x800
       ip_proto: 17
-      udp_src: 2152
-      udp_dst: 2152
-      ipv4_src: 192.168.29.1
+      ipv4_src: 192.168.27.32
       ipv4_dst: 192.168.29.0/24
       actions:
         allow: 1
