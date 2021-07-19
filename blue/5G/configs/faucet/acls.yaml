@@ -201,6 +201,22 @@ acls:
       actions:
         allow: 1
     - rule:
+      description: RAN/UPN UPF GTP-U
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.27.41
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
+      description: RAN/UPN UPF2 GTP-U
+      eth_type: 0x800
+      ip_proto: 17
+      ipv4_src: 192.168.27.42
+      ipv4_dst: 192.168.29.0/24
+      actions:
+        allow: 1
+    - rule:
       description: RAN/PFCP
       eth_type: 0x800
       ip_proto: 17
