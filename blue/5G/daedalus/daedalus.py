@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import shlex
@@ -7,6 +8,7 @@ import sys
 import docker as dclient
 from daedalus import __file__
 from daedalus import __version__
+from daedalus.validators import IMSIValidator
 from daedalus.validators import NumberValidator
 from examples import custom_style_2
 from plumbum import FG
@@ -246,6 +248,84 @@ class Daedalus():
         ]
 
     @staticmethod
+    def imsi_questions():
+        example_imsi = json.loads('''[{
+    "access_restriction_data": 32,
+    "ambr": {
+      "downlink": {
+        "unit": 3,
+        "value": 1
+      },
+      "uplink": {
+        "unit": 3,
+        "value": 1
+      }
+    },
+    "imsi": "001010000000012",
+    "network_access_mode": 2,
+    "security": {
+      "amf": "8000",
+      "k": "c8eba87c1074edd06885cb0486718341",
+      "op": null,
+      "opc": "17b6c0157895bcaa1efc1cef55033f5f"
+    },
+    "slice": [
+      {
+        "default_indicator": true,
+        "sd": "000000",
+        "session": [
+          {
+            "ambr": {
+              "downlink": {
+                "unit": 3,
+                "value": 1
+              },
+              "uplink": {
+                "unit": 3,
+                "value": 1
+              }
+            },
+            "name": "internet",
+            "pcc_rule": [],
+            "qos": {
+              "arp": {
+                "pre_emption_capability": 1,
+                "pre_emption_vulnerability": 1,
+                "priority_level": 8
+              },
+              "index": 9
+            },
+            "type": 1
+          }
+        ],
+        "sst": 1
+      }
+    ],
+    "subscribed_rau_tau_timer": 12,
+    "subscriber_status": 0
+  }]''')
+
+        return [
+            {
+                'type': 'editor',
+                'name': 'imsi',
+                'message': 'Add a new IMSI (an example will be prepopulated to get you started)',
+                'default': f'{json.dumps(example_imsi, indent=2)}',
+                'eargs': {
+                    'editor': 'nano',
+                    'ext': '.json',
+                },
+                'validate': IMSIValidator,
+            },
+            {
+                'type': 'confirm',
+                'message': 'Would you like to add another IMSI?',
+                'name': 'add_imsi',
+                'default': False,
+            },
+        ]
+
+    @staticmethod
     def running_questions():
         return [
             {
@@ -325,7 +405,6 @@ class Daedalus():
         srsran_lime = False
         build_open5gs = False
         build_ueransim = False
-        add_imsis = False
         if 'services' in answers:
             selections = answers['services']
             if '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)' in selections:
@@ -385,7 +464,6 @@ class Daedalus():
                 build_ueransim = True
             if 'Add UE IMSIs' in selections:
                 self.options.append('imsis')
-                add_imsis = True
             if 'Subscriber WebUI' in selections:
                 self.compose_files += ['-f', 'core/ui.yml']
                 self.options.append('webui')
@@ -416,6 +494,25 @@ class Daedalus():
                             self.limesdr_earfcn = str(answers['earfcn'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_earfcn = str(answers['earfcn'])
+            if 'imsis' in self.options:
+                adding_imsis = True
+                while adding_imsis:
+                    answers = self.execute_prompt(self.imsi_questions())
+                    if 'imsi' in answers:
+                        try:
+                            imsi = json.loads(answers['imsi'])
+                            for i in imsi:
+                                logging.debug(f'Adding IMSI: {i["imsi"]}')
+                            imsis = None
+                            with open('configs/imsis.json', 'r') as f:
+                                imsis = json.load(f)
+                            imsis += imsi
+                            with open('configs/imsis.json', 'w') as f:
+                                json.dump(imsis, f, indent=2)
+                        except Exception as e:
+                            logging.error(f'Unable to add IMSI because: {e}')
+                    if 'add_imsi' in answers:
+                        adding_imsis = answers['add_imsi']
             self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
                                open5gs=build_open5gs, srsran_lime=srsran_lime)
             self.start_dovesnap()
