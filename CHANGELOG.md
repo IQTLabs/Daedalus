@@ -1,3 +1,7 @@
+# v0.4.0 (2021-07-20)
+
+* Implement adding IMSIs through the CLI
+
 # v0.3.0 (2021-07-19)
 
 * Enable configurable PRB and EARFCN per SDR
