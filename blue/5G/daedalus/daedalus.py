@@ -82,7 +82,7 @@ class Daedalus():
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = 'v0.22.1'
+        RELEASE = 'v0.22.2'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
