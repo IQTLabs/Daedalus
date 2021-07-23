@@ -482,16 +482,16 @@ class Daedalus():
                     answers = self.execute_prompt(self.sdr_questions(sdr))
                     if 'prb' in answers:
                         if sdr == 'bladerf-enb':
-                            self.limesdr_prb = str(answers['prb'])
+                            self.bladerf_prb = str(answers['prb'])
                         if sdr == 'ettus-enb':
-                            self.limesdr_prb = str(answers['prb'])
+                            self.ettus_prb = str(answers['prb'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_prb = str(answers['prb'])
                     if 'earfcn' in answers:
                         if sdr == 'bladerf-enb':
-                            self.limesdr_earfcn = str(answers['earfcn'])
+                            self.bladerf_earfcn = str(answers['earfcn'])
                         if sdr == 'ettus-enb':
-                            self.limesdr_earfcn = str(answers['earfcn'])
+                            self.ettus_earfcn = str(answers['earfcn'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_earfcn = str(answers['earfcn'])
             if 'imsis' in self.options:
