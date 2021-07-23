@@ -26,7 +26,7 @@ services:
     command:
       - /config/enb.conf
       - --enb.name=limesdr-ENB01
-      - --enb.n_prb=${LIME_PRB}
+      - --enb.n_prb=${LIMESDR_PRB}
       - --enb.tac=1
       - --enb.mcc=001
       - --enb.mnc=01
