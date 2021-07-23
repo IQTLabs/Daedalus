@@ -52,6 +52,7 @@ RUN npm install && npm run build
 
 COPY scripts /scripts
 
+WORKDIR /open5gs
 # TODO: provide certs externally; open5gs will use locally built certs for now via make_certs.sh in this image.
 RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make_certs.sh && \
   mkdir /certs && misc/make_certs.sh /certs
