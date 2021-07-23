@@ -1,3 +1,7 @@
+# v0.5.1 (2021-07-23)
+
+* Fix name of LimeSDR PRB variable
+
 # v0.5.0 (2021-07-23)
 
 * Fix incorrect handling of PRB and EARFCN options for Ettus and BladeRF
