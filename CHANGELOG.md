@@ -1,3 +1,8 @@
+# v0.5.0 (2021-07-23)
+
+* Fix incorrect handling of PRB and EARFCN options for Ettus and BladeRF
+* Dynamically generate certs instead of using static ones in the repo
+
 # v0.4.0 (2021-07-20)
 
 * Implement adding IMSIs through the CLI
