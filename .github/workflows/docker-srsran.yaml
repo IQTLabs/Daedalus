@@ -1,4 +1,4 @@
-name: buildx-srsran
+name: buildx
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     tags: 'v*'
 
 jobs:
-  buildx:
+  srsran:
 
     runs-on: ubuntu-latest
 

@@ -1,4 +1,4 @@
-name: buildx-ueransim
+name: buildx
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     tags: 'v*'
 
 jobs:
-  buildx:
+  ueransim:
 
     runs-on: ubuntu-latest
 
