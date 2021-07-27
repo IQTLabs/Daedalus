@@ -1,5 +1,5 @@
 FROM ubuntu:21.04
-MAINTAINER Charlie Lewis <clewis@iqt.org>
+LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
