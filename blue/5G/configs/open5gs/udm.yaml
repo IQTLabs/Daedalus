@@ -1,3 +1,4 @@
+---
 #
 # logger:
 #
@@ -18,7 +19,7 @@
 #    level: trace
 #    domain: core,sbi,udm,event,tlv,mem,sock
 #
-#logger:
+# logger:
 #    file: @localstatedir@/log/open5gs/udm.log
 #
 # udm:
@@ -74,9 +75,9 @@
 #          - ::1
 #
 udm:
-    sbi:
-      - addr: 192.168.26.80
-        port: 7777
+  sbi:
+    - addr: 192.168.26.80
+      port: 7777
 
 #
 # nrf:
@@ -105,10 +106,9 @@ udm:
 #        - fe80::1%@loopback_devname@
 #
 nrf:
-    sbi:
-      - addr:
-          - 192.168.26.61
-        port: 7777
+  sbi:
+    - addr: 192.168.26.61
+      port: 7777
 
 #
 # parameter:

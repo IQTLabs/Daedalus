@@ -1,2 +1,3 @@
+---
 include:
-- acls.yaml
+  - acls.yaml

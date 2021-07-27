@@ -1,22 +1,23 @@
+---
 logger:
-    file: /usr/local/var/log/open5gs/sgwc.log
-    trace:
-        app: 1
-        gtpv2: 1
-        gtp: 1
+  file: /usr/local/var/log/open5gs/sgwc.log
+  trace:
+    app: 1
+    gtpv2: 1
+    gtp: 1
 
 parameter:
-    no_ipv6: true
+  no_ipv6: true
 
 sgwc:
-    gtpc:
-      addr: 192.168.26.30
-    pfcp:
-      addr: 192.168.26.30
+  gtpc:
+    addr: 192.168.26.30
+  pfcp:
+    addr: 192.168.26.30
 
 sgwu:
-    pfcp:
-      - addr: 192.168.27.31
-        apn: internet
-      - addr: 192.168.27.32
-        apn: [internet2, internet3]
+  pfcp:
+    - addr: 192.168.27.31
+      apn: internet
+    - addr: 192.168.27.32
+      apn: [internet2, internet3]
