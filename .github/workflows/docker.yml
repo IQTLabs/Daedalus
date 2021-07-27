@@ -40,7 +40,7 @@ jobs:
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
       run: |
-        cd srsRAN && docker buildx build \
+        cd blue/5G/srsRAN && docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
           -t iqtlabs/srsran-base:${{ steps.change_version.outputs.VERSION }} \
