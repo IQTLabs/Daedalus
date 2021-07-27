@@ -1,4 +1,4 @@
-name: buildx
+name: buildx-open5gs
 
 on:
   push:
