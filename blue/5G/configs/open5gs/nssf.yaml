@@ -1,3 +1,4 @@
+---
 #
 # logger:
 #
@@ -18,7 +19,7 @@
 #    level: trace
 #    domain: core,sbi,nssf,event,tlv,mem,sock
 #
-#logger:
+# logger:
 #    file: @localstatedir@/log/open5gs/nssf.log
 #
 # nssf:
@@ -111,15 +112,15 @@
 #          sst: 1
 #          sd: 009000
 nssf:
-    sbi:
-      - addr: 192.168.26.92
-        port: 7777
-    nsi:
-      - addr: 192.168.26.61
-        port: 7777
-        s_nssai:
-          sst: 1
-          sd: 0
+  sbi:
+    - addr: 192.168.26.92
+      port: 7777
+  nsi:
+    - addr: 192.168.26.61
+      port: 7777
+      s_nssai:
+        sst: 1
+        sd: 0
 
 #
 # nrf:
@@ -148,10 +149,9 @@ nssf:
 #        - fe80::1%@loopback_devname@
 #
 nrf:
-    sbi:
-      - addr:
-          - 192.168.26.61
-        port: 7777
+  sbi:
+    - addr: 192.168.26.61
+      port: 7777
 
 #
 # parameter:

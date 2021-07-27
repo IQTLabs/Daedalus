@@ -1,8 +1,8 @@
+---
 logger:
-    file: /usr/local/var/log/open5gs/nrf.log
+  file: /usr/local/var/log/open5gs/nrf.log
 
 nrf:
-    sbi:
-      addr:
-        - 192.168.26.61
+  sbi:
+    - addr: 192.168.26.61
       port: 7777

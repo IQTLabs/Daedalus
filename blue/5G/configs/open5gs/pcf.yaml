@@ -1,3 +1,4 @@
+---
 db_uri: mongodb://mongoadmin:secret@mongodb/open5gs?authSource=admin
 
 #
@@ -20,7 +21,7 @@ db_uri: mongodb://mongoadmin:secret@mongodb/open5gs?authSource=admin
 #    level: trace
 #    domain: core,sbi,pcf,event,tlv,mem,sock
 #
-#logger:
+# logger:
 #    file: @localstatedir@/log/open5gs/pcf.log
 #
 # pcf:
@@ -76,9 +77,9 @@ db_uri: mongodb://mongoadmin:secret@mongodb/open5gs?authSource=admin
 #          - ::1
 #
 pcf:
-    sbi:
-      - addr: 192.168.26.93
-        port: 7777
+  sbi:
+    - addr: 192.168.26.93
+      port: 7777
 
 #
 # nrf:
@@ -107,10 +108,9 @@ pcf:
 #        - fe80::1%@loopback_devname@
 #
 nrf:
-    sbi:
-      - addr:
-          - 192.168.26.61
-        port: 7777
+  sbi:
+    - addr: 192.168.26.61
+      port: 7777
 
 #
 # parameter:

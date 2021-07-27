@@ -1,12 +1,13 @@
+---
 ### For reference, see `nextepc.conf`
 
 logger:
   file: /usr/local/var/log/open5gs/smf.log
   trace:
-      app: 1
-      diameter: 1
-      gtpv2: 1
-      gtp: 1
+    app: 1
+    diameter: 1
+    gtpv2: 1
+    gtp: 1
 
 smf:
   freeDiameter: /usr/local/etc/freeDiameter/smf.conf
