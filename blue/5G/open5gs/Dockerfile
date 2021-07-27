@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-MAINTAINER Charlie Lewis <clewis@iqt.org>
+LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
