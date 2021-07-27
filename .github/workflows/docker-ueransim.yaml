@@ -40,29 +40,8 @@ jobs:
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
       run: |
-        cd blue/5G/srsRAN && docker buildx build \
+        cd blue/5G/UERANSIM && docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
-          -t iqtlabs/srsran-base:${{ steps.change_version.outputs.VERSION }} \
-          -f Dockerfile.base . && \
-        docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_21_04 \
-          -f Dockerfile.srs . && \
-        docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/srsran-lime:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_19_12 \
-          -f Dockerfile.srs . && \
-        cd ../UERANSIM && docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/ueransim:${{ steps.change_version.outputs.VERSION }} . && \
-        cd ../open5gs && docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/open5gs:${{ steps.change_version.outputs.VERSION }} .
+          -t iqtlabs/ueransim:${{ steps.change_version.outputs.VERSION }} .
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
