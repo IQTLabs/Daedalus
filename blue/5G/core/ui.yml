@@ -9,7 +9,7 @@ networks:
 
 services:
   webui:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     depends_on:
       - mongodb
     environment:

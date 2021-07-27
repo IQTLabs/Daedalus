@@ -27,7 +27,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   mongodbloader:
-    image: mongo:latest
+    image: mongo:4.4.6-bionic
     depends_on:
       - mongodb
     environment:

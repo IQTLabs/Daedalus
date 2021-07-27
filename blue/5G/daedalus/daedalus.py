@@ -57,25 +57,25 @@ class Daedalus():
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
         if srsran:
             srsran_version = 'release_21_04'
-            base_args = ['build', '-t', 'srsran:base',
+            base_args = ['build', '-t', 'iqtlabs/srsran-base',
                          '-f', 'Dockerfile.base', '.']
-            srs_args = ['build', '-t', 'srsran', '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran', '-f', 'Dockerfile.srs',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(base_args) & FG
                 docker.bound_command(srs_args) & FG
         if srsran_lime:
             srsran_version = 'release_19_12'
-            srs_args = ['build', '-t', 'srsran-lime', '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran-lime', '-f', 'Dockerfile.srs',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(srs_args) & FG
         if ueransim:
-            args = ['build', '-t', 'ueransim', '.']
+            args = ['build', '-t', 'iqtlabs/ueransim', '.']
             with local.cwd(local.cwd / 'UERANSIM'):
                 docker.bound_command(args) & FG
         if open5gs:
-            args = ['build', '-t', 'open5gs', '.']
+            args = ['build', '-t', 'iqtlabs/open5gs', '.']
             with local.cwd(local.cwd / 'open5gs'):
                 docker.bound_command(args) & FG
         return

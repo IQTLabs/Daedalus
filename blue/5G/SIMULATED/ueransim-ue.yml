@@ -8,7 +8,7 @@ networks:
       name: rfn
 services:
   ue1:
-    image: ueransim:latest
+    image: iqtlabs/ueransim:latest
     container_name: ue1
     cap_add:
       - NET_ADMIN

@@ -11,7 +11,7 @@ networks:
       name: rfn
 services:
   enb:
-    image: srsran:latest
+    image: iqtlabs/srsran:latest
     container_name: enb
     cap_add:
       - SYS_NICE

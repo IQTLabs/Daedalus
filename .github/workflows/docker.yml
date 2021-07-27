@@ -1,0 +1,68 @@
+name: buildx
+
+on:
+  push:
+    branches: main
+    tags: 'v*'
+
+jobs:
+  buildx:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+    - name: Change for main
+      id: change_version
+      run: if [ "${{ steps.get_version.outputs.VERSION }}" == "main" ]; then echo ::set-output name=VERSION::latest; else echo ::set-output name=VERSION::${{ steps.get_version.outputs.VERSION }}; fi
+    - name: Set up qemu
+      uses: docker/setup-qemu-action@v1
+      with:
+        platforms: all
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+      with:
+        version: latest
+    - name: Docker Login
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+      run: |
+        echo "${DOCKER_PASSWORD}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
+
+    - name: Build and push platforms
+      env:
+        DOCKER_CLI_EXPERIMENTAL: enabled
+      run: |
+        cd srsRAN && docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t iqtlabs/srsran-base:${{ steps.change_version.outputs.VERSION }} \
+          -f Dockerfile.base . && \
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
+          --build-arg SRS_VERSION=release_21_04 \
+          -f Dockerfile.srs . && \
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t iqtlabs/srsran-lime:${{ steps.change_version.outputs.VERSION }} \
+          --build-arg SRS_VERSION=release_19_12 \
+          -f Dockerfile.srs . && \
+        cd ../UERANSIM && docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t iqtlabs/ueransim:${{ steps.change_version.outputs.VERSION }} . && \
+        cd ../open5gs && docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t iqtlabs/open5gs:${{ steps.change_version.outputs.VERSION }} .
+      if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'

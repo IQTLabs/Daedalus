@@ -11,7 +11,7 @@ networks:
       name: ran
 services:
   gnb:
-    image: ueransim:latest
+    image: iqtlabs/ueransim:latest
     container_name: gnb
     cap_add:
       - SYS_NICE
