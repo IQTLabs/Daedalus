@@ -12,7 +12,7 @@ networks:
 
 services:
   nrf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: nrf
     hostname: nrf
     command:
@@ -26,7 +26,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   ausf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: ausf
     hostname: ausf
     depends_on:
@@ -42,7 +42,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   nssf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: nssf
     hostname: nssf
     depends_on:
@@ -58,7 +58,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   udm:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: udm
     hostname: udm
     depends_on:
@@ -74,7 +74,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   bsf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: bsf
     hostname: bsf
     environment:
@@ -95,7 +95,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   pcf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: pcf
     hostname: pcf
     environment:
@@ -116,7 +116,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   udr:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: udr
     hostname: udr
     environment:
@@ -138,7 +138,7 @@ services:
       - "daedalus.namespace=primary"
   amf:
     restart: always
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: amf
     hostname: amf
     depends_on:

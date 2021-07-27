@@ -9,7 +9,7 @@ networks:
 
 services:
   ue:
-    image: srsran:latest
+    image: iqtlabs/srsran:latest
     container_name: ue
     cap_add:
       - NET_ADMIN
@@ -36,7 +36,7 @@ services:
       - --nas.apn=internet
       - --rf.device_args="tx_port=tcp://*:5554,rx_port=tcp://192.168.28.60:5555,id=ue,base_srate=1.92e6"
   ue2:
-    image: srsran:latest
+    image: iqtlabs/srsran:latest
     container_name: ue2
     cap_add:
       - NET_ADMIN
@@ -63,7 +63,7 @@ services:
       - --nas.apn=internet2
       - --rf.device_args="tx_port=tcp://*:5564,rx_port=tcp://192.168.28.60:5565,id=ue2,base_srate=1.92e6"
   ue3:
-    image: srsran:latest
+    image: iqtlabs/srsran:latest
     container_name: ue3
     cap_add:
       - NET_ADMIN
@@ -90,7 +90,7 @@ services:
       - --nas.apn=internet
       - --rf.device_args="tx_port=tcp://*:5574,rx_port=tcp://192.168.28.60:5575,id=ue3,base_srate=1.92e6"
   ue4:
-    image: srsran:latest
+    image: iqtlabs/srsran:latest
     container_name: ue4
     cap_add:
       - NET_ADMIN

@@ -9,7 +9,7 @@ networks:
 
 services:
   hss:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     depends_on:
       - mongodb
     container_name: hss
@@ -30,7 +30,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   pcrf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     depends_on:
       - mongodb
       - hss
@@ -51,7 +51,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   mme:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     depends_on:
       - hss
     container_name: mme
@@ -67,7 +67,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   smf:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: smf
     hostname: smf
     command:
@@ -82,7 +82,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   sgwc:
-    image: open5gs:latest
+    image: iqtlabs/open5gs:latest
     container_name: sgwc
     hostname: sgwc
     command:
