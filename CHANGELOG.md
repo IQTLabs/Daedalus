@@ -1,3 +1,12 @@
+# v0.6.0 (2021-07-27)
+
+* Pinned MongoDB version for loader
+* Updated Dovesnap
+* Updated precommit hooks
+* Added Maintainer labels
+* Add Docker image builds to workflows
+* Linting
+
 # v0.5.1 (2021-07-23)
 
 * Fix name of LimeSDR PRB variable
