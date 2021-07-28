@@ -35,47 +35,36 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      soapysdr-module-lms7 \
      soapysdr-tools \
      tcpdump \
-     wget
+     wget && \
+     apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pip3 install -U requests
 WORKDIR /root
-COPY scripts /scripts
 
-RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.03
-RUN git clone https://github.com/EttusResearch/uhd.git -b v4.0.0.0
-RUN git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2
-RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0
+RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.1 \
+    && mkdir -p /root/uhd/host/build \
+    && cd /root/uhd/host/build \
+    && cmake ../ && make -j `nproc` && make install && ldconfig \
+    && cd /root && rm -rf /root/uhd
 
-# pinned FPGA/firmware (see "latest" on fpga/firmware pages)
-RUN wget https://www.nuand.com/fpga/v0.12.0/hostedxA9.rbf
-RUN wget https://www.nuand.com/fx3/bladeRF_fw_v2.4.0.img
+RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.03 \
+    && mkdir -p /root/bladeRF/host/build \
+    && cd /root/bladeRF/host/build \
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && make -j && make install && ldconfig \
+    && cd /root && rm -rf /root bladeRF
 
-WORKDIR /root/uhd/host
-RUN mkdir build
-WORKDIR /root/uhd/host/build
-RUN cmake ../ && make -j `nproc` && make install && ldconfig
+RUN git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2 \
+    && mkdir -p /root/SoapySDR/build \
+    && cd /root/SoapySDR/build \
+    && cmake ../ && make -j `nproc` && make install && ldconfig \
+    && cd /root && rm -rf /root/SoapySDR
 
-# https://github.com/Nuand/bladeRF
-RUN mkdir -p /root/bladeRF/host/build
-WORKDIR /root/bladeRF/host/build
-RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && make -j && make install && ldconfig
-# Should detect bladeRF:
-# bladeRF-cli -p
-# bladeRF-cli -e info -e version
-# if firmware upgrade indicated:
-# bladeRF-cli -f <firmware_file>
-# if need to auto flash fpga
-# bladeRF-cli -L hostedxA9.rbf
+RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
+    && mkdir -p /root/LimeSuite/build \
+    && cd /root/LimeSuite/build \
+    && cmake ../ && make -j `nproc` && make install && ldconfig \
+    && cd /root && rm -rf /root/LimeSuite
 
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py
-# Should detect B200:
-# uhd_find_devices
 
-RUN mkdir -p /root/SoapySDR/build
-WORKDIR /root/SoapySDR/build
-RUN cmake ../ && make -j `nproc` && make install && ldconfig
-
-RUN mkdir -p /root/LimeSuite/builddir
-WORKDIR /root/LimeSuite/builddir
-RUN cmake ../ && make -j `nproc` && make install && ldconfig
-
+COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]
