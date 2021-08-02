@@ -19,7 +19,17 @@ services:
     environment:
       - 'MONGO_INITDB_ROOT_USERNAME=${DB_USER}'
       - 'MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}'
+    command:
+      - mongod
+      - --bind_ip
+      - 0.0.0.0
     hostname: mongodb
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     networks:
       cpn:
         ipv4_address: 192.168.26.5
@@ -29,7 +39,8 @@ services:
   mongodbloader:
     image: mongo:4.4.6-bionic
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     environment:
       - DB_HOST=mongodb
       - 'DB_USER=${DB_USER}'

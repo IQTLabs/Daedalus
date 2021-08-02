@@ -1,6 +1,4 @@
 ---
-db_uri: mongodb://mongoadmin:secret@mongodb/open5gs?authSource=admin
-
 #
 # logger:
 #

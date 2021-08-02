@@ -9,6 +9,8 @@ import docker as dclient
 from daedalus import __file__
 from daedalus import __version__
 from daedalus.validators import IMSIValidator
+from daedalus.validators import MCCValidator
+from daedalus.validators import MNCValidator
 from daedalus.validators import NumberValidator
 from examples import custom_style_2
 from plumbum import FG
@@ -227,6 +229,25 @@ class Daedalus():
         ]
 
     @staticmethod
+    def global_number_questions():
+        return [
+            {
+                'type': 'input',
+                'name': 'mcc',
+                'message': f'What MCC code for {enb} would you like?',
+                'default': '001',
+                'validate': MCCValidator,
+            },
+            {
+                'type': 'input',
+                'name': 'mnc',
+                'message': f'What MNC code for {enb} would you like?',
+                'default': '01',
+                'validate': MNCValidator,
+            },
+        ]
+
+    @staticmethod
     def sdr_questions(enb):
         return [
             {
@@ -244,6 +265,20 @@ class Daedalus():
                 # TODO should also validate the EARFCN wasn't already used
                 'validate': NumberValidator,
                 'filter': lambda val: int(val),
+            },
+            {
+                'type': 'input',
+                'name': 'txgain',
+                'message': f'What TX gain value for {enb} would you like?',
+                'default': '80',
+                'validate': NumberValidator,
+            },
+            {
+                'type': 'input',
+                'name': 'rxgain',
+                'message': f'What RX gain value for {enb} would you like?',
+                'default': '40',
+                'validate': NumberValidator,
             },
         ]
 
@@ -395,6 +430,7 @@ class Daedalus():
                                          description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
         parser.add_argument('--version', '-V', action='version',
                             version=f'%(prog)s {__version__}')
+        # TODO set log level
         parser.add_argument('--verbose', '-v', choices=[
                             'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
         args = parser.parse_args(raw_args)
@@ -476,6 +512,9 @@ class Daedalus():
             self.bladerf_earfcn = '3400'
             self.ettus_earfcn = '1800'
             self.limesdr_earfcn = '900'
+            self.mcc = '001'
+            self.mnc = '01'
+
             sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
             for sdr in sdrs:
                 if sdr in self.options:

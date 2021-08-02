@@ -12,11 +12,21 @@ networks:
 
 services:
   nrf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: nrf
     hostname: nrf
+    entrypoint:
+      - /usr/local/bin/open5gs-nrfd
     command:
-      - "/scripts/run_nrf.sh"
+      - -c
+      - /usr/local/etc/open5gs/nrf.yaml
+    healthcheck:
+      test: netstat -ltn | grep -c 7777
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -26,13 +36,18 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   ausf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: ausf
     hostname: ausf
     depends_on:
-      - nrf
+      nrf:
+        condition: service_healthy
+    entrypoint:
+      - /usr/local/bin/open5gs-ausfd
     command:
-      - "/scripts/run_ausf.sh"
+      - -c
+      - /usr/local/etc/open5gs/ausf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -42,13 +57,18 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   nssf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: nssf
     hostname: nssf
     depends_on:
-      - nrf
+      nrf:
+        condition: service_healthy
+    entrypoint:
+      - /usr/local/bin/open5gs-nssfd
     command:
-      - "/scripts/run_nssf.sh"
+      - -c
+      - /usr/local/etc/open5gs/nssf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -58,13 +78,20 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   udm:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: udm
     hostname: udm
     depends_on:
-      - nrf
+      nrf:
+        condition: service_healthy
+      udr:
+        condition: service_started
+    entrypoint:
+      - /usr/local/bin/open5gs-udmd
     command:
-      - "/scripts/run_udm.sh"
+      - -c
+      - /usr/local/etc/open5gs/udm.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -74,18 +101,18 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   bsf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: bsf
     hostname: bsf
-    environment:
-      - DB_HOST=mongodb
-      - 'DB_USER=${DB_USER}'
-      - 'DB_PASS=${DB_PASS}'
     depends_on:
-      - nrf
-      - mongodb
+      nrf:
+        condition: service_healthy
+    entrypoint:
+      - /usr/local/bin/open5gs-bsfd
     command:
-      - "/scripts/run_bsf.sh"
+      - -c
+      - /usr/local/etc/open5gs/bsf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -95,6 +122,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   pcf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: pcf
     hostname: pcf
@@ -103,10 +131,17 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     depends_on:
-      - nrf
-      - mongodb
+      bsf:
+        condition: service_started
+      nrf:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    entrypoint:
+      - /usr/local/bin/open5gs-pcfd
     command:
-      - "/scripts/run_pcf.sh"
+      - -c
+      - /usr/local/etc/open5gs/pcf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -116,6 +151,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   udr:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: udr
     hostname: udr
@@ -124,10 +160,15 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     depends_on:
-      - nrf
-      - mongodb
+      nrf:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    entrypoint:
+      - /usr/local/bin/open5gs-udrd
     command:
-      - "/scripts/run_udr.sh"
+      - -c
+      - /usr/local/etc/open5gs/udr.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -142,12 +183,21 @@ services:
     container_name: amf
     hostname: amf
     depends_on:
-      - nrf
-      - ausf
-      - udr
-      - udm
+      nrf:
+        condition: service_healthy
+      ausf:
+        condition: service_started
+      udr:
+        condition: service_started
+      udm:
+        condition: service_started
+      nssf:
+        condition: service_started
+    entrypoint:
+      - /usr/local/bin/open5gs-amfd
     command:
-      - "/scripts/run_amf.sh"
+      - -c
+      - /usr/local/etc/open5gs/amf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:

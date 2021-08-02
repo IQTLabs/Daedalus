@@ -9,39 +9,49 @@ networks:
 
 services:
   hss:
+    restart: always
     image: iqtlabs/open5gs:latest
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     container_name: hss
     hostname: hss
     environment:
       - DB_HOST=mongodb
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
+    entrypoint:
+      - /usr/local/bin/open5gs-hssd
     command:
-      - "/scripts/run_hss.sh"
+      - -c
+      - /usr/local/etc/open5gs/hss.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
       cpn:
         ipv4_address: 192.168.26.10
-    restart: always
     labels:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   pcrf:
+    restart: always
     image: iqtlabs/open5gs:latest
     depends_on:
-      - mongodb
-      - hss
+      mongodb:
+        condition: service_healthy
+      hss:
+        condition: service_started
     container_name: pcrf
     hostname: pcrf
     environment:
       - DB_HOST=mongodb
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
+    entrypoint:
+      - /usr/local/bin/open5gs-pcrfd
     command:
-      - "/scripts/run_pcrf.sh"
+      - -c
+      - /usr/local/etc/open5gs/pcrf.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -51,13 +61,18 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   mme:
+    restart: always
     image: iqtlabs/open5gs:latest
     depends_on:
-      - hss
+      hss:
+        condition: service_started
     container_name: mme
     hostname: mme
+    entrypoint:
+      - /usr/local/bin/open5gs-mmed
     command:
-      - "/scripts/run_mme.sh"
+      - -c
+      - /usr/local/etc/open5gs/mme.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -67,6 +82,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   smf:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: smf
     hostname: smf
@@ -82,11 +98,15 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   sgwc:
+    restart: always
     image: iqtlabs/open5gs:latest
     container_name: sgwc
     hostname: sgwc
+    entrypoint:
+      - /usr/local/bin/open5gs-sgwcd
     command:
-      - "/scripts/run_sgwc.sh"
+      - -c
+      - /usr/local/etc/open5gs/sgwc.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:

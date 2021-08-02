@@ -11,16 +11,23 @@ services:
   webui:
     image: iqtlabs/open5gs:latest
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     environment:
+      - NODE_ENV=dev
       - 'DB_URI=mongodb://${DB_USER}:${DB_PASS}@mongodb/open5gs?authSource=admin'
       - DB_HOST=mongodb
     container_name: webui
     hostname: webui
     ports:
       - "3000:3000"
+    entrypoint:
+      - npm
     command:
-      - "/scripts/run_webui.sh"
+      - run
+      - dev
+      - --prefix
+      - /open5gs/webui
     networks:
       cpn:
         ipv4_address: 192.168.26.6
