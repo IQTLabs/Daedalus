@@ -42,6 +42,4 @@ nrf:
 upf:
   pfcp:
     - addr: 192.168.27.41
-      apn: internet
-    - addr: 192.168.27.42
-      apn: [internet2, internet3]
+      apn: [internet, internet2, internet3]

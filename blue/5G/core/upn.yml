@@ -12,27 +12,16 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: sgwu
     hostname: sgwu
+    entrypoint:
+      - /usr/local/bin/open5gs-sgwud
     command:
-      - "/scripts/run_sgwu.sh"
+      - -c
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
       upn:
         ipv4_address: 192.168.27.31
-    labels:
-      - "dovesnap.faucet.mirror=true"
-      - "daedalus.namespace=primary"
-  sgwu2:
-    image: iqtlabs/open5gs:latest
-    container_name: sgwu2
-    hostname: sgwu2
-    command:
-      - "/scripts/run_sgwu.sh"
-    volumes:
-      - "../configs:/usr/local/etc:z"
-    networks:
-      upn:
-        ipv4_address: 192.168.27.32
     labels:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
@@ -43,28 +32,6 @@ services:
     command:
       - "/scripts/run_upf.sh"
       - "10.10.0.1/16"
-    volumes:
-      - "../configs:/usr/local/etc:z"
-    cap_add:
-      - NET_ADMIN
-      - SYS_NICE
-    devices:
-      - /dev/net/tun
-    sysctls:
-      - net.ipv4.conf.all.send_redirects=0
-      - net.ipv4.conf.default.send_redirects=0
-    networks:
-      upn:
-        ipv4_address: 192.168.27.41
-    labels:
-      - "dovesnap.faucet.mirror=true"
-      - "daedalus.namespace=primary"
-  upf2:
-    image: iqtlabs/open5gs:latest
-    container_name: upf2
-    hostname: upf2
-    command:
-      - "/scripts/run_upf.sh"
       - "10.11.0.1/16"
       - "10.12.0.1/16"
     volumes:
@@ -79,7 +46,7 @@ services:
       - net.ipv4.conf.default.send_redirects=0
     networks:
       upn:
-        ipv4_address: 192.168.27.42
+        ipv4_address: 192.168.27.41
     labels:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"

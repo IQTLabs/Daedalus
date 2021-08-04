@@ -51,8 +51,7 @@ WORKDIR /open5gs/webui
 RUN npm install && npm run build
 RUN mkdir -p /usr/local/var/log/open5gs
 WORKDIR /usr/local/var/log/open5gs
-RUN touch amf.log ausf.log bsf.log nrf.log nssf.log pcf.log udm.log udr.log
-RUN touch hss.log pcrf.log mme.log smf.log sgwc.log
+RUN touch smf.log
 
 COPY scripts /scripts
 

@@ -140,20 +140,15 @@ amf:
 sgwu:
     pfcp:
       - addr: 192.168.27.31
-      - addr: 192.168.27.32
     gtpu:
       - addr: 192.168.27.31
-      - addr: 192.168.27.32
 
 upf:
     pfcp:
       - addr: 192.168.27.41
-        apn: internet
-      - addr: 192.168.27.42
-        apn: [internet2, internet3]
+        apn: [internet, internet2, internet3]
     gtpu:
       - addr: 192.168.27.41
-      - addr: 192.168.27.42
     subnet:
       - addr: 10.10.0.1/16
         apn: internet
