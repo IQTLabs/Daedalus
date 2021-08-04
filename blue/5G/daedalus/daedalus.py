@@ -130,7 +130,7 @@ class Daedalus():
             if 'core' in self.options:
                 SMF = '5GC'
             # TODO handle multiple SDRs of the same type
-            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, SMF=SMF):
+            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, BLADERF_TXGAIN=self.bladerf_txgain, BLADERF_RXGAIN=self.bladerf_rxgain, ETTUS_TXGAIN=self.ettus_txgain, ETTUS_RXGAIN=self.ettus_rxgain, LIMESDR_TXGAIN=self.limesdr_txgain, LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=SMF):
                 docker_compose.bound_command(compose_up) & FG
         else:
             logging.warning('No services to start, quitting.')
@@ -512,6 +512,12 @@ class Daedalus():
             self.bladerf_earfcn = '3400'
             self.ettus_earfcn = '1800'
             self.limesdr_earfcn = '900'
+            self.bladerf_txgain = '80'
+            self.bladerf_rxgain = '40'
+            self.ettus_txgain = '80'
+            self.ettus_rxgain = '40'
+            self.limesdr_txgain = '80'
+            self.limesdr_rxgain = '40'
             self.mcc = '001'
             self.mnc = '01'
 
@@ -533,6 +539,20 @@ class Daedalus():
                             self.ettus_earfcn = str(answers['earfcn'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_earfcn = str(answers['earfcn'])
+                    if 'txgain' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.bladerf_txgain = str(answers['txgain'])
+                        if sdr == 'ettus-enb':
+                            self.ettus_txgain = str(answers['txgain'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_txgain = str(answers['txgain'])
+                    if 'rxgain' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.bladerf_rxgain = str(answers['rxgain'])
+                        if sdr == 'ettus-enb':
+                            self.ettus_rxgain = str(answers['rxgain'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_rxgain = str(answers['rxgain'])
             if 'imsis' in self.options:
                 adding_imsis = True
                 while adding_imsis:

@@ -35,3 +35,5 @@ services:
       - --enb.s1c_bind_addr=192.168.29.62
       - --rf.device_name=UHD
       - --rf.dl_earfcn=${ETTUS_EARFCN}
+      - --rf.tx_gain=${ETTUS_TXGAIN}
+      - --rf.rx_gain=${ETTUS_RXGAIN}

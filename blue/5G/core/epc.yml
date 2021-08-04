@@ -24,7 +24,7 @@ services:
       - /usr/local/bin/open5gs-hssd
     command:
       - -c
-      - /usr/local/etc/open5gs/hss.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -51,7 +51,7 @@ services:
       - /usr/local/bin/open5gs-pcrfd
     command:
       - -c
-      - /usr/local/etc/open5gs/pcrf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -72,7 +72,7 @@ services:
       - /usr/local/bin/open5gs-mmed
     command:
       - -c
-      - /usr/local/etc/open5gs/mme.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -106,7 +106,7 @@ services:
       - /usr/local/bin/open5gs-sgwcd
     command:
       - -c
-      - /usr/local/etc/open5gs/sgwc.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:

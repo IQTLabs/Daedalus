@@ -38,3 +38,5 @@ services:
       - --rf.device_name=soapy
       - --rf.device_args=auto
       - --rf.dl_earfcn=${LIMESDR_EARFCN}
+      - --rf.tx_gain=${LIMESDR_TXGAIN}
+      - --rf.rx_gain=${LIMESDR_RXGAIN}

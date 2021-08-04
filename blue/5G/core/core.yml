@@ -20,7 +20,7 @@ services:
       - /usr/local/bin/open5gs-nrfd
     command:
       - -c
-      - /usr/local/etc/open5gs/nrf.yaml
+      - /usr/local/etc/slice.yaml
     healthcheck:
       test: netstat -ltn | grep -c 7777
       interval: 10s
@@ -47,7 +47,7 @@ services:
       - /usr/local/bin/open5gs-ausfd
     command:
       - -c
-      - /usr/local/etc/open5gs/ausf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -68,7 +68,7 @@ services:
       - /usr/local/bin/open5gs-nssfd
     command:
       - -c
-      - /usr/local/etc/open5gs/nssf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -91,7 +91,7 @@ services:
       - /usr/local/bin/open5gs-udmd
     command:
       - -c
-      - /usr/local/etc/open5gs/udm.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -112,7 +112,7 @@ services:
       - /usr/local/bin/open5gs-bsfd
     command:
       - -c
-      - /usr/local/etc/open5gs/bsf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -141,7 +141,7 @@ services:
       - /usr/local/bin/open5gs-pcfd
     command:
       - -c
-      - /usr/local/etc/open5gs/pcf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -168,7 +168,7 @@ services:
       - /usr/local/bin/open5gs-udrd
     command:
       - -c
-      - /usr/local/etc/open5gs/udr.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
@@ -197,7 +197,7 @@ services:
       - /usr/local/bin/open5gs-amfd
     command:
       - -c
-      - /usr/local/etc/open5gs/amf.yaml
+      - /usr/local/etc/slice.yaml
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
