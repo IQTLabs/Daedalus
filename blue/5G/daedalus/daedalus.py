@@ -84,7 +84,7 @@ class Daedalus():
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = 'v0.22.3'
+        RELEASE = 'v0.22.5'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -100,7 +100,7 @@ class Daedalus():
         tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
         rm[local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
         args = ['-f', 'docker-compose.yml', '-f',
-                'docker-compose-standalone.yml', 'up', '-d']
+                'docker-compose-standalone.yml', 'up', '-d', '--build']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         with local.env(MIRROR_BRIDGE_OUT='tpmirrorint', FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
             with local.cwd(dovesnap_dir[0]):
