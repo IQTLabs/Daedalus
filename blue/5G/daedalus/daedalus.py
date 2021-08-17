@@ -84,7 +84,7 @@ class Daedalus():
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = 'v0.22.5'
+        RELEASE = 'v0.22.6'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -109,7 +109,7 @@ class Daedalus():
     @staticmethod
     def create_networks():
         dovesnap_opts = ['network', 'create', '-o', 'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
-                         '-o', 'ovs.bridge.mtu=9000', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
+                         '-o', 'ovs.bridge.mtu=9000', '-o', 'ovs.bridge.preallocate_ports=15', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
         cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
                     '--gateway', '192.168.26.1', '--ipam-opt', 'com.docker.network.bridge.name=cpn', '-o', 'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
         upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630', '-o', 'ovs.bridge.mode=nat', '--subnet',
