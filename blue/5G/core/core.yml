@@ -14,6 +14,9 @@ services:
   nrf:
     restart: always
     image: iqtlabs/open5gs:latest
+    depends_on:
+      hss:
+        condition: service_started
     container_name: nrf
     hostname: nrf
     entrypoint:
@@ -85,8 +88,6 @@ services:
     depends_on:
       nrf:
         condition: service_healthy
-      udr:
-        condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-udmd
     command:
@@ -131,8 +132,6 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     depends_on:
-      bsf:
-        condition: service_started
       nrf:
         condition: service_healthy
       mongodb:
@@ -183,15 +182,7 @@ services:
     container_name: amf
     hostname: amf
     depends_on:
-      nrf:
-        condition: service_healthy
-      ausf:
-        condition: service_started
-      udr:
-        condition: service_started
-      udm:
-        condition: service_started
-      nssf:
+      smf:
         condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-amfd

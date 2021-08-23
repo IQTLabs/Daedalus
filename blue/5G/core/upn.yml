@@ -12,6 +12,9 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: sgwu
     hostname: sgwu
+    depends_on:
+      smf:
+        condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-sgwud
     command:
@@ -29,6 +32,9 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: upf
     hostname: upf
+    depends_on:
+      sgwu:
+        condition: service_started
     command:
       - "/scripts/run_upf.sh"
       - "10.10.0.1/16"

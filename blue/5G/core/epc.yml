@@ -14,6 +14,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      upf:
+        condition: service_started
     container_name: hss
     hostname: hss
     environment:
@@ -63,9 +65,6 @@ services:
   mme:
     restart: always
     image: iqtlabs/open5gs:latest
-    depends_on:
-      hss:
-        condition: service_started
     container_name: mme
     hostname: mme
     entrypoint:
@@ -84,6 +83,9 @@ services:
   smf:
     restart: always
     image: iqtlabs/open5gs:latest
+    depends_on:
+      sgwc:
+        condition: service_started
     container_name: smf
     hostname: smf
     command:
@@ -100,6 +102,9 @@ services:
   sgwc:
     restart: always
     image: iqtlabs/open5gs:latest
+    depends_on:
+      mme:
+        condition: service_started
     container_name: sgwc
     hostname: sgwc
     entrypoint:
