@@ -40,20 +40,26 @@ logging.basicConfig(level=level)
 class Daedalus():
 
     def __init__(self, raw_args=None):
+        # defaults
+        self.bladerf_prb = '50'
+        self.ettus_prb = '50'
+        self.limesdr_prb = '50'
+        self.bladerf_earfcn = '3400'
+        self.ettus_earfcn = '1800'
+        self.limesdr_earfcn = '900'
+        self.bladerf_txgain = '80'
+        self.bladerf_rxgain = '40'
+        self.ettus_txgain = '80'
+        self.ettus_rxgain = '40'
+        self.limesdr_txgain = '80'
+        self.limesdr_rxgain = '40'
+        self.mcc = '001'
+        self.mnc = '01'
+
+        self.raw_args = raw_args
         self.compose_files = []
         self.options = []
-        previous_dir = os.getcwd()
-        try:
-            os.chdir(os.path.dirname(__file__).split('lib')[0] + '/5G')
-            # TODO find a better way to do this for writing out dovesnap files
-            sudo[chmod['-R', '777', '.']]()
-        except Exception as e:
-            logging.error(f'Unable to find config files, exiting because: {e}')
-            sys.exit(1)
-        self.main(raw_args=raw_args)
-        # TODO find a better way to do this for writing out dovesnap files
-        sudo[chmod['-R', '755', '.']]()
-        os.chdir(previous_dir)
+        self.previous_dir = os.getcwd()
 
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
@@ -425,7 +431,23 @@ class Daedalus():
                 if 'Quit (services that were not removed will continue to run)' in selections:
                     running = False
 
-    def main(self, raw_args=None):
+    @staticmethod
+    def set_config_dir(conf_dir='/5G'):
+        try:
+            os.chdir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
+            # TODO find a better way to do this for writing out dovesnap files
+            sudo[chmod['-R', '777', '.']]()
+        except Exception as e:
+            logging.error(f'Unable to find config files, exiting because: {e}')
+            sys.exit(1)
+
+    def reset_cwd(self):
+        # TODO find a better way to do this for writing out dovesnap files
+        sudo[chmod['-R', '755', '.']]()
+        os.chdir(self.previous_dir)
+
+    def main(self):
+        self.set_config_dir()
         parser = argparse.ArgumentParser(prog='Daedalus',
                                          description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
         parser.add_argument('--version', '-V', action='version',
@@ -433,7 +455,7 @@ class Daedalus():
         # TODO set log level
         parser.add_argument('--verbose', '-v', choices=[
                             'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
-        args = parser.parse_args(raw_args)
+        args = parser.parse_args(self.raw_args)
         self.check_commands()
         self.cleanup()
         answers = self.execute_prompt(self.main_questions())
@@ -505,22 +527,6 @@ class Daedalus():
                 self.options.append('webui')
                 build_open5gs = True
 
-            # defaults
-            self.bladerf_prb = '50'
-            self.ettus_prb = '50'
-            self.limesdr_prb = '50'
-            self.bladerf_earfcn = '3400'
-            self.ettus_earfcn = '1800'
-            self.limesdr_earfcn = '900'
-            self.bladerf_txgain = '80'
-            self.bladerf_rxgain = '40'
-            self.ettus_txgain = '80'
-            self.ettus_rxgain = '40'
-            self.limesdr_txgain = '80'
-            self.limesdr_rxgain = '40'
-            self.mcc = '001'
-            self.mnc = '01'
-
             sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
             for sdr in sdrs:
                 if sdr in self.options:
@@ -578,3 +584,4 @@ class Daedalus():
             self.create_networks()
             self.start_services()
             self.loop()
+        self.reset_cwd()
