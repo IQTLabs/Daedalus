@@ -21,7 +21,7 @@ jobs:
     - name: unit_test
       run: |
         ./blue/tests/install_test.sh && \
-        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        cd blue && PYTHONPATH=.:$PYTHONPATH PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=5G/daedalus -c ../.coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
   srsran_enb_ue_int_test:
