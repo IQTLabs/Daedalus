@@ -34,3 +34,5 @@ services:
       - --enb.s1c_bind_addr=192.168.29.61
       - --rf.device_name=bladeRF
       - --rf.dl_earfcn=${BLADERF_EARFCN}
+      - --rf.tx_gain=${BLADERF_TXGAIN}
+      - --rf.rx_gain=${BLADERF_RXGAIN}

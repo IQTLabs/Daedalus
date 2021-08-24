@@ -9,6 +9,8 @@ import docker as dclient
 from daedalus import __file__
 from daedalus import __version__
 from daedalus.validators import IMSIValidator
+from daedalus.validators import MCCValidator
+from daedalus.validators import MNCValidator
 from daedalus.validators import NumberValidator
 from examples import custom_style_2
 from plumbum import FG
@@ -82,7 +84,7 @@ class Daedalus():
 
     @staticmethod
     def start_dovesnap():
-        RELEASE = 'v0.22.3'
+        RELEASE = 'v0.22.6'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -98,7 +100,7 @@ class Daedalus():
         tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
         rm[local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
         args = ['-f', 'docker-compose.yml', '-f',
-                'docker-compose-standalone.yml', 'up', '-d']
+                'docker-compose-standalone.yml', 'up', '-d', '--build']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         with local.env(MIRROR_BRIDGE_OUT='tpmirrorint', FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
             with local.cwd(dovesnap_dir[0]):
@@ -107,7 +109,7 @@ class Daedalus():
     @staticmethod
     def create_networks():
         dovesnap_opts = ['network', 'create', '-o', 'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
-                         '-o', 'ovs.bridge.mtu=9000', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
+                         '-o', 'ovs.bridge.mtu=9000', '-o', 'ovs.bridge.preallocate_ports=15', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
         cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
                     '--gateway', '192.168.26.1', '--ipam-opt', 'com.docker.network.bridge.name=cpn', '-o', 'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
         upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630', '-o', 'ovs.bridge.mode=nat', '--subnet',
@@ -128,7 +130,7 @@ class Daedalus():
             if 'core' in self.options:
                 SMF = '5GC'
             # TODO handle multiple SDRs of the same type
-            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, SMF=SMF):
+            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, BLADERF_TXGAIN=self.bladerf_txgain, BLADERF_RXGAIN=self.bladerf_rxgain, ETTUS_TXGAIN=self.ettus_txgain, ETTUS_RXGAIN=self.ettus_rxgain, LIMESDR_TXGAIN=self.limesdr_txgain, LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=SMF):
                 docker_compose.bound_command(compose_up) & FG
         else:
             logging.warning('No services to start, quitting.')
@@ -227,6 +229,25 @@ class Daedalus():
         ]
 
     @staticmethod
+    def global_number_questions():
+        return [
+            {
+                'type': 'input',
+                'name': 'mcc',
+                'message': f'What MCC code for {enb} would you like?',
+                'default': '001',
+                'validate': MCCValidator,
+            },
+            {
+                'type': 'input',
+                'name': 'mnc',
+                'message': f'What MNC code for {enb} would you like?',
+                'default': '01',
+                'validate': MNCValidator,
+            },
+        ]
+
+    @staticmethod
     def sdr_questions(enb):
         return [
             {
@@ -244,6 +265,20 @@ class Daedalus():
                 # TODO should also validate the EARFCN wasn't already used
                 'validate': NumberValidator,
                 'filter': lambda val: int(val),
+            },
+            {
+                'type': 'input',
+                'name': 'txgain',
+                'message': f'What TX gain value for {enb} would you like?',
+                'default': '80',
+                'validate': NumberValidator,
+            },
+            {
+                'type': 'input',
+                'name': 'rxgain',
+                'message': f'What RX gain value for {enb} would you like?',
+                'default': '40',
+                'validate': NumberValidator,
             },
         ]
 
@@ -395,6 +430,7 @@ class Daedalus():
                                          description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
         parser.add_argument('--version', '-V', action='version',
                             version=f'%(prog)s {__version__}')
+        # TODO set log level
         parser.add_argument('--verbose', '-v', choices=[
                             'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
         args = parser.parse_args(raw_args)
@@ -476,6 +512,15 @@ class Daedalus():
             self.bladerf_earfcn = '3400'
             self.ettus_earfcn = '1800'
             self.limesdr_earfcn = '900'
+            self.bladerf_txgain = '80'
+            self.bladerf_rxgain = '40'
+            self.ettus_txgain = '80'
+            self.ettus_rxgain = '40'
+            self.limesdr_txgain = '80'
+            self.limesdr_rxgain = '40'
+            self.mcc = '001'
+            self.mnc = '01'
+
             sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
             for sdr in sdrs:
                 if sdr in self.options:
@@ -494,6 +539,20 @@ class Daedalus():
                             self.ettus_earfcn = str(answers['earfcn'])
                         if sdr == 'limesdr-enb':
                             self.limesdr_earfcn = str(answers['earfcn'])
+                    if 'txgain' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.bladerf_txgain = str(answers['txgain'])
+                        if sdr == 'ettus-enb':
+                            self.ettus_txgain = str(answers['txgain'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_txgain = str(answers['txgain'])
+                    if 'rxgain' in answers:
+                        if sdr == 'bladerf-enb':
+                            self.bladerf_rxgain = str(answers['rxgain'])
+                        if sdr == 'ettus-enb':
+                            self.ettus_rxgain = str(answers['rxgain'])
+                        if sdr == 'limesdr-enb':
+                            self.limesdr_rxgain = str(answers['rxgain'])
             if 'imsis' in self.options:
                 adding_imsis = True
                 while adding_imsis:

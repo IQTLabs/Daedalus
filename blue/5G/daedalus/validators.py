@@ -18,6 +18,34 @@ class NumberValidator(Validator):
                 cursor_position=len(document.text))  # pragma: no cover
 
 
+class MCCValidator(Validator):
+    def validate(self, document):
+        try:
+            int(document.text.lstrip('0'))
+        except ValueError:  # pragma: no cover
+            raise ValidationError(
+                message='Please enter a number',
+                cursor_position=len(document.text))  # pragma: no cover
+        if int(document.text.lstrip('0')) < 0 or int(document.text.lstrip('0')) > 999 or len(document.text) != 3:
+            raise ValidationError(
+                message='Please enter a number between 000 and 999',
+                cursor_position=len(document.text))  # pragma: no cover
+
+
+class MNCValidator(Validator):
+    def validate(self, document):
+        try:
+            int(document.text.lstrip('0'))
+        except ValueError:  # pragma: no cover
+            raise ValidationError(
+                message='Please enter a number',
+                cursor_position=len(document.text))  # pragma: no cover
+        if int(document.text.lstrip('0')) < 0 or int(document.text.lstrip('0')) > 99 or len(document.text) != 2:
+            raise ValidationError(
+                message='Please enter a number between 00 and 99',
+                cursor_position=len(document.text))  # pragma: no cover
+
+
 class IMSIValidator(Validator):
     def validate(self, document):
         imsi = None

@@ -10,6 +10,7 @@ RUN apt-get update && \
         flex \
         git \
         gnupg \
+        jq \
         iproute2 \
         iptables \
         iputils-ping \
@@ -49,6 +50,9 @@ RUN ln -s /usr/local/lib/*/freeDiameter /freeDiameter
 RUN ldconfig
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
+RUN mkdir -p /usr/local/var/log/open5gs
+WORKDIR /usr/local/var/log/open5gs
+RUN touch smf.log
 
 COPY scripts /scripts
 
@@ -56,5 +60,3 @@ WORKDIR /open5gs
 # TODO: provide certs externally; open5gs will use locally built certs for now via make_certs.sh in this image.
 RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make_certs.sh && \
   mkdir /certs && misc/make_certs.sh /certs
-
-ENTRYPOINT ["/bin/sh"]
