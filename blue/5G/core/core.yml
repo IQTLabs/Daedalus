@@ -28,8 +28,8 @@ services:
       test: /scripts/nrfhc.sh
       interval: 10s
       timeout: 10s
-      retries: 10
-      start_period: 60s
+      retries: 5
+      start_period: 40s
     volumes:
       - "../configs:/usr/local/etc:z"
     networks:
