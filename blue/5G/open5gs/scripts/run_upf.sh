@@ -19,7 +19,7 @@ for ip in $* ; do
 	brmac=$(ovs-ofctl dump-ports-desc "$br"|grep LOCAL|grep -Eo '([a-f0-9:]{17,17})$')
 	ovs-ofctl del-flows "$br"
 	ovs-ofctl add-flow "$br" "in_port=$br,actions=output:$ifname"
-	ovs-ofctl add-flow "$br" "in_port=$ifname,,actions=set_field:$brmac->eth_dst,output:$br"
+	ovs-ofctl add-flow "$br" "in_port=$ifname,actions=set_field:$brmac->eth_dst,output:$br"
 	ip addr add "$ip" dev "$br"
 	ip link set "$ifname" up
 	ip link set "$br" up
