@@ -432,9 +432,9 @@ class Daedalus():
                     running = False
 
     @staticmethod
-    def set_config_dir():
+    def set_config_dir(conf_dir='/5G'):
         try:
-            os.chdir(os.path.dirname(__file__).split('lib')[0] + '/5G')
+            os.chdir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
             # TODO find a better way to do this for writing out dovesnap files
             sudo[chmod['-R', '777', '.']]()
         except Exception as e:
