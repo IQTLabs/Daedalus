@@ -1,0 +1,13 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  srsran_enb_ue_int_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: srsran_enb_ue_int_test
+        run: |
+          ./blue/tests/install_test.sh && ./blue/tests/test_srsran_enb_ue.sh

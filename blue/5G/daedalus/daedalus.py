@@ -40,6 +40,22 @@ logging.basicConfig(level=level)
 class Daedalus():
 
     def __init__(self, raw_args=None):
+        # defaults
+        self.bladerf_prb = '50'
+        self.ettus_prb = '50'
+        self.limesdr_prb = '50'
+        self.bladerf_earfcn = '3400'
+        self.ettus_earfcn = '1800'
+        self.limesdr_earfcn = '900'
+        self.bladerf_txgain = '80'
+        self.bladerf_rxgain = '40'
+        self.ettus_txgain = '80'
+        self.ettus_rxgain = '40'
+        self.limesdr_txgain = '80'
+        self.limesdr_rxgain = '40'
+        self.mcc = '001'
+        self.mnc = '01'
+
         self.compose_files = []
         self.options = []
         previous_dir = os.getcwd()
@@ -504,22 +520,6 @@ class Daedalus():
                 self.compose_files += ['-f', 'core/ui.yml']
                 self.options.append('webui')
                 build_open5gs = True
-
-            # defaults
-            self.bladerf_prb = '50'
-            self.ettus_prb = '50'
-            self.limesdr_prb = '50'
-            self.bladerf_earfcn = '3400'
-            self.ettus_earfcn = '1800'
-            self.limesdr_earfcn = '900'
-            self.bladerf_txgain = '80'
-            self.bladerf_rxgain = '40'
-            self.ettus_txgain = '80'
-            self.ettus_rxgain = '40'
-            self.limesdr_txgain = '80'
-            self.limesdr_rxgain = '40'
-            self.mcc = '001'
-            self.mnc = '01'
 
             sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
             for sdr in sdrs:
