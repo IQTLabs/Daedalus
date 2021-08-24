@@ -31,4 +31,6 @@ jobs:
         uses: actions/checkout@v2
       - name: srsran_enb_ue_int_test
         run: |
-          ./blue/tests/install_test.sh && ./blue/tests/test_srsran_enb_ue.sh
+          ./blue/tests/install_test.sh && \
+          cd blue && sudo python3 setup.py install && cd .. && \
+          ./blue/tests/test_srsran_enb_ue.sh
