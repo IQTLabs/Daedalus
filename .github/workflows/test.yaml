@@ -21,7 +21,7 @@ jobs:
     - name: unit_test
       run: |
         ./blue/tests/install_test.sh && \
-        export PYTHONPATH=$PWD/blue:$PYTHONPATH && \
+        export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
