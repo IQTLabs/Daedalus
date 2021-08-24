@@ -8,7 +8,7 @@ from daedalus.daedalus import Daedalus
 
 def test_start_remove_dovesnap():
     instance = Daedalus()
-    instancce.set_config_dir()
+    instance.set_config_dir()
     instance.start_dovesnap()
     instance.remove_dovesnap()
     instance.reset_cwd()
