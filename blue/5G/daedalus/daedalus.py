@@ -59,6 +59,7 @@ class Daedalus():
         self.raw_args = raw_args
         self.compose_files = []
         self.options = []
+        self.previous_dir = os.getcwd()
 
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
@@ -430,8 +431,8 @@ class Daedalus():
                 if 'Quit (services that were not removed will continue to run)' in selections:
                     running = False
 
-    def main(self):
-        previous_dir = os.getcwd()
+    @staticmethod
+    def set_config_dir():
         try:
             os.chdir(os.path.dirname(__file__).split('lib')[0] + '/5G')
             # TODO find a better way to do this for writing out dovesnap files
@@ -439,6 +440,14 @@ class Daedalus():
         except Exception as e:
             logging.error(f'Unable to find config files, exiting because: {e}')
             sys.exit(1)
+
+    def reset_cwd(self):
+        # TODO find a better way to do this for writing out dovesnap files
+        sudo[chmod['-R', '755', '.']]()
+        os.chdir(self.previous_dir)
+
+    def main(self):
+        self.set_config_dir()
         parser = argparse.ArgumentParser(prog='Daedalus',
                                          description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
         parser.add_argument('--version', '-V', action='version',
@@ -575,7 +584,4 @@ class Daedalus():
             self.create_networks()
             self.start_services()
             self.loop()
-
-        # TODO find a better way to do this for writing out dovesnap files
-        sudo[chmod['-R', '755', '.']]()
-        os.chdir(previous_dir)
+        self.reset_cwd()
