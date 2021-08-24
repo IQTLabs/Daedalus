@@ -13,6 +13,9 @@ services:
   gnb:
     image: iqtlabs/ueransim:latest
     container_name: gnb
+    depends_on:
+      nrf:
+        condition: service_healthy
     cap_add:
       - SYS_NICE
       - NET_ADMIN

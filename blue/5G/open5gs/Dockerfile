@@ -10,6 +10,7 @@ RUN apt-get update && \
         flex \
         git \
         gnupg \
+        jq \
         iproute2 \
         iptables \
         iputils-ping \
