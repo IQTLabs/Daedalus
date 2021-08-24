@@ -5,7 +5,7 @@ set -e
 /etc/init.d/openvswitch-switch start
 
 i=0
-for ip in "$*" ; do
+for ip in $* ; do
 	i=$((i+1))
 	ifname=ogstap${i}
 	if [ "$i" -eq 1 ] ; then
