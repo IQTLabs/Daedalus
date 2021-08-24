@@ -11,4 +11,4 @@ def test_start_remove_dovesnap():
     instancce.set_config_dir()
     instance.start_dovesnap()
     instance.remove_dovesnap()
-    instancce.reset_cwd()
+    instance.reset_cwd()
