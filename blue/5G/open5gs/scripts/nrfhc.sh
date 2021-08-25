@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NRFSBI=192.168.26.61:7777
-ALLREG="AMF AUSF NSSF PCF SMF UDM UDR"
+ALLREG="AMF AUSF BSF NSSF PCF SMF UDM UDR"
 
 instances=$(curl -s --http2-prior-knowledge "$NRFSBI"/nnrf-nfm/v1/nf-instances| jq -r "._links.items[].href")
 registered=""
