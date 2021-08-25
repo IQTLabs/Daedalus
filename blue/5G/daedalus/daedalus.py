@@ -524,22 +524,10 @@ class Daedalus():
         sudo[chmod['-R', '755', '.']]()
         os.chdir(self.previous_dir)
 
-    def main(self):
-        """Main entrypoint to the class, parse args and main program driver"""
-        self.set_config_dir()
-        parser = argparse.ArgumentParser(prog='Daedalus',
-                                         description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
-        parser.add_argument('--version', '-V', action='version',
-                            version=f'%(prog)s {__version__}')
-        # TODO set log level
-        parser.add_argument('--verbose', '-v', choices=[
-                            'DEBUG', 'INFO', 'WARNING', 'ERROR'],
-                            default='INFO',
-                            help='logging level (default=INFO)')
-        args = parser.parse_args(self.raw_args)
-        self.check_commands()
-        self.cleanup()
-        answers = self.execute_prompt(self.main_questions())
+    def parse_answers(self, answers):
+        """
+        Parses responses to which services to start to decide what happens next
+        """
         build_srsran = False
         srsran_lime = False
         build_open5gs = False
@@ -608,60 +596,88 @@ class Daedalus():
                 self.compose_files += ['-f', 'core/ui.yml']
                 self.options.append('webui')
                 build_open5gs = True
+        return build_srsran, srsran_lime, build_open5gs, build_ueransim
 
-            sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
-            for sdr in sdrs:
-                if sdr in self.options:
-                    answers = self.execute_prompt(self.sdr_questions(sdr))
-                    if 'prb' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_prb = str(answers['prb'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_prb = str(answers['prb'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_prb = str(answers['prb'])
-                    if 'earfcn' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_earfcn = str(answers['earfcn'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_earfcn = str(answers['earfcn'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_earfcn = str(answers['earfcn'])
-                    if 'txgain' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_txgain = str(answers['txgain'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_txgain = str(answers['txgain'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_txgain = str(answers['txgain'])
-                    if 'rxgain' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_rxgain = str(answers['rxgain'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_rxgain = str(answers['rxgain'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_rxgain = str(answers['rxgain'])
-            if 'imsis' in self.options:
-                adding_imsis = True
-                while adding_imsis:
-                    answers = self.execute_prompt(self.imsi_questions())
-                    if 'imsi' in answers:
-                        try:
-                            imsi = json.loads(answers['imsi'])
-                            for i in imsi:
-                                logging.debug('Adding IMSI: %s', i['imsi'])
-                            imsis = None
-                            with open('configs/imsis.json', 'r') as f_handle:
-                                imsis = json.load(f_handle)
-                            imsis += imsi
-                            with open('configs/imsis.json', 'w') as f_handle:
-                                json.dump(imsis, f_handle, indent=2)
-                        except Exception as err:  # pragma: no cover
-                            logging.error(
-                                'Unable to add IMSI because: %s', err)
-                    adding_imsis = answers.get('add_imsi', False)
-            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
-                               open5gs=build_open5gs, srsran_lime=srsran_lime)
+    def parse_sdrs(self):
+        """Asks for SDR parameters and sets them"""
+        sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
+        for sdr in sdrs:
+            if sdr in self.options:
+                answers = self.execute_prompt(self.sdr_questions(sdr))
+                if 'prb' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_prb = str(answers['prb'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_prb = str(answers['prb'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_prb = str(answers['prb'])
+                if 'earfcn' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_earfcn = str(answers['earfcn'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_earfcn = str(answers['earfcn'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_earfcn = str(answers['earfcn'])
+                if 'txgain' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_txgain = str(answers['txgain'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_txgain = str(answers['txgain'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_txgain = str(answers['txgain'])
+                if 'rxgain' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_rxgain = str(answers['rxgain'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_rxgain = str(answers['rxgain'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_rxgain = str(answers['rxgain'])
+
+    def write_imsis(self):
+        """Asks for IMSI changes and writes them out to JSON"""
+        if 'imsis' in self.options:
+            adding_imsis = True
+            while adding_imsis:
+                answers = self.execute_prompt(self.imsi_questions())
+                if 'imsi' in answers:
+                    try:
+                        imsi = json.loads(answers['imsi'])
+                        for i in imsi:
+                            logging.debug('Adding IMSI: %s', i['imsi'])
+                        imsis = None
+                        with open('configs/imsis.json', 'r') as f_handle:
+                            imsis = json.load(f_handle)
+                        imsis += imsi
+                        with open('configs/imsis.json', 'w') as f_handle:
+                            json.dump(imsis, f_handle, indent=2)
+                    except Exception as err:  # pragma: no cover
+                        logging.error(
+                            'Unable to add IMSI because: %s', err)
+                adding_imsis = answers.get('add_imsi', False)
+
+    def main(self):
+        """Main entrypoint to the class, parse args and main program driver"""
+        self.set_config_dir()
+        parser = argparse.ArgumentParser(prog='Daedalus',
+                                         description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
+        parser.add_argument('--version', '-V', action='version',
+                            version=f'%(prog)s {__version__}')
+        # TODO set log level
+        parser.add_argument('--verbose', '-v', choices=[
+                            'DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                            default='INFO',
+                            help='logging level (default=INFO)')
+        args = parser.parse_args(self.raw_args)
+        self.check_commands()
+        self.cleanup()
+        answers = self.execute_prompt(self.main_questions())
+        build_srsran, srsran_lime, build_open5gs, build_ueransim = self.parse_answers(
+            answers)
+        self.parse_sdrs()
+        self.write_imsis()
+        self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
+                           open5gs=build_open5gs, srsran_lime=srsran_lime)
+        if 'services' in answers:
             self.start_dovesnap()
             self.create_networks()
             self.start_services()
