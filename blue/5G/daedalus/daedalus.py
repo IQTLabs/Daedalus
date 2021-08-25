@@ -4,6 +4,7 @@ import logging
 import os
 import shlex
 import sys
+import time
 
 import docker as dclient
 from daedalus import __file__
@@ -88,8 +89,7 @@ class Daedalus():
                 docker.bound_command(args) & FG
         return
 
-    @staticmethod
-    def start_dovesnap():
+    def start_dovesnap(self):
         RELEASE = 'v0.22.6'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
@@ -110,7 +110,12 @@ class Daedalus():
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         with local.env(MIRROR_BRIDGE_OUT='tpmirrorint', FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
             with local.cwd(dovesnap_dir[0]):
-                docker_compose.bound_command(args) & FG
+                try:
+                    docker_compose.bound_command(args) & FG
+                except Exception as e:
+                    logging.error(
+                        f'Failed to start dovesnap because: {e} \nCleaning up and quitting.')
+                    self.cleanup()
 
     @staticmethod
     def create_networks():
@@ -137,14 +142,24 @@ class Daedalus():
                 SMF = '5GC'
             # TODO handle multiple SDRs of the same type
             with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, BLADERF_TXGAIN=self.bladerf_txgain, BLADERF_RXGAIN=self.bladerf_rxgain, ETTUS_TXGAIN=self.ettus_txgain, ETTUS_RXGAIN=self.ettus_rxgain, LIMESDR_TXGAIN=self.limesdr_txgain, LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=SMF):
-                docker_compose.bound_command(compose_up) & FG
+                try:
+                    docker_compose.bound_command(compose_up) & FG
+                except Exception as e:
+                    logging.error(
+                        f'Failed to start services because: {e} \nCleaning up and quitting.')
+                    self.cleanup()
         else:
             logging.warning('No services to start, quitting.')
 
     def follow_logs(self):
         if len(self.compose_files) > 0:
             compose_logs = self.compose_files + ['logs', '-f']
-            docker_compose.bound_command(compose_logs) & TF(None, FG=True)
+            try:
+                docker_compose.bound_command(compose_logs) & TF(None, FG=True)
+            except Exception as e:
+                logging.error(
+                    f'Failed to follow logs because: {e} \nReturning to menu in 3 seconds.')
+                time.sleep(3)
         else:
             logging.warning('No services to log.')
 
@@ -161,6 +176,14 @@ class Daedalus():
                 docker_compose.bound_command(args) & FG
             except Exception as e:
                 logging.debug(f'{e}')
+        # ensure the dovesnap network has been removed
+        try:
+            dovesnap_path = local['echo'][dovesnap_dir]()
+            dovesnap_network = dovesnap_path.split('/')[-1].strip().lower()
+            dn_args = ['network', 'rm', dovesnap_network+'_dovesnap']
+            docker.bound_command(dn_args) & FG
+        except Exception as e:
+            logging.debug(f'{e}')
 
     @staticmethod
     def remove_networks():
