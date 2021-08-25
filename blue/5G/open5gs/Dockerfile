@@ -43,7 +43,7 @@ RUN python3 -m pip install meson
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get -y install nodejs
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.2
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.3
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 RUN ln -s /usr/local/lib/*/freeDiameter /freeDiameter
