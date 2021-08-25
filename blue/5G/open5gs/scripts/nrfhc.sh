@@ -7,7 +7,9 @@ instances=$(curl -s --http2-prior-knowledge "$NRFSBI"/nnrf-nfm/v1/nf-instances| 
 registered=""
 for instance in $instances ; do
     nfmeta=$(curl -s --http2-prior-knowledge "$instance" |jq -r ".nfType,.nfStatus")
-    read -ar nfmeta <<< "${nfmeta}"
+    # Read nftype and nfstatus into an array (from space delimited string).
+    # We can't use the (VAR) format to array-ize due to shellcheck, requirements for quoting.
+    read -r -d " " -a nfmeta <<< "${nfmeta}"
     nftype=${nfmeta[0]}
     nfstatus=${nfmeta[1]}
     if [ "$nfstatus" != "REGISTERED" ] ; then
