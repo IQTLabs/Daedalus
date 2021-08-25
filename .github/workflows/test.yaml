@@ -23,7 +23,7 @@ jobs:
         ./blue/tests/install_test.sh && \
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         pytype . && \
-        pylint --fail-under=5.0 blue/5G/daedalus && \
+        pylint --fail-under=6.0 --disable=expression-not-assigned blue/5G/daedalus && \
         PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml

@@ -2,7 +2,6 @@ import argparse
 import json
 import logging
 import os
-import shlex
 import sys
 import time
 
@@ -29,7 +28,6 @@ from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
 from PyInquirer import prompt
-from PyInquirer import Separator
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -64,6 +62,7 @@ class Daedalus():
 
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
+        """Build Docker images for the various components"""
         if srsran:
             srsran_version = 'release_21_04'
             base_args = ['build', '-t', 'iqtlabs/srsran-base',
@@ -90,6 +89,7 @@ class Daedalus():
         return
 
     def start_dovesnap(self):
+        """Start Dovesnap components in Docker containers"""
         RELEASE = 'v0.22.6'
         TPFAUCETPREFIX = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
@@ -108,7 +108,8 @@ class Daedalus():
         args = ['-f', 'docker-compose.yml', '-f',
                 'docker-compose-standalone.yml', 'up', '-d', '--build']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
-        with local.env(MIRROR_BRIDGE_OUT='tpmirrorint', FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
+        with local.env(MIRROR_BRIDGE_OUT='tpmirrorint',
+                       FAUCET_PREFIX=f'{TPFAUCETPREFIX}'):
             with local.cwd(dovesnap_dir[0]):
                 try:
                     docker_compose.bound_command(args) & FG
@@ -119,29 +120,54 @@ class Daedalus():
 
     @staticmethod
     def create_networks():
-        dovesnap_opts = ['network', 'create', '-o', 'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
-                         '-o', 'ovs.bridge.mtu=9000', '-o', 'ovs.bridge.preallocate_ports=15', '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
-        cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
-                    '--gateway', '192.168.26.1', '--ipam-opt', 'com.docker.network.bridge.name=cpn', '-o', 'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
-        upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630', '-o', 'ovs.bridge.mode=nat', '--subnet',
-                    '192.168.27.0/24', '--gateway', '192.168.27.1', '--ipam-opt', 'com.docker.network.bridge.name=upn', '-d', 'ovs', 'upn']
-        rfn_opts = ['-o', 'ovs.bridge.vlan=28', '-o', 'ovs.bridge.dpid=0x640', '-o', 'ovs.bridge.mode=flat', '--subnet',
-                    '192.168.28.0/24', '--ipam-opt', 'com.docker.network.bridge.name=rfn', '-o', 'ovs.bridge.nat_acl=protectrfn', '-d', 'ovs', 'rfn']
-        ran_opts = ['-o', 'ovs.bridge.vlan=29', '-o', 'ovs.bridge.dpid=0x650', '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.29.0/24',
-                    '--gateway', '192.168.29.1', '--ipam-opt', 'com.docker.network.bridge.name=ran', '-o', 'ovs.bridge.nat_acl=protectran', '-d', 'ovs', 'ran']
+        """Create necessary Dovesnap networks as Docker networks"""
+        dovesnap_opts = ['network', 'create', '-o',
+                         'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
+                         '-o', 'ovs.bridge.mtu=9000', '-o', 'ovs.bridge.preallocate_ports=15',
+                         '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
+        cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620',
+                    '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
+                    '--gateway', '192.168.26.1', '--ipam-opt',
+                    'com.docker.network.bridge.name=cpn', '-o',
+                    'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
+        upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630',
+                    '-o', 'ovs.bridge.mode=nat', '--subnet', '192.168.27.0/24',
+                    '--gateway', '192.168.27.1', '--ipam-opt',
+                    'com.docker.network.bridge.name=upn', '-d', 'ovs', 'upn']
+        rfn_opts = ['-o', 'ovs.bridge.vlan=28', '-o', 'ovs.bridge.dpid=0x640',
+                    '-o', 'ovs.bridge.mode=flat', '--subnet', '192.168.28.0/24',
+                    '--ipam-opt', 'com.docker.network.bridge.name=rfn', '-o',
+                    'ovs.bridge.nat_acl=protectrfn', '-d', 'ovs', 'rfn']
+        ran_opts = ['-o', 'ovs.bridge.vlan=29', '-o', 'ovs.bridge.dpid=0x650',
+                    '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.29.0/24',
+                    '--gateway', '192.168.29.1', '--ipam-opt',
+                    'com.docker.network.bridge.name=ran', '-o',
+                    'ovs.bridge.nat_acl=protectran', '-d', 'ovs', 'ran']
         docker.bound_command(dovesnap_opts + cpn_opts) & FG
         docker.bound_command(dovesnap_opts + upn_opts) & FG
         docker.bound_command(dovesnap_opts + rfn_opts) & FG
         docker.bound_command(dovesnap_opts + ran_opts) & FG
 
     def start_services(self):
+        """Start selected services for the 4G/5G environment"""
         if len(self.compose_files) > 0:
             compose_up = self.compose_files + ['up', '-d', '--build']
             SMF = ''
             if 'core' in self.options:
                 SMF = '5GC'
             # TODO handle multiple SDRs of the same type
-            with local.env(BLADERF_PRB=self.bladerf_prb, BLADERF_EARFCN=self.bladerf_earfcn, ETTUS_PRB=self.ettus_prb, ETTUS_EARFCN=self.ettus_earfcn, LIMESDR_PRB=self.limesdr_prb, LIMESDR_EARFCN=self.limesdr_earfcn, BLADERF_TXGAIN=self.bladerf_txgain, BLADERF_RXGAIN=self.bladerf_rxgain, ETTUS_TXGAIN=self.ettus_txgain, ETTUS_RXGAIN=self.ettus_rxgain, LIMESDR_TXGAIN=self.limesdr_txgain, LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=SMF):
+            with local.env(BLADERF_PRB=self.bladerf_prb,
+                           BLADERF_EARFCN=self.bladerf_earfcn,
+                           ETTUS_PRB=self.ettus_prb,
+                           ETTUS_EARFCN=self.ettus_earfcn,
+                           LIMESDR_PRB=self.limesdr_prb,
+                           LIMESDR_EARFCN=self.limesdr_earfcn,
+                           BLADERF_TXGAIN=self.bladerf_txgain,
+                           BLADERF_RXGAIN=self.bladerf_rxgain,
+                           ETTUS_TXGAIN=self.ettus_txgain,
+                           ETTUS_RXGAIN=self.ettus_rxgain,
+                           LIMESDR_TXGAIN=self.limesdr_txgain,
+                           LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=SMF):
                 try:
                     docker_compose.bound_command(compose_up) & FG
                 except Exception as e:
@@ -152,6 +178,7 @@ class Daedalus():
             logging.warning('No services to start, quitting.')
 
     def follow_logs(self):
+        """Follow logs from selected services using Docker"""
         if len(self.compose_files) > 0:
             compose_logs = self.compose_files + ['logs', '-f']
             try:
@@ -165,6 +192,7 @@ class Daedalus():
 
     @staticmethod
     def remove_dovesnap():
+        """Remove the Dovesnap containers"""
         args = ['-f', 'docker-compose.yml', '-f', 'docker-compose-standalone.yml',
                 'down', '--volumes', '--remove-orphans']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
@@ -187,6 +215,7 @@ class Daedalus():
 
     @staticmethod
     def remove_networks():
+        """Remove the Dovesnap Docker networks"""
         cpn_args = ['network', 'rm', 'cpn']
         upn_args = ['network', 'rm', 'upn']
         rfn_args = ['network', 'rm', 'rfn']
@@ -213,6 +242,7 @@ class Daedalus():
             logging.debug(f'{e}')
 
     def remove_services(self):
+        """Remove the services started as Docker containers"""
         if len(self.compose_files) > 0:
             logging.debug('Removing Daedalus services')
             compose_down = self.compose_files + \
@@ -231,6 +261,7 @@ class Daedalus():
 
     @staticmethod
     def main_questions():
+        """Ask which services to start"""
         return [
             {
                 'type': 'checkbox',
@@ -259,6 +290,7 @@ class Daedalus():
 
     @staticmethod
     def global_number_questions(enb):
+        """Ask which codes to use"""
         return [
             {
                 'type': 'input',
@@ -423,7 +455,7 @@ class Daedalus():
     @staticmethod
     def check_commands():
         logging.info(
-            'Checking necessary commands exist, if it fails, install the missing tool and try again.')
+            'Checking necessary commands exist, if it fails, install the missing tools.')
         chmod['--version']()
         cp['--version']()
         curl['--version']()
@@ -477,7 +509,9 @@ class Daedalus():
                             version=f'%(prog)s {__version__}')
         # TODO set log level
         parser.add_argument('--verbose', '-v', choices=[
-                            'DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='logging level (default=INFO)')
+                            'DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                            default='INFO',
+                            help='logging level (default=INFO)')
         args = parser.parse_args(self.raw_args)
         self.check_commands()
         self.cleanup()
@@ -529,7 +563,7 @@ class Daedalus():
                     uhd_find_devices()
                 except Exception as e:
                     logging.error(
-                        'No UHD device found, but you chose Ettus. It is unlikely to work as expected.')
+                        'No UHD device found, but you chose Ettus. It is unlikely to work.')
                 build_srsran = True
             if '4G LimeSDR eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/limesdr.yml']
