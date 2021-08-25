@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy
-from essential_generators import DocumentGenerator  # pytype: disable=import-error
+from essential_generators import DocumentGenerator
 
 try:
     os.mkdir('bar')
