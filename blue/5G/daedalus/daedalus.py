@@ -14,20 +14,20 @@ from daedalus.validators import MCCValidator
 from daedalus.validators import MNCValidator
 from daedalus.validators import NumberValidator
 from examples import custom_style_2
-from plumbum import FG
-from plumbum import local
-from plumbum import TF
-from plumbum.cmd import chmod
-from plumbum.cmd import cp
-from plumbum.cmd import curl
-from plumbum.cmd import docker
-from plumbum.cmd import docker_compose
-from plumbum.cmd import ip
-from plumbum.cmd import ls
-from plumbum.cmd import mkdir
-from plumbum.cmd import rm
-from plumbum.cmd import sudo
-from plumbum.cmd import tar
+from plumbum import FG  # pytype: disable=import-error
+from plumbum import local  # pytype: disable=import-error
+from plumbum import TF  # pytype: disable=import-error
+from plumbum.cmd import chmod  # pytype: disable=import-error
+from plumbum.cmd import cp  # pytype: disable=import-error
+from plumbum.cmd import curl  # pytype: disable=import-error
+from plumbum.cmd import docker  # pytype: disable=import-error
+from plumbum.cmd import docker_compose  # pytype: disable=import-error
+from plumbum.cmd import ip  # pytype: disable=import-error
+from plumbum.cmd import ls  # pytype: disable=import-error
+from plumbum.cmd import mkdir  # pytype: disable=import-error
+from plumbum.cmd import rm  # pytype: disable=import-error
+from plumbum.cmd import sudo  # pytype: disable=import-error
+from plumbum.cmd import tar  # pytype: disable=import-error
 from PyInquirer import prompt
 from PyInquirer import Separator
 
@@ -258,7 +258,7 @@ class Daedalus():
         ]
 
     @staticmethod
-    def global_number_questions():
+    def global_number_questions(enb):
         return [
             {
                 'type': 'input',

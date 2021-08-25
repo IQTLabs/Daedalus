@@ -22,9 +22,14 @@ jobs:
       run: |
         ./blue/tests/install_test.sh && \
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
+        pytype . && \
+        pylint --fail-under=5.0 blue/5G/daedalus && \
         PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2.0.2
+      if: github.repository == 'iqtlabs/daedalus'
   srsran_enb_ue_int_test:
     runs-on: ubuntu-latest
     steps:
