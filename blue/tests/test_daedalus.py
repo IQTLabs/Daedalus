@@ -17,8 +17,8 @@ def test_start_remove_dovesnap():
 
 def test_build_images():
     instance = Daedalus()
-    instance.build_dockers(srsran=true, ueransim=true,
-                           open5gs=true, srsran_lime=true)
+    instance.build_dockers(srsran=True, ueransim=True,
+                           open5gs=True, srsran_lime=True)
 
 
 def test_create_remove_networks():
