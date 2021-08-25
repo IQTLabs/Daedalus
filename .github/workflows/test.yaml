@@ -28,7 +28,7 @@ jobs:
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2.0.2
+      uses: codecov/codecov-action@v2.0.3
       if: github.repository == 'iqtlabs/daedalus'
   srsran_enb_ue_int_test:
     runs-on: ubuntu-latest
