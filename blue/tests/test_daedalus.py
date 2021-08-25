@@ -33,3 +33,33 @@ def test_create_remove_networks():
     instance.remove_networks()
     instance.remove_dovesnap()
     instance.reset_cwd()
+
+
+def test_main_questions():
+    instance = Daedalus()
+    instance.main_questions()
+
+
+def test_global_number_questions():
+    instance = Daedalus()
+    instance.global_number_questions('enb')
+
+
+def test_sdr_questions():
+    instance = Daedalus()
+    instance.sdr_questions('enb')
+
+
+def test_imsi_questions():
+    instance = Daedalus()
+    instance.imsi_questions()
+
+
+def test_running_questions():
+    instance = Daedalus()
+    instance.running_questions()
+
+
+def test_check_commands():
+    instance = Daedalus()
+    instance.check_commands()
