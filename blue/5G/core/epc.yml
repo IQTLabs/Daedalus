@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -10,7 +9,7 @@ networks:
 services:
   hss:
     restart: always
-    image: iqtlabs/open5gs:latest
+    image: iqtlabs/open5gs:v0.7.0
     depends_on:
       mongodb:
         condition: service_healthy
@@ -37,7 +36,7 @@ services:
       - "daedalus.namespace=primary"
   pcrf:
     restart: always
-    image: iqtlabs/open5gs:latest
+    image: iqtlabs/open5gs:v0.7.0
     depends_on:
       mongodb:
         condition: service_healthy
@@ -64,7 +63,7 @@ services:
       - "daedalus.namespace=primary"
   mme:
     restart: always
-    image: iqtlabs/open5gs:latest
+    image: iqtlabs/open5gs:v0.7.0
     container_name: mme
     hostname: mme
     entrypoint:
@@ -82,7 +81,7 @@ services:
       - "daedalus.namespace=primary"
   smf:
     restart: always
-    image: iqtlabs/open5gs:latest
+    image: iqtlabs/open5gs:v0.7.0
     depends_on:
       sgwc:
         condition: service_started
@@ -101,7 +100,7 @@ services:
       - "daedalus.namespace=primary"
   sgwc:
     restart: always
-    image: iqtlabs/open5gs:latest
+    image: iqtlabs/open5gs:v0.7.0
     depends_on:
       mme:
         condition: service_started
