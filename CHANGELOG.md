@@ -1,3 +1,18 @@
+# v0.7.0 (2021-08-26)
+
+* Updated Open5GS
+* Updated uhd for Ettus
+* Updated dovesnap, and locked to versions for pulling images rather than building
+* Using a versioned UERANSIM now
+* Consolidated configs into a single file slice.yaml for most components
+* Added tests
+* Uses versioned images for pulling rather than building
+* Added option to still build images if preferred
+* Consoolidated scripts to reduce duplication
+* Added a healthcheck for the NRF for services registered with it
+* Added a healthcheck for MongoDB
+* Moved to one SGWU and one UPF to simplify configs
+
 # v0.6.0 (2021-07-27)
 
 * Pinned MongoDB version for loader
