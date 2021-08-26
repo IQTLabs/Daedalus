@@ -71,33 +71,37 @@ class Daedalus():
     @staticmethod
     def build_dockers(srsran=False, ueransim=False, open5gs=False, srsran_lime=False):
         """Build Docker images for the various components"""
+        version = 'latest'
+        if not 'dev' in __version__:
+            version = 'v'+__version__
+
         if srsran:
             srsran_version = 'release_21_04'
-            base_args = ['build', '-t', 'iqtlabs/srsran-base',
+            base_args = ['build', '-t', 'iqtlabs/srsran-base:'+version,
                          '-f', 'Dockerfile.base', '.']
-            srs_args = ['build', '-t', 'iqtlabs/srsran', '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile.srs',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(base_args) & FG
                 docker.bound_command(srs_args) & FG
         if srsran_lime:
             srsran_version = 'release_19_12'
-            srs_args = ['build', '-t', 'iqtlabs/srsran-lime', '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran-lime:'+version, '-f', 'Dockerfile.srs',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(srs_args) & FG
         if ueransim:
-            args = ['build', '-t', 'iqtlabs/ueransim', '.']
+            args = ['build', '-t', 'iqtlabs/ueransim:'+version, '.']
             with local.cwd(local.cwd / 'UERANSIM'):
                 docker.bound_command(args) & FG
         if open5gs:
-            args = ['build', '-t', 'iqtlabs/open5gs', '.']
+            args = ['build', '-t', 'iqtlabs/open5gs:'+version, '.']
             with local.cwd(local.cwd / 'open5gs'):
                 docker.bound_command(args) & FG
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v0.22.6'
+        release = 'v1.0.1'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -131,25 +135,26 @@ class Daedalus():
         dovesnap_opts = ['network', 'create', '-o',
                          'ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:6654',
                          '-o', 'ovs.bridge.mtu=9000', '-o', 'ovs.bridge.preallocate_ports=15',
-                         '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal']
+                         '--ipam-opt', 'com.docker.network.driver.mtu=9000', '--internal',
+                         '-d', 'dovesnap']
         cpn_opts = ['-o', 'ovs.bridge.vlan=26', '-o', 'ovs.bridge.dpid=0x620',
                     '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.26.0/24',
                     '--gateway', '192.168.26.1', '--ipam-opt',
                     'com.docker.network.bridge.name=cpn', '-o',
-                    'ovs.bridge.nat_acl=protectcpn', '-d', 'ovs', 'cpn']
+                    'ovs.bridge.nat_acl=protectcpn', 'cpn']
         upn_opts = ['-o', 'ovs.bridge.vlan=27', '-o', 'ovs.bridge.dpid=0x630',
                     '-o', 'ovs.bridge.mode=nat', '--subnet', '192.168.27.0/24',
                     '--gateway', '192.168.27.1', '--ipam-opt',
-                    'com.docker.network.bridge.name=upn', '-d', 'ovs', 'upn']
+                    'com.docker.network.bridge.name=upn', 'upn']
         rfn_opts = ['-o', 'ovs.bridge.vlan=28', '-o', 'ovs.bridge.dpid=0x640',
                     '-o', 'ovs.bridge.mode=flat', '--subnet', '192.168.28.0/24',
                     '--ipam-opt', 'com.docker.network.bridge.name=rfn', '-o',
-                    'ovs.bridge.nat_acl=protectrfn', '-d', 'ovs', 'rfn']
+                    'ovs.bridge.nat_acl=protectrfn', 'rfn']
         ran_opts = ['-o', 'ovs.bridge.vlan=29', '-o', 'ovs.bridge.dpid=0x650',
                     '-o', 'ovs.bridge.mode=routed', '--subnet', '192.168.29.0/24',
                     '--gateway', '192.168.29.1', '--ipam-opt',
                     'com.docker.network.bridge.name=ran', '-o',
-                    'ovs.bridge.nat_acl=protectran', '-d', 'ovs', 'ran']
+                    'ovs.bridge.nat_acl=protectran', 'ran']
         docker.bound_command(dovesnap_opts + cpn_opts) & FG
         docker.bound_command(dovesnap_opts + upn_opts) & FG
         docker.bound_command(dovesnap_opts + rfn_opts) & FG
@@ -660,13 +665,15 @@ class Daedalus():
         self.set_config_dir()
         parser = argparse.ArgumentParser(prog='Daedalus',
                                          description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
-        parser.add_argument('--version', '-V', action='version',
-                            version=f'%(prog)s {__version__}')
+        parser.add_argument('--build', '-b', action='store_true',
+                            help='Force build Docker images rather than pulling')
         # TODO set log level
         parser.add_argument('--verbose', '-v', choices=[
                             'DEBUG', 'INFO', 'WARNING', 'ERROR'],
                             default='INFO',
                             help='logging level (default=INFO)')
+        parser.add_argument('--version', '-V', action='version',
+                            version=f'%(prog)s {__version__}')
         args = parser.parse_args(self.raw_args)
         self.check_commands()
         self.cleanup()
@@ -675,8 +682,9 @@ class Daedalus():
             answers)
         self.parse_sdrs()
         self.write_imsis()
-        self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
-                           open5gs=build_open5gs, srsran_lime=srsran_lime)
+        if args.build:
+            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
+                               open5gs=build_open5gs, srsran_lime=srsran_lime)
         if 'services' in answers:
             self.start_dovesnap()
             self.create_networks()
