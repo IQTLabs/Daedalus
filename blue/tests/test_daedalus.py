@@ -35,6 +35,29 @@ def test_create_remove_networks():
     instance.reset_cwd()
 
 
+def test_start_no_services():
+    instance = Daedalus()
+    instance.start_services()
+
+
+def test_remove_no_services():
+    instance = Daedalus()
+    instance.remove_services()
+
+
+def test_start_remove_services():
+    instance = Daedalus()
+    # hack conf_dir since it's not installed as a library
+    instance.set_config_dir(conf_dir='/..')
+    instance.start_dovesnap()
+    instance.create_networks()
+    instance.compose_files = ['-f', 'core/epc.yml',
+                              '-f', 'core/upn.yml', '-f', 'core/db.yml']
+    instance.start_services()
+    instance.remove_services()
+    instance.cleanup()
+
+
 def test_main_questions():
     instance = Daedalus()
     instance.main_questions()

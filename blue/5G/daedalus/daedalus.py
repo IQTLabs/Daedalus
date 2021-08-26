@@ -120,7 +120,7 @@ class Daedalus():
             with local.cwd(dovesnap_dir[0]):
                 try:
                     docker_compose.bound_command(args) & FG
-                except Exception as err:
+                except Exception as err:  # pragma: no cover
                     logging.error(
                         'Failed to start dovesnap because: %s\nCleaning up and quitting.', err)
                     self.cleanup()
@@ -177,7 +177,7 @@ class Daedalus():
                            LIMESDR_RXGAIN=self.limesdr_rxgain, SMF=smf):
                 try:
                     docker_compose.bound_command(compose_up) & FG
-                except Exception as err:
+                except Exception as err:  # pragma: no cover
                     logging.error(
                         'Failed to start services because: %s\nCleaning up and quitting.', err)
                     self.cleanup()
@@ -190,7 +190,7 @@ class Daedalus():
             compose_logs = self.compose_files + ['logs', '-f']
             try:
                 docker_compose.bound_command(compose_logs) & TF(None, FG=True)
-            except Exception as err:
+            except Exception as err:  # pragma: no cover
                 logging.error(
                     'Failed to follow logs because: %s\nReturning to menu in 3 seconds.', err)
                 time.sleep(3)
@@ -209,7 +209,7 @@ class Daedalus():
             logging.debug('Removing Dovesnap services')
             try:
                 docker_compose.bound_command(args) & FG
-            except Exception as err:
+            except Exception as err:  # pragma: no cover
                 logging.debug('%s', err)
         # ensure the dovesnap network has been removed
         try:
@@ -217,7 +217,7 @@ class Daedalus():
             dovesnap_network = dovesnap_path.split('/')[-1].strip().lower()
             dn_args = ['network', 'rm', dovesnap_network+'_dovesnap']
             docker.bound_command(dn_args) & FG
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.debug('%s', err)
 
     @staticmethod
@@ -230,22 +230,22 @@ class Daedalus():
         try:
             logging.info('Removing cpn network')
             docker.bound_command(cpn_args) & FG
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.debug('%s', err)
         try:
             logging.info('Removing upn network')
             docker.bound_command(upn_args) & FG
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.debug('%s', err)
         try:
             logging.info('Removing rfn network')
             docker.bound_command(rfn_args) & FG
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.debug('%s', err)
         try:
             logging.info('Removing ran network')
             docker.bound_command(ran_args) & FG
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.debug('%s', err)
 
     def remove_services(self):
@@ -256,7 +256,7 @@ class Daedalus():
                 ['down', '--volumes', '--remove-orphans']
             try:
                 docker_compose.bound_command(compose_down) & FG
-            except Exception as err:
+            except Exception as err:  # pragma: no cover
                 logging.debug('%s', err)
         else:
             logging.warning('No services to remove.')
@@ -462,7 +462,7 @@ class Daedalus():
             try:
                 logging.debug('Removing container: %s', container.name)
                 container.remove(force=True)
-            except Exception as err:
+            except Exception as err:  # pragma: no cover
                 logging.debug('%s', err)
         self.remove_networks()
         self.remove_dovesnap()
@@ -513,7 +513,7 @@ class Daedalus():
             os.chdir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
             # TODO find a better way to do this for writing out dovesnap files
             sudo[chmod['-R', '777', '.']]()
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             logging.error(
                 'Unable to find config files, exiting because: %s', err)
             sys.exit(1)
@@ -524,22 +524,10 @@ class Daedalus():
         sudo[chmod['-R', '755', '.']]()
         os.chdir(self.previous_dir)
 
-    def main(self):
-        """Main entrypoint to the class, parse args and main program driver"""
-        self.set_config_dir()
-        parser = argparse.ArgumentParser(prog='Daedalus',
-                                         description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
-        parser.add_argument('--version', '-V', action='version',
-                            version=f'%(prog)s {__version__}')
-        # TODO set log level
-        parser.add_argument('--verbose', '-v', choices=[
-                            'DEBUG', 'INFO', 'WARNING', 'ERROR'],
-                            default='INFO',
-                            help='logging level (default=INFO)')
-        args = parser.parse_args(self.raw_args)
-        self.check_commands()
-        self.cleanup()
-        answers = self.execute_prompt(self.main_questions())
+    def parse_answers(self, answers):
+        """
+        Parses responses to which services to start to decide what happens next
+        """
         build_srsran = False
         srsran_lime = False
         build_open5gs = False
@@ -585,7 +573,7 @@ class Daedalus():
                 from plumbum.cmd import uhd_find_devices
                 try:
                     uhd_find_devices()
-                except Exception as err:
+                except Exception as err:  # pragma: no cover
                     logging.debug('%s', err)
                     logging.error(
                         'No UHD device found, but you chose Ettus. It is unlikely to work.')
@@ -608,60 +596,88 @@ class Daedalus():
                 self.compose_files += ['-f', 'core/ui.yml']
                 self.options.append('webui')
                 build_open5gs = True
+        return build_srsran, srsran_lime, build_open5gs, build_ueransim
 
-            sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
-            for sdr in sdrs:
-                if sdr in self.options:
-                    answers = self.execute_prompt(self.sdr_questions(sdr))
-                    if 'prb' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_prb = str(answers['prb'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_prb = str(answers['prb'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_prb = str(answers['prb'])
-                    if 'earfcn' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_earfcn = str(answers['earfcn'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_earfcn = str(answers['earfcn'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_earfcn = str(answers['earfcn'])
-                    if 'txgain' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_txgain = str(answers['txgain'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_txgain = str(answers['txgain'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_txgain = str(answers['txgain'])
-                    if 'rxgain' in answers:
-                        if sdr == 'bladerf-enb':
-                            self.bladerf_rxgain = str(answers['rxgain'])
-                        if sdr == 'ettus-enb':
-                            self.ettus_rxgain = str(answers['rxgain'])
-                        if sdr == 'limesdr-enb':
-                            self.limesdr_rxgain = str(answers['rxgain'])
-            if 'imsis' in self.options:
-                adding_imsis = True
-                while adding_imsis:
-                    answers = self.execute_prompt(self.imsi_questions())
-                    if 'imsi' in answers:
-                        try:
-                            imsi = json.loads(answers['imsi'])
-                            for i in imsi:
-                                logging.debug('Adding IMSI: %s', i['imsi'])
-                            imsis = None
-                            with open('configs/imsis.json', 'r') as f_handle:
-                                imsis = json.load(f_handle)
-                            imsis += imsi
-                            with open('configs/imsis.json', 'w') as f_handle:
-                                json.dump(imsis, f_handle, indent=2)
-                        except Exception as err:
-                            logging.error(
-                                'Unable to add IMSI because: %s', err)
-                    adding_imsis = answers.get('add_imsi', False)
-            self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
-                               open5gs=build_open5gs, srsran_lime=srsran_lime)
+    def parse_sdrs(self):
+        """Asks for SDR parameters and sets them"""
+        sdrs = ['limesdr-enb', 'ettus-enb', 'bladerf-enb']
+        for sdr in sdrs:
+            if sdr in self.options:
+                answers = self.execute_prompt(self.sdr_questions(sdr))
+                if 'prb' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_prb = str(answers['prb'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_prb = str(answers['prb'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_prb = str(answers['prb'])
+                if 'earfcn' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_earfcn = str(answers['earfcn'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_earfcn = str(answers['earfcn'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_earfcn = str(answers['earfcn'])
+                if 'txgain' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_txgain = str(answers['txgain'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_txgain = str(answers['txgain'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_txgain = str(answers['txgain'])
+                if 'rxgain' in answers:
+                    if sdr == 'bladerf-enb':
+                        self.bladerf_rxgain = str(answers['rxgain'])
+                    if sdr == 'ettus-enb':
+                        self.ettus_rxgain = str(answers['rxgain'])
+                    if sdr == 'limesdr-enb':
+                        self.limesdr_rxgain = str(answers['rxgain'])
+
+    def write_imsis(self):
+        """Asks for IMSI changes and writes them out to JSON"""
+        if 'imsis' in self.options:
+            adding_imsis = True
+            while adding_imsis:
+                answers = self.execute_prompt(self.imsi_questions())
+                if 'imsi' in answers:
+                    try:
+                        imsi = json.loads(answers['imsi'])
+                        for i in imsi:
+                            logging.debug('Adding IMSI: %s', i['imsi'])
+                        imsis = None
+                        with open('configs/imsis.json', 'r') as f_handle:
+                            imsis = json.load(f_handle)
+                        imsis += imsi
+                        with open('configs/imsis.json', 'w') as f_handle:
+                            json.dump(imsis, f_handle, indent=2)
+                    except Exception as err:  # pragma: no cover
+                        logging.error(
+                            'Unable to add IMSI because: %s', err)
+                adding_imsis = answers.get('add_imsi', False)
+
+    def main(self):
+        """Main entrypoint to the class, parse args and main program driver"""
+        self.set_config_dir()
+        parser = argparse.ArgumentParser(prog='Daedalus',
+                                         description='Daedalus - A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in')
+        parser.add_argument('--version', '-V', action='version',
+                            version=f'%(prog)s {__version__}')
+        # TODO set log level
+        parser.add_argument('--verbose', '-v', choices=[
+                            'DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                            default='INFO',
+                            help='logging level (default=INFO)')
+        args = parser.parse_args(self.raw_args)
+        self.check_commands()
+        self.cleanup()
+        answers = self.execute_prompt(self.main_questions())
+        build_srsran, srsran_lime, build_open5gs, build_ueransim = self.parse_answers(
+            answers)
+        self.parse_sdrs()
+        self.write_imsis()
+        self.build_dockers(srsran=build_srsran, ueransim=build_ueransim,
+                           open5gs=build_open5gs, srsran_lime=srsran_lime)
+        if 'services' in answers:
             self.start_dovesnap()
             self.create_networks()
             self.start_services()
