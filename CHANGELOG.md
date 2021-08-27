@@ -1,3 +1,7 @@
+# v0.7.2 (2021-08-27)
+
+* Reduce number of things UHD installs and downloads for quicker build times and smaller image sizes
+
 # v0.7.1 (2021-08-27)
 
 * Fix scripts not being executable
