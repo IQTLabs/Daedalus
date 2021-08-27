@@ -43,7 +43,7 @@ WORKDIR /root
 RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.1 \
     && mkdir -p /root/uhd/host/build \
     && cd /root/uhd/host/build \
-    && cmake ../ && make -j `nproc` && make install && ldconfig \
+    && cmake -DENABLE_TESTS=OFF -DENABLE_MANUAL=OFF -DENABLE_EXAMPLES=OFF -DENABLE_B100=OFF -DENABLE_USRP1=OFF -DENABLE_USRP2=OFF -DENABLE_X300=OFF -DENABLE_N320=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF -DENABLE_X400=OFF -DENABLE_MPMD=OFF -DENABLE_OCTOCLOCK=OFF ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/uhd
 
 RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.03 \
@@ -64,7 +64,7 @@ RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
     && cmake ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/LimeSuite
 
-RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py
+RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
 
 COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]
