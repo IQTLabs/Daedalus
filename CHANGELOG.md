@@ -1,3 +1,7 @@
+# v0.7.1 (2021-08-27)
+
+* Fix scripts not being executable
+
 # v0.7.0 (2021-08-26)
 
 * Updated Open5GS
