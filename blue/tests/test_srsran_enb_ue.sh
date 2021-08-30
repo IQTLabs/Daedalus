@@ -7,6 +7,6 @@ docker stop ue3
 docker stop ue4
 
 echo "checking UE connectivity..."
-sleep 180
+sleep 300
 docker logs ue
 docker exec ue ping -I tun_srsue -c1 google.com
