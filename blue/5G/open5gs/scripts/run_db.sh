@@ -17,4 +17,5 @@ until mongo  --host "${DB_HOST}" --eval "print(\"waited for connection\")" 2>&1 
   done
 
 mongoimport --host "${DB_HOST}" --db open5gs --authenticationDatabase admin --username "${DB_USER}" --password "${DB_PASS}" --collection subscribers --file /tmp/imsis.json --type json  --jsonArray
+date > /importdone
 sleep infinity
