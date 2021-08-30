@@ -30,13 +30,19 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2.0.3
       if: github.repository == 'iqtlabs/daedalus'
-  srsran_enb_ue_int_test:
+  integration_tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: srsran_enb_ue_int_test
+      - name: setup_int_tests
         run: |
           ./blue/tests/install_test.sh && \
           cd blue && sudo python3 setup.py install && cd .. && \
+          ./blue/tests/test_setup.sh
+      - name: srsran_enb_ue_int_test
+        run: |
           ./blue/tests/test_srsran_enb_ue.sh
+      - name: ueransim_gnb_ue_int_test
+        run: |
+          ./blue/tests/test_ueransim_gnb_ue.sh
