@@ -2,10 +2,10 @@
 
 echo "building images..."
 
-cd blue/5G/srsRAN
+cd blue/5G/srsRAN || exit 1
 docker build -t iqtlabs/srsran-base:latest -f Dockerfile.base .
 docker build -t iqtlabs/srsran:latest -f Dockerfile.srs --build-arg SRS_VERSIONS=release_21_04 .
-cd ../open5gs
+cd ../open5gs || exit 1
 docker build -t iqtlabs/open5gs:latest .
 cd ..
 
@@ -18,8 +18,8 @@ mkdir -p /tmp/tpfaucet/etc/faucet
 cp configs/faucet/faucet.yaml /tmp/tpfaucet/etc/faucet/
 cp configs/faucet/acls.yaml /tmp/tpfaucet/etc/faucet/
 curl -LJO https://github.com/iqtlabs/dovesnap/tarball/v1.0.1
-tar -xvf IQTLabs-dovesnap-*.tar.gz
-cd IQTLabs-dovesnap-*
+tar -xvf IQTLabs-dovesnap-v1.0.1-0-gf8e4809.tar.gz
+cd IQTLabs-dovesnap-f8e4809 || exit 1
 MIRROR_BRIDGE_OUT='tpmirrorint' FAUCET_PREFIX='/tmp/tpfaucet' docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
 cd ..
 
