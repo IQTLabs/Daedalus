@@ -35,11 +35,11 @@ docker network create -o ovs.bridge.controller=tcp:127.0.0.1:6653,tcp:127.0.0.1:
 
 echo "starting services..."
 SMF='' docker-compose -f core/epc.yml -f core/upn.yml -f core/db.yml -f SIMULATED/srsran-enb.yml -f SIMULATED/srsran-ue.yml up -d --build
-docker ue2 stop
-docker ue3 stop
-docker ue4 stop
+docker stop ue2
+docker stop ue3
+docker stop ue4
 
 echo "checking UE connectivity..."
 sleep 180
 docker logs ue
-docker exec -it ue ping -I tun_srsue -c1 google.com
+docker exec ue ping -I tun_srsue -c1 google.com
