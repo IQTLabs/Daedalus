@@ -39,10 +39,10 @@ smf:
       dev: ogstap
     - addr: 10.11.0.1/16
       apn: internet2
-      dev: ogstap
+      dev: ogstap2
     - addr: 10.12.0.1/16
       apn: internet3
-      dev: ogstap2
+      dev: ogstap3
   dns:
     - 8.8.8.8
     - 8.8.4.4
