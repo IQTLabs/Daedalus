@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   ettus-enb:
-    image: iqtlabs/srsran:latest
+    image: iqtlabs/srsran:v0.7.3
     container_name: ettus-enb
     cap_add:
       - SYS_NICE
