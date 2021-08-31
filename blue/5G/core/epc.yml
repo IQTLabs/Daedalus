@@ -11,10 +11,8 @@ services:
     restart: always
     image: iqtlabs/open5gs:latest
     depends_on:
-      mongodb:
+      mongodbloader:
         condition: service_healthy
-      upf:
-        condition: service_started
     container_name: hss
     hostname: hss
     environment:
@@ -66,6 +64,9 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: mme
     hostname: mme
+    depends_on:
+      hss:
+        condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-mmed
     command:

@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      lksctp-tools \
      tcpdump \
      iputils-ping \
-     make
+     make \
+     wget
 RUN git clone https://github.com/aligungr/UERANSIM && cd /UERANSIM && git checkout v3.2.3
 WORKDIR /UERANSIM
 RUN make
