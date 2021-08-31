@@ -20,4 +20,4 @@ if [ "$OUT" == "" ] ; then
 fi
 
 echo "checking ${UECON} connectivity..."
-docker exec "${UECON}" ping -I "${UETUN}" -c1 google.com
+docker exec "${UECON}" wget -q -O- bing.com
