@@ -13,5 +13,5 @@ Once installed, you can simply execute `daedalus` and you will be prompted for t
 
 ** Note **
 ```
-CPU must support SSE4.1, AVX, AVX2, and FMA
+CPU must support SSE4.1, AVX, AVX2, and FMA. If you don't have those, you can alternatively try starting daedalus with -b which will build the images locally and might work.
 ```
