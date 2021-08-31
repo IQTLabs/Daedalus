@@ -76,8 +76,9 @@ smf:
         apn: internet2
         dev: ogstap2
       - addr: 10.12.0.1/16
-        apn: internet3
+        apn: iot.nb
         dev: ogstap3
+      - addr: 10.50.0.1/16 # FALLBACK SUBNET
     dns:
       - 8.8.8.8
       - 8.8.4.4
@@ -146,7 +147,7 @@ sgwu:
 upf:
     pfcp:
       - addr: 192.168.27.41
-        apn: [internet, internet2, internet3]
+        apn: [internet, internet2, iot.nb]
     gtpu:
       - addr: 192.168.27.41
     subnet:
@@ -157,8 +158,9 @@ upf:
         apn: internet2
         dev: ogstap2
       - addr: 10.12.0.1/16
-        apn: internet3
+        apn: iot.nb
         dev: ogstap3
+      - addr: 10.50.0.1/16 # FALLBACK SUBNET
 
 hss:
     freeDiameter:
