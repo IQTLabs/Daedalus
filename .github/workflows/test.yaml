@@ -38,7 +38,7 @@ jobs:
       - name: setup_int_tests
         run: |
           ./blue/tests/install_test.sh && \
-          cd blue && sudo python3 setup.py install && cd .. && \
+          cd blue && sudo python3 setup.py install && cd ..
       - name: srsran_enb_ue_int_test
         run: |
           ./blue/tests/test_setup.sh && \
