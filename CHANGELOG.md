@@ -1,3 +1,10 @@
+# v0.7.3 (2021-08-31)
+
+* Remove unnecessary configs
+* Fix interfaces for different APNs
+* Add a healthcheck for mongoloader successfully importing IMSI records
+* Add virtual UE internet connectivity integration tests for both eNB and gNB setups
+
 # v0.7.2 (2021-08-27)
 
 * Reduce number of things UHD installs and downloads for quicker build times and smaller image sizes
@@ -16,7 +23,7 @@
 * Added tests
 * Uses versioned images for pulling rather than building
 * Added option to still build images if preferred
-* Consoolidated scripts to reduce duplication
+* Consolidated scripts to reduce duplication
 * Added a healthcheck for the NRF for services registered with it
 * Added a healthcheck for MongoDB
 * Moved to one SGWU and one UPF to simplify configs
