@@ -11,6 +11,8 @@ cd UERANSIM && docker build -t iqtlabs/ueransim:latest . && cd .. || exit 1
 
 echo "starting dovesnap..."
 
+docker network prune -f && docker system prune -f || exit 1
+
 sudo ip link add tpmirrorint type veth peer name tpmirror
 sudo ip link set tpmirrorint up
 sudo ip link set tpmirror up
