@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 UETEST=$(dirname "$0")/uetuncheck.sh
 UETEST=$(realpath "${UETEST}")
 
