@@ -1,4 +1,4 @@
-FROM iqtlabs/srsran-base:v0.7.4
+FROM iqtlabs/srsran-base:latest
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ARG SRS_VERSION=release_21_04
 WORKDIR /root
