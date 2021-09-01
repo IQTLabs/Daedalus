@@ -5,14 +5,9 @@ RUN apt-get update && \
         bison \
         build-essential \
         ca-certificates \
-        curl \
         flex \
         git \
         gnupg \
-        jq \
-        iproute2 \
-        iptables \
-        iputils-ping \
         libbson-dev \
         libcurl4-gnutls-dev \
         libgcrypt-dev \
@@ -29,23 +24,19 @@ RUN apt-get update && \
         mongodb-clients \
         netbase \
         net-tools \
-        openvswitch-switch \
         ninja-build \
         pkg-config \
         python3-pip \
         python3-setuptools \
-        python3-wheel \
-        tcpdump \
-        tshark && \
+        python3-wheel && \
     apt-get clean
 RUN python3 -m pip install meson
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get -y install nodejs
+RUN apt-get install -y --no-install-recommends npm nodejs
 
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.3
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
-RUN ln -s /usr/local/lib/*/freeDiameter /freeDiameter
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
 WORKDIR /open5gs
@@ -74,6 +65,7 @@ RUN apt-get install -y --no-install-recommends npm nodejs
 COPY --from=builder /certs /certs
 COPY --from=builder /usr/local/bin/open5gs* /usr/local/bin/
 COPY --from=builder /open5gs/webui /webui
+COPY --from=builder /usr/local/lib/*/freeDiameter /freeDiameter
 COPY scripts /scripts
 RUN mkdir -p /usr/local/var/log/open5gs
 WORKDIR /usr/local/var/log/open5gs
