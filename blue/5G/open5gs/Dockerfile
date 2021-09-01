@@ -57,6 +57,7 @@ RUN apt-get update && \
         iptables \
         iputils-ping \
         net-tools \
+        openvswitch-switch \
         tcpdump \
         tshark && \
     apt-get clean
