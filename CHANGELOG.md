@@ -1,3 +1,9 @@
+# v0.7.4 (2021-09-01)
+
+* Use versionsed base image for srsRAN
+* Change cmake flags to allow for srsRAN to run on CPUs that don't have AVX512
+* Add iot.nb APN and fallback subnet for unknown APNs
+
 # v0.7.3 (2021-08-31)
 
 * Remove unnecessary configs
