@@ -10,3 +10,8 @@ sudo python3 setup.py install
 ```
 
 Once installed, you can simply execute `daedalus` and you will be prompted for the 4G/5G environments you'd like it to create.
+
+** Note **
+```
+CPU must support SSE4.1, AVX, AVX2, and FMA. If you don't have those, you can alternatively try starting daedalus with -b which will build the images locally and might work.
+```
