@@ -1,3 +1,10 @@
+# v0.8.0 (2021-09-02)
+
+* Fixed an issue where permissions under /usr could potentially get trashed
+* Reduced the image size for Open5GS by half
+* Updated docker, docker-compose, plumbum, pylint, pytest-cov, pytest, pytype, ruamel.yaml
+* Added some more docs
+
 # v0.7.4 (2021-09-01)
 
 * Use versionsed base image for srsRAN
