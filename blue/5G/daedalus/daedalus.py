@@ -515,7 +515,7 @@ class Daedalus():
 
     @staticmethod
     def _check_conf_dir(conf_dir):
-        realpath = os.path.realpath(os.path.dirname(__file__).split('lib')[0] + conf_dir)
+        realpath = os.path.realpath(conf_dir)
         if not realpath.endswith('/5G'):
             raise ValueError('last element of conf_dir must be 5G: %s' % realpath)
         if not realpath.startswith('/usr/local') and not realpath.startswith('/opt') and not realpath.startswith('/home'):
@@ -526,7 +526,7 @@ class Daedalus():
     def set_config_dir(conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
         try:
-            realpath = self._check_conf_dir(conf_dir)
+            realpath = self._check_conf_dir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
             os.chdir(realpath)
             # TODO find a better way to do this for writing out dovesnap files
             sudo[chown['-R', str(os.getuid()), '.']]()
