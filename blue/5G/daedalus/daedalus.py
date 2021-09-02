@@ -534,9 +534,6 @@ class Daedalus():
 
     def reset_cwd(self):
         """Set the current working directory back to what it was originally"""
-        # TODO find a better way to do this for writing out dovesnap files
-        self._check_conf_dir('.')
-        sudo[chown['-R', str(os.getuid()), '.']]()
         os.chdir(self.previous_dir)
 
     def parse_answers(self, answers):
