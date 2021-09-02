@@ -7,7 +7,7 @@ networks:
       name: rfn
 services:
   ue1:
-    image: iqtlabs/ueransim:v0.8.0
+    image: iqtlabs/ueransim:latest
     container_name: ue1
     depends_on:
       - gnb
