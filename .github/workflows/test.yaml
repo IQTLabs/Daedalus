@@ -24,7 +24,7 @@ jobs:
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         pytype . && \
         pylint --fail-under=6.0 --disable=expression-not-assigned blue && \
-        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        PATH=/home/runner/.local/bin:$PATH py.test -n1 -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov
