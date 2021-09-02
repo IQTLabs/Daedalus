@@ -25,3 +25,5 @@ Alternatetively, each of these attack modes can be countered with one of the fol
 * throttling: significantly increase the amount of time the attacker needs to achieve objectives
 
 We use the Red-Team/Blue-Team approach where the red-team serves as the attacker and the blue-team as the defender. The red-team has minimal knowledge of blue-team defenses as it develops an attack strategy. The blue-team is passive in the attack exercises, only recording what is needed to reproduce the scenario. The goal is not to necessarily develop new exploits, but rather to use known exploits, tools and techniques to navigate the attack surface.
+
+Setting up the scenarios for the defender can be tedious and time expensive. That's why we've created a tool to make it easy to build and tear down 4G/5G environments both through virtual simulation and with real hardware options using a variety of supported SDRs. Learn more about getting started with the tool [here](blue/README.md).

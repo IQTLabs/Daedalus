@@ -26,7 +26,7 @@ services:
       - run
       - dev
       - --prefix
-      - /open5gs/webui
+      - /webui
     networks:
       cpn:
         ipv4_address: 192.168.26.6
