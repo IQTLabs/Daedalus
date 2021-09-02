@@ -525,7 +525,6 @@ class Daedalus():
         try:
             realpath = self._check_conf_dir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
             os.chdir(realpath)
-            # TODO find a better way to do this for writing out dovesnap files
             sudo[chown['-R', str(os.getuid()), '.']]()
         except Exception as err:  # pragma: no cover
             logging.error(
