@@ -67,6 +67,7 @@ COPY --from=builder /certs /certs
 COPY --from=builder /usr/local/bin/open5gs* /usr/local/bin/
 COPY --from=builder /open5gs/webui /webui
 COPY --from=builder /usr/local/lib/*/freeDiameter /freeDiameter
+COPY --from=builder /usr/lib/libtins* /usr/lib/
 COPY scripts /scripts
 RUN mkdir -p /usr/local/var/log/open5gs
 WORKDIR /usr/local/var/log/open5gs
