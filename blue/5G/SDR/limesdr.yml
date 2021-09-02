@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   limesdr-enb:
-    image: iqtlabs/srsran-lime:v0.8.0
+    image: iqtlabs/srsran-lime:latest
     container_name: limesdr-enb
     cap_add:
       - SYS_NICE
