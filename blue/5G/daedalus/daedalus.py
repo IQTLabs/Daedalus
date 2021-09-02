@@ -20,7 +20,7 @@ from examples import custom_style_2
 from plumbum import FG  # pytype: disable=import-error
 from plumbum import local  # pytype: disable=import-error
 from plumbum import TF  # pytype: disable=import-error
-from plumbum.cmd import chmod  # pytype: disable=import-error
+from plumbum.cmd import chown  # pytype: disable=import-error
 from plumbum.cmd import cp  # pytype: disable=import-error
 from plumbum.cmd import curl  # pytype: disable=import-error
 from plumbum.cmd import docker  # pytype: disable=import-error
@@ -480,7 +480,7 @@ class Daedalus():
         """
         logging.info(
             'Checking necessary commands exist, if it fails, install the missing tools.')
-        chmod['--version']()
+        chown['--version']()
         cp['--version']()
         curl['--version']()
         docker['--version']()
@@ -512,12 +512,20 @@ class Daedalus():
                     running = False
 
     @staticmethod
-    def set_config_dir(conf_dir='/5G'):
+    def _check_conf_dir(conf_dir):
+        realpath = os.path.realpath(conf_dir)
+        if not realpath.endswith('/5G'):
+            raise ValueError('last element of conf_dir must be 5G: %s' % realpath)
+        if not realpath.startswith('/usr/local') and not realpath.startswith('/opt') and not realpath.startswith('/home'):
+            raise ValueError('conf_dir root may not be safe: %s' % realpath)
+        return realpath
+
+    def set_config_dir(self, conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
         try:
-            os.chdir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
-            # TODO find a better way to do this for writing out dovesnap files
-            sudo[chmod['-R', '777', '.']]()
+            realpath = self._check_conf_dir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
+            os.chdir(realpath)
+            sudo[chown['-R', str(os.getuid()), '.']]()
         except Exception as err:  # pragma: no cover
             logging.error(
                 'Unable to find config files, exiting because: %s', err)
@@ -525,8 +533,6 @@ class Daedalus():
 
     def reset_cwd(self):
         """Set the current working directory back to what it was originally"""
-        # TODO find a better way to do this for writing out dovesnap files
-        sudo[chmod['-R', '755', '.']]()
         os.chdir(self.previous_dir)
 
     def parse_answers(self, answers):
