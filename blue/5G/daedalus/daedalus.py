@@ -20,7 +20,6 @@ from examples import custom_style_2
 from plumbum import FG  # pytype: disable=import-error
 from plumbum import local  # pytype: disable=import-error
 from plumbum import TF  # pytype: disable=import-error
-from plumbum.cmd import chmod  # pytype: disable=import-error
 from plumbum.cmd import chown  # pytype: disable=import-error
 from plumbum.cmd import cp  # pytype: disable=import-error
 from plumbum.cmd import curl  # pytype: disable=import-error
@@ -481,7 +480,6 @@ class Daedalus():
         """
         logging.info(
             'Checking necessary commands exist, if it fails, install the missing tools.')
-        chmod['--version']()
         chown['--version']()
         cp['--version']()
         curl['--version']()
@@ -539,7 +537,7 @@ class Daedalus():
         """Set the current working directory back to what it was originally"""
         # TODO find a better way to do this for writing out dovesnap files
         self._check_conf_dir('.')
-        sudo[chmod['-R', '755', '.']]()
+        sudo[chown['-R', str(os.getuid()), '.']]()
         os.chdir(self.previous_dir)
 
     def parse_answers(self, answers):
