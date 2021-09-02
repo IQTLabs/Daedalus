@@ -520,8 +520,7 @@ class Daedalus():
             raise ValueError('conf_dir root may not be safe: %s' % realpath)
         return realpath
 
-    @staticmethod
-    def set_config_dir(conf_dir='/5G'):
+    def set_config_dir(self, conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
         try:
             realpath = self._check_conf_dir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
