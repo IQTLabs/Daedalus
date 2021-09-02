@@ -31,7 +31,6 @@ RUN apt-get update && \
         python3-wheel && \
     apt-get clean
 RUN python3 -m pip install meson
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y --no-install-recommends npm nodejs
 
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.3
