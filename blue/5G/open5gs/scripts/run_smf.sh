@@ -6,5 +6,5 @@ if [ -z "$1" ]
 then
 	open5gs-smfd -c /usr/local/etc/open5gs/smf.yaml
 else
-	open5gs-smfd -c /usr/local/etc/open5gs/smf5gc.yaml
+	open5gs-smfd -c /usr/local/etc/slice.yaml
 fi

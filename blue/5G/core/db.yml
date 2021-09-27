@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -51,6 +50,13 @@ services:
     entrypoint:
       - /bin/sh
       - /scripts/run_db.sh
+
+    healthcheck:
+      test: /bin/cat /importdone
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     networks:
       cpn:
         ipv4_address: 192.168.26.19

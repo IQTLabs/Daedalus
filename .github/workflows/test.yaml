@@ -1,0 +1,49 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: shell_test
+      run: |
+        wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
+        tar --xz -xvf "shellcheck-stable.linux.x86_64.tar.xz" && \
+        shellcheck() { "shellcheck-stable/shellcheck" "$@"; } && \
+        shellcheck --version && \
+        /bin/bash --version && \
+        for shellscript in $(find blue -type f -name "*.sh"); do /bin/bash -n "$shellscript" && shellcheck -x -e SC2069 -e SC2048 "$shellscript"; done
+    - name: unit_test
+      run: |
+        ./blue/tests/install_test.sh && \
+        export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
+        pytype . && \
+        pylint --fail-under=6.0 --disable=expression-not-assigned blue && \
+        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        PATH=/home/runner/.local/bin:$PATH coverage report && \
+        PATH=/home/runner/.local/bin:$PATH coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2.0.3
+      if: github.repository == 'iqtlabs/daedalus'
+  integration_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: setup_int_tests
+        run: |
+          ./blue/tests/install_test.sh && \
+          cd blue && sudo python3 setup.py install && cd ..
+      - name: srsran_enb_ue_int_test
+        run: |
+          ./blue/tests/test_setup.sh && \
+          ./blue/tests/test_srsran_enb_ue.sh
+      - name: ueransim_gnb_ue_int_test
+        run: |
+          ./blue/tests/test_setup.sh && \
+          ./blue/tests/test_ueransim_gnb_ue.sh

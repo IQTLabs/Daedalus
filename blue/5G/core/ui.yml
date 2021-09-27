@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -27,7 +26,7 @@ services:
       - run
       - dev
       - --prefix
-      - /open5gs/webui
+      - /webui
     networks:
       cpn:
         ipv4_address: 192.168.26.6

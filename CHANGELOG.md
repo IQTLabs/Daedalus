@@ -1,3 +1,46 @@
+# v0.8.0 (2021-09-02)
+
+* Fixed an issue where permissions under /usr could potentially get trashed
+* Reduced the image size for Open5GS by half
+* Updated docker, docker-compose, plumbum, pylint, pytest-cov, pytest, pytype, ruamel.yaml
+* Added some more docs
+
+# v0.7.4 (2021-09-01)
+
+* Use versionsed base image for srsRAN
+* Change cmake flags to allow for srsRAN to run on CPUs that don't have AVX512
+* Add iot.nb APN and fallback subnet for unknown APNs
+
+# v0.7.3 (2021-08-31)
+
+* Remove unnecessary configs
+* Fix interfaces for different APNs
+* Add a healthcheck for mongoloader successfully importing IMSI records
+* Add virtual UE internet connectivity integration tests for both eNB and gNB setups
+
+# v0.7.2 (2021-08-27)
+
+* Reduce number of things UHD installs and downloads for quicker build times and smaller image sizes
+
+# v0.7.1 (2021-08-27)
+
+* Fix scripts not being executable
+
+# v0.7.0 (2021-08-26)
+
+* Updated Open5GS
+* Updated uhd for Ettus
+* Updated dovesnap, and locked to versions for pulling images rather than building
+* Using a versioned UERANSIM now
+* Consolidated configs into a single file slice.yaml for most components
+* Added tests
+* Uses versioned images for pulling rather than building
+* Added option to still build images if preferred
+* Consolidated scripts to reduce duplication
+* Added a healthcheck for the NRF for services registered with it
+* Added a healthcheck for MongoDB
+* Moved to one SGWU and one UPF to simplify configs
+
 # v0.6.0 (2021-07-27)
 
 * Pinned MongoDB version for loader

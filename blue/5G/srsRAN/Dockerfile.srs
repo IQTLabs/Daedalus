@@ -5,6 +5,6 @@ WORKDIR /root
 RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
     && mkdir -p /root/srsRAN/build \
     && cd /root/srsRAN/build \
-    && cmake ../ && make -j `nproc` && make install && ldconfig
+    && cmake -DENABLE_AVX512=OFF ../ && make -j `nproc` && make install && ldconfig
 WORKDIR /root
 RUN mkdir /config

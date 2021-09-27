@@ -10,11 +10,12 @@ else
   DB_HOST=mongodb
 fi
 
-until mongo  --host ${DB_HOST} --eval "print(\"waited for connection\")" 2>&1 >/dev/null
+until mongo  --host "${DB_HOST}" --eval "print(\"waited for connection\")" 2>&1 >/dev/null
   do
     sleep 5
     echo "Trying to connect to MongoDB"
   done
 
-mongoimport --host ${DB_HOST} --db open5gs --authenticationDatabase admin --username ${DB_USER} --password ${DB_PASS} --collection subscribers --file /tmp/imsis.json --type json  --jsonArray
+mongoimport --host "${DB_HOST}" --db open5gs --authenticationDatabase admin --username "${DB_USER}" --password "${DB_PASS}" --collection subscribers --file /tmp/imsis.json --type json  --jsonArray
+date > /importdone
 sleep infinity

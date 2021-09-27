@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -13,6 +12,9 @@ services:
   enb:
     image: iqtlabs/srsran:latest
     container_name: enb
+    depends_on:
+      mme:
+        condition: service_started
     cap_add:
       - SYS_NICE
     networks:

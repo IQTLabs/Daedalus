@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway optiono with ipam
 version: '2'
 

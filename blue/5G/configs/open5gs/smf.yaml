@@ -10,7 +10,23 @@ logger:
     gtp: 1
 
 smf:
-  freeDiameter: /usr/local/etc/freeDiameter/smf.conf
+  freeDiameter:
+    identity: smf.localdomain
+    realm: localdomain
+    listen_on: 192.168.26.40
+    no_fwd: true
+    load_extension:
+      - module: /freeDiameter/dbg_msg_dumps.fdx
+        conf: 0x8888
+      - module: /freeDiameter/dict_rfc5777.fdx
+      - module: /freeDiameter/dict_mip6i.fdx
+      - module: /freeDiameter/dict_nasreq.fdx
+      - module: /freeDiameter/dict_nas_mipv6.fdx
+      - module: /freeDiameter/dict_dcca.fdx
+      - module: /freeDiameter/dict_dcca_3gpp.fdx
+    connect:
+      - identity: pcrf.localdomain
+        addr: 192.168.26.50
   gtpc:
     - addr: 192.168.26.40
   gtpu:
@@ -23,10 +39,11 @@ smf:
       dev: ogstap
     - addr: 10.11.0.1/16
       apn: internet2
-      dev: ogstap
-    - addr: 10.12.0.1/16
-      apn: internet3
       dev: ogstap2
+    - addr: 10.12.0.1/16
+      apn: iot.nb
+      dev: ogstap3
+    - addr: 10.50.0.1/16 # FALLBACK SUBNET
   dns:
     - 8.8.8.8
     - 8.8.4.4
@@ -34,4 +51,4 @@ smf:
 upf:
   pfcp:
     - addr: 192.168.27.41
-      apn: [internet, internet2, internet3]
+      apn: [internet, internet2, iot.nb]

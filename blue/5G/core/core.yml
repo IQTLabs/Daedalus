@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -14,6 +13,9 @@ services:
   nrf:
     restart: always
     image: iqtlabs/open5gs:latest
+    depends_on:
+      hss:
+        condition: service_started
     container_name: nrf
     hostname: nrf
     entrypoint:
@@ -22,7 +24,7 @@ services:
       - -c
       - /usr/local/etc/slice.yaml
     healthcheck:
-      test: netstat -ltn | grep -c 7777
+      test: /scripts/nrfhc.sh
       interval: 10s
       timeout: 10s
       retries: 5
@@ -40,9 +42,6 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: ausf
     hostname: ausf
-    depends_on:
-      nrf:
-        condition: service_healthy
     entrypoint:
       - /usr/local/bin/open5gs-ausfd
     command:
@@ -61,9 +60,6 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: nssf
     hostname: nssf
-    depends_on:
-      nrf:
-        condition: service_healthy
     entrypoint:
       - /usr/local/bin/open5gs-nssfd
     command:
@@ -82,11 +78,6 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: udm
     hostname: udm
-    depends_on:
-      nrf:
-        condition: service_healthy
-      udr:
-        condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-udmd
     command:
@@ -105,9 +96,6 @@ services:
     image: iqtlabs/open5gs:latest
     container_name: bsf
     hostname: bsf
-    depends_on:
-      nrf:
-        condition: service_healthy
     entrypoint:
       - /usr/local/bin/open5gs-bsfd
     command:
@@ -131,10 +119,6 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     depends_on:
-      bsf:
-        condition: service_started
-      nrf:
-        condition: service_healthy
       mongodb:
         condition: service_healthy
     entrypoint:
@@ -160,8 +144,6 @@ services:
       - 'DB_USER=${DB_USER}'
       - 'DB_PASS=${DB_PASS}'
     depends_on:
-      nrf:
-        condition: service_healthy
       mongodb:
         condition: service_healthy
     entrypoint:
@@ -183,15 +165,7 @@ services:
     container_name: amf
     hostname: amf
     depends_on:
-      nrf:
-        condition: service_healthy
-      ausf:
-        condition: service_started
-      udr:
-        condition: service_started
-      udm:
-        condition: service_started
-      nssf:
+      smf:
         condition: service_started
     entrypoint:
       - /usr/local/bin/open5gs-amfd

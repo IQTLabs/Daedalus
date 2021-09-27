@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -10,6 +9,8 @@ services:
   ue1:
     image: iqtlabs/ueransim:latest
     container_name: ue1
+    depends_on:
+      - gnb
     cap_add:
       - NET_ADMIN
       - SYS_NICE

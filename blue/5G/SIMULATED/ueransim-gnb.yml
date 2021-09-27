@@ -1,4 +1,3 @@
----
 # using version 2 for the gateway option with ipam
 version: '2'
 
@@ -13,6 +12,11 @@ services:
   gnb:
     image: iqtlabs/ueransim:latest
     container_name: gnb
+    depends_on:
+      nrf:
+        condition: service_healthy
+      mme:
+        condition: service_started
     cap_add:
       - SYS_NICE
       - NET_ADMIN

@@ -6,4 +6,4 @@ done
 
 ip route del default
 ip route add default via 192.168.29.1
-exec /UERANSIM/build/nr-gnb $*
+exec /UERANSIM/build/nr-gnb "$@"
