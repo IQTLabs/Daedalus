@@ -516,9 +516,10 @@ class Daedalus():
         realpath = os.path.realpath(conf_dir)
         if not realpath.endswith('/5G'):
             raise ValueError('last element of conf_dir must be 5G: %s' % realpath)
-        if not realpath.startswith('/usr/local') and not realpath.startswith('/opt') and not realpath.startswith('/home'):
-            raise ValueError('conf_dir root may not be safe: %s' % realpath)
-        return realpath
+        for valid_prefix in ('/usr/local', '/opt', '/home'):
+            if realpath.startswith(valid_prefix):
+                return realpath
+        raise ValueError('conf_dir root may not be safe: %s' % realpath)
 
     def set_config_dir(self, conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
