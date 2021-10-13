@@ -1,3 +1,9 @@
+# v0.8.1 (2021-10-13)
+
+* Upgrade Open5GS to 2.3.4
+* Upgrade UHD to v4.1.0.3
+* Upgrade docker, dovesnap, pylint, pytype, pytest
+
 # v0.8.0 (2021-09-02)
 
 * Fixed an issue where permissions under /usr could potentially get trashed
