@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
 RUN pip3 install -U requests
 WORKDIR /root
 
-RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.1 \
+RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.3 \
     && mkdir -p /root/uhd/host/build \
     && cd /root/uhd/host/build \
     && cmake -DENABLE_TESTS=OFF -DENABLE_MANUAL=OFF -DENABLE_EXAMPLES=OFF -DENABLE_B100=OFF -DENABLE_USRP1=OFF -DENABLE_USRP2=OFF -DENABLE_X300=OFF -DENABLE_N320=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF -DENABLE_X400=OFF -DENABLE_MPMD=OFF -DENABLE_OCTOCLOCK=OFF ../ && make -j `nproc` && make install && ldconfig \
