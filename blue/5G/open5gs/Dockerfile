@@ -55,6 +55,7 @@ RUN apt-get update && \
         iproute2 \
         iptables \
         iputils-ping \
+        lksctp-tools \
         net-tools \
         openvswitch-switch \
         tcpdump \
