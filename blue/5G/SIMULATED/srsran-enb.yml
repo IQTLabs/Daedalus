@@ -14,7 +14,7 @@ services:
     container_name: enb
     depends_on:
       mme:
-        condition: service_started
+        condition: service_healthy
     cap_add:
       - SYS_NICE
     networks:
