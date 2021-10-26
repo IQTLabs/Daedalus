@@ -30,7 +30,8 @@ RUN apt-get update && \
         python3-setuptools \
         python3-wheel && \
     apt-get clean
-RUN python3 -m pip install meson
+# TODO: need to pin meson to workaround "Target "../dict_dcca_3gpp" has a path segment pointing to directory "subprojects/freeDiameter/extensions/dict_dcca_3gpp/..". This is an error."
+RUN python3 -m pip install -U meson==0.59.3
 RUN apt-get install -y --no-install-recommends npm nodejs
 
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.6
