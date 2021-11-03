@@ -76,7 +76,7 @@ class Daedalus():
             version = 'v'+__version__
 
         if srsran:
-            srsran_version = 'release_21_04'
+            srsran_version = 'release_21_10'
             base_args = ['build', '-t', 'iqtlabs/srsran-base:'+version,
                          '-f', 'Dockerfile.base', '.']
             srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile.srs',
