@@ -1,3 +1,11 @@
+# v0.9.0 (2021-11-04)
+
+* Upgrade to Open5GS 2.3.6
+* Upgrade srsRAN to 20.10
+* Upgrade dovesnap to 1.0.4
+* Upgrade UHD driver to v4.1.0.3
+* Upgrade pytype, pylint, pytest-cov, docker
+
 # v0.8.0 (2021-09-02)
 
 * Fixed an issue where permissions under /usr could potentially get trashed
