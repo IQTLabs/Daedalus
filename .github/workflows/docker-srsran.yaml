@@ -43,18 +43,13 @@ jobs:
         cd blue/5G/srsRAN && docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
-          -t iqtlabs/srsran-base:${{ steps.change_version.outputs.VERSION }} \
-          -f Dockerfile.base . && \
-        docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
           -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_21_04 \
-          -f Dockerfile.srs . && \
+          --build-arg SRS_VERSION=release_21_10 \
+          -f Dockerfile . && \
         docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
           -t iqtlabs/srsran-lime:${{ steps.change_version.outputs.VERSION }} \
           --build-arg SRS_VERSION=release_19_12 \
-          -f Dockerfile.srs .
+          -f Dockerfile .
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'

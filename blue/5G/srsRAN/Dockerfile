@@ -1,5 +1,4 @@
-FROM ubuntu:20.04
-LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
+FROM ubuntu:20.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
@@ -7,10 +6,6 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      cmake \
      git \
      g++ \
-     iperf \
-     iperf3 \
-     iproute2 \
-     iputils-ping \
      libboost-chrono-dev \
      libboost-date-time-dev \
      libboost-filesystem-dev \
@@ -19,23 +14,15 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      libboost-test-dev \
      libconfig++-dev \
      libedit-dev \
-     libfftw3-dev \
-     libmbedtls-dev \
      libpcsclite-dev \
-     libsctp-dev \
      libtecla-dev \
      libusb-1.0-0-dev \
      libvolk2-dev \
-     libzmq3-dev \
-     lksctp-tools \
-     net-tools \
      python3 \
      python3-pip \
      python3-mako \
      soapysdr-module-lms7 \
-     soapysdr-tools \
-     tcpdump \
-     wget && \
+     soapysdr-tools && \
      apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pip3 install -U requests
 WORKDIR /root
@@ -66,5 +53,51 @@ RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
 
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
 
+FROM ubuntu:20.04 AS srsran
+ARG SRS_VERSION=release_21_10
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get install --no-install-recommends -yq \
+     build-essential \
+     ca-certificates \
+     cmake \
+     git \
+     g++ \
+     libboost-chrono-dev \
+     libboost-date-time-dev \
+     libboost-filesystem-dev \
+     libboost-program-options-dev \
+     libboost-thread-dev \
+     libboost-test-dev \
+     libconfig++-dev \
+     libmbedtls-dev \
+     libfftw3-dev \
+     libsctp-dev \
+     libzmq3-dev \
+     lksctp-tools \
+     pkg-config && \
+     apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
+    && mkdir -p /srsRAN/build \
+    && cd /srsRAN/build \
+    && cmake -DENABLE_AVX512=OFF ../ && make -j `nproc` && make install && ldconfig
+
+FROM ubuntu:20.04
+LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
+COPY --from=builder /usr/local /usr/local
+COPY --from=srsran /usr/local /usr/local
+COPY --from=builder /usr/lib/*-linux-gnu /usr/lib/
+COPY --from=srsran /usr/lib/*-linux-gnu /usr/lib/
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get install --no-install-recommends -yq \
+     iperf \
+     iperf3 \
+     iproute2 \
+     iputils-ping \
+     net-tools \
+     tcpdump \
+     wget && \
+     apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN mkdir /config
+WORKDIR /root
 COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]

@@ -77,16 +77,13 @@ class Daedalus():
 
         if srsran:
             srsran_version = 'release_21_10'
-            base_args = ['build', '-t', 'iqtlabs/srsran-base:'+version,
-                         '-f', 'Dockerfile.base', '.']
-            srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
-                docker.bound_command(base_args) & FG
                 docker.bound_command(srs_args) & FG
         if srsran_lime:
             srsran_version = 'release_19_12'
-            srs_args = ['build', '-t', 'iqtlabs/srsran-lime:'+version, '-f', 'Dockerfile.srs',
+            srs_args = ['build', '-t', 'iqtlabs/srsran-lime:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
                 docker.bound_command(srs_args) & FG
@@ -515,7 +512,8 @@ class Daedalus():
     def _check_conf_dir(conf_dir):
         realpath = os.path.realpath(conf_dir)
         if not realpath.endswith('/5G'):
-            raise ValueError('last element of conf_dir must be 5G: %s' % realpath)
+            raise ValueError(
+                'last element of conf_dir must be 5G: %s' % realpath)
         for valid_prefix in ('/usr/local', '/opt', '/home'):
             if realpath.startswith(valid_prefix):
                 return realpath
@@ -524,7 +522,8 @@ class Daedalus():
     def set_config_dir(self, conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
         try:
-            realpath = self._check_conf_dir(os.path.dirname(__file__).split('lib')[0] + conf_dir)
+            realpath = self._check_conf_dir(
+                os.path.dirname(__file__).split('lib')[0] + conf_dir)
             os.chdir(realpath)
             sudo[chown['-R', str(os.getuid()), '.']]()
         except Exception as err:  # pragma: no cover
