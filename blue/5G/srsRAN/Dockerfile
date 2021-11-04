@@ -54,7 +54,7 @@ RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
 
 FROM ubuntu:20.04 AS srsran
-ARG SRS_VERSION=release_21_04
+ARG SRS_VERSION=release_21_10
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
