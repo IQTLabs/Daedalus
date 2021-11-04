@@ -2,8 +2,15 @@
 
 echo "building images..."
 
+DSVER=v1.0.4
+
 cd blue/5G/srsRAN && \
+<<<<<<< HEAD
     docker build -t iqtlabs/srsran:latest -f Dockerfile --build-arg SRS_VERSIONS=release_21_04 . && \
+=======
+    docker build -t iqtlabs/srsran-base:latest -f Dockerfile.base . && \
+    docker build -t iqtlabs/srsran:latest -f Dockerfile.srs --build-arg SRS_VERSIONS=release_21_10 . && \
+>>>>>>> c935e972d753f4a3971cf6cf827d19b4dd247aa8
     cd .. || exit 1
 cd open5gs && docker build -t iqtlabs/open5gs:latest . && cd .. || exit 1
 cd UERANSIM && docker build -t iqtlabs/ueransim:latest . && cd .. || exit 1
@@ -18,9 +25,9 @@ sudo ip link set tpmirror up
 mkdir -p /tmp/tpfaucet/etc/faucet
 cp configs/faucet/faucet.yaml /tmp/tpfaucet/etc/faucet/
 cp configs/faucet/acls.yaml /tmp/tpfaucet/etc/faucet/
-curl -LJO https://github.com/iqtlabs/dovesnap/tarball/v1.0.1
-tar -xvf IQTLabs-dovesnap-v1.0.1-0-gf8e4809.tar.gz
-cd IQTLabs-dovesnap-f8e4809 || exit 1
+curl -LJO https://github.com/iqtlabs/dovesnap/tarball/${DSVER}
+tar -xvf IQTLabs-dovesnap*.tar.gz
+cd IQTLabs-dovesnap*/ || exit 1
 MIRROR_BRIDGE_OUT='tpmirrorint' FAUCET_PREFIX='/tmp/tpfaucet' docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
 cd ..
 

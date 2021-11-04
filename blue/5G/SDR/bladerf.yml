@@ -9,6 +9,9 @@ services:
   bladerf-enb:
     image: iqtlabs/srsran:latest
     container_name: bladerf-enb
+    depends_on:
+      mme:
+        condition: service_healthy
     cap_add:
       - SYS_NICE
     networks:

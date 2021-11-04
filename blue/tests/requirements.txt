@@ -1,6 +1,6 @@
 codecov==2.1.12
-pylint==2.10.2
-pytest-cov==2.12.1
+pylint==2.11.1
+pytest-cov==3.0.0
 pytest==6.2.5
-pytype==2021.9.9
-ruamel.yaml==0.17.16
+pytype==2021.11.2
+ruamel.yaml==0.17.17

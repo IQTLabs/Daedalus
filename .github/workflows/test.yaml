@@ -24,11 +24,11 @@ jobs:
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         pytype . && \
         pylint --fail-under=6.0 --disable=expression-not-assigned blue && \
-        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2.0.3
+      uses: codecov/codecov-action@v2.1.0
       if: github.repository == 'iqtlabs/daedalus'
   integration_tests:
     runs-on: ubuntu-latest

@@ -16,7 +16,7 @@ services:
       nrf:
         condition: service_healthy
       mme:
-        condition: service_started
+        condition: service_healthy
     cap_add:
       - SYS_NICE
       - NET_ADMIN

@@ -76,7 +76,7 @@ class Daedalus():
             version = 'v'+__version__
 
         if srsran:
-            srsran_version = 'release_21_04'
+            srsran_version = 'release_21_10'
             srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'srsRAN'):
@@ -98,7 +98,7 @@ class Daedalus():
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v1.0.1'
+        release = 'v1.0.4'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -514,9 +514,10 @@ class Daedalus():
         if not realpath.endswith('/5G'):
             raise ValueError(
                 'last element of conf_dir must be 5G: %s' % realpath)
-        if not realpath.startswith('/usr/local') and not realpath.startswith('/opt') and not realpath.startswith('/home'):
-            raise ValueError('conf_dir root may not be safe: %s' % realpath)
-        return realpath
+        for valid_prefix in ('/usr/local', '/opt', '/home'):
+            if realpath.startswith(valid_prefix):
+                return realpath
+        raise ValueError('conf_dir root may not be safe: %s' % realpath)
 
     def set_config_dir(self, conf_dir='/5G'):
         """Set the current working directory to where the configs are"""
