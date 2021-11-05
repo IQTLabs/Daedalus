@@ -1,4 +1,5 @@
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:20.04
+LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
@@ -37,7 +38,7 @@ RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.03 \
     && mkdir -p /root/bladeRF/host/build \
     && cd /root/bladeRF/host/build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && make -j && make install && ldconfig \
-    && cd /root && rm -rf /root bladeRF
+    && cd /root && rm -rf /root/bladeRF
 
 RUN git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2 \
     && mkdir -p /root/SoapySDR/build \
@@ -53,9 +54,9 @@ RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
 
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
 
-FROM ubuntu:20.04 AS srsran
+#FROM builder AS srsran
 ARG SRS_VERSION=release_21_10
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
      ca-certificates \
@@ -77,27 +78,27 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      pkg-config && \
      apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
-    && mkdir -p /srsRAN/build \
-    && cd /srsRAN/build \
+    && mkdir -p /root/srsRAN/build \
+    && cd /root/srsRAN/build \
     && cmake -DENABLE_AVX512=OFF ../ && make -j `nproc` && make install && ldconfig
 
-FROM ubuntu:20.04
-LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
-COPY --from=builder /usr/local /usr/local
-COPY --from=srsran /usr/local /usr/local
-COPY --from=builder /usr/lib/*-linux-gnu /usr/lib/
-COPY --from=srsran /usr/lib/*-linux-gnu /usr/lib/
-ENV DEBIAN_FRONTEND noninteractive
+#FROM srsran
+#COPY --from=builder /usr/local /usr/local
+#COPY --from=srsran /usr/local /usr/local
+#COPY --from=builder /usr/lib/*-linux-gnu /usr/lib/
+#COPY --from=srsran /usr/lib/*-linux-gnu /usr/lib/
+#ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      iperf \
      iperf3 \
      iproute2 \
      iputils-ping \
+     libtecla-dev \
+     libusb-1.0-0-dev \
      net-tools \
      tcpdump \
      wget && \
      apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir /config
-WORKDIR /root
 COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]
