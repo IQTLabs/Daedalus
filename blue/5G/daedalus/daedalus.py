@@ -489,7 +489,6 @@ class Daedalus():
         rm['--version']()
         sudo['--version']()
         tar['--version']()
-        uhd_find_devices()
 
     def loop(self):
         """Stay in a loop of options for the user until quitting is chosen"""
