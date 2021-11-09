@@ -7,6 +7,7 @@ The following directory has a series of tools that are used for defending and bu
 - Linux with a recent kernel
 - Docker
 - python3 and pip3
+- uhd-host (`sudo apt-get install -y uhd-host`)
 
 ## Installation
 The main tool in this directory is called `daedalus` and can be installed with easily with pip:

@@ -31,6 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
+from plumbum.cmd import uhd_find_devices  # pytype: disable=import-error
 from PyInquirer import prompt
 
 
@@ -488,6 +489,7 @@ class Daedalus():
         rm['--version']()
         sudo['--version']()
         tar['--version']()
+        uhd_find_devices()
 
     def loop(self):
         """Stay in a loop of options for the user until quitting is chosen"""
