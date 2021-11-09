@@ -31,7 +31,6 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from plumbum.cmd import uhd_find_devices  # pytype: disable=import-error
 from PyInquirer import prompt
 
 
