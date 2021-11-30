@@ -1,3 +1,8 @@
+# v0.10.0 (2021-12-01)
+
+* Reduce docker srsran image size
+* Upgrade pbr, pytype, pylint, plumbum
+
 # v0.9.0 (2021-11-04)
 
 * Upgrade to Open5GS 2.3.6
