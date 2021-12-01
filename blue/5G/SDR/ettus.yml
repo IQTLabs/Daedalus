@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   ettus-enb:
-    image: iqtlabs/srsran:latest
+    image: iqtlabs/srsran:v0.10.0
     container_name: ettus-enb
     depends_on:
       mme:
