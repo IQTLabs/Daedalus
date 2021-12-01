@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   bladerf-enb:
-    image: iqtlabs/srsran:v0.10.0
+    image: iqtlabs/srsran:latest
     container_name: bladerf-enb
     depends_on:
       mme:
