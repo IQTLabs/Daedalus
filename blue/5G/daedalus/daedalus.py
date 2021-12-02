@@ -292,6 +292,7 @@ class Daedalus():
                     {'name': '4G srsRAN eNodeB (eNB)'},
                     {'name': '4G BladeRF eNodeB (eNB)'},
                     {'name': '4G Ettus USRP B2xx eNodeB (eNB)'},
+                    {'name': '5G Ettus USRP B2xx NSA gNodeB (gNB)'},
                     {'name': '4G LimeSDR eNodeB (eNB)'},
                     {'name': '4G srsRAN UE (UE)'},
                     {'name': '5G UERANSIM UE (UE)'},
@@ -535,6 +536,15 @@ class Daedalus():
         """Set the current working directory back to what it was originally"""
         os.chdir(self.previous_dir)
 
+    def find_uhd(self):
+        from plumbum.cmd import uhd_find_devices
+        try:
+            uhd_find_devices()
+        except Exception as err:  # pragma: no cover
+            logging.debug('%s', err)
+            logging.error(
+                'No UHD device found, but you chose Ettus. It is unlikely to work.')
+
     def parse_answers(self, answers):
         """
         Parses responses to which services to start to decide what happens next
@@ -581,13 +591,12 @@ class Daedalus():
             if '4G Ettus USRP B2xx eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/ettus.yml']
                 self.options.append('ettus-enb')
-                from plumbum.cmd import uhd_find_devices
-                try:
-                    uhd_find_devices()
-                except Exception as err:  # pragma: no cover
-                    logging.debug('%s', err)
-                    logging.error(
-                        'No UHD device found, but you chose Ettus. It is unlikely to work.')
+                self.find_uhd()
+                build_srsran = True
+            if '5G Ettus USRP B2xx NSA gNodeB (gNB)' in selections:
+                self.compose_files += ['-f', 'SDR/ettus-gnb.yml']
+                self.options.append('ettus-gnb')
+                self.find_uhd()
                 build_srsran = True
             if '4G LimeSDR eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/limesdr.yml']
