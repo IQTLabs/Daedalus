@@ -1,0 +1,42 @@
+# using version 2 for the gateway optiono with ipam
+version: '2'
+
+networks:
+  ran:
+    external:
+      name: ran
+services:
+  ettus-enb-nsa:
+    image: iqtlabs/srsran:latest
+    container_name: ettus-enb-nsa
+    depends_on:
+      mme:
+        condition: service_healthy
+    cap_add:
+      - SYS_NICE
+      - SYS_RAWIO
+    networks:
+      ran:
+        ipv4_address: 192.168.29.64
+    volumes:
+      - "../configs/srsRAN:/config:z"
+    entrypoint:
+      - srsenb
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    labels:
+      - "daedalus.namespace=primary"
+    command:
+      - /config/enb.conf
+      - --enb_files.rr_config=/config/ettus-nrr.conf
+      - --enb.name=ettus-ENB-NSA01
+      - --enb.n_prb=${ETTUS_PRB}
+      - --enb.enb_id=0x64
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.29.64
+      - --enb.s1c_bind_addr=192.168.29.64
+      - --rf.device_name=UHD
+      - --rf.device_args=device_args=type=b210,sampling_rate=11.52e6,lo_freq_offset_hz=11.52e6
+      - --rf.dl_earfcn=${ETTUS_EARFCN}
+      - --rf.tx_gain=${ETTUS_TXGAIN}
+      - --rf.rx_gain=${ETTUS_RXGAIN}
