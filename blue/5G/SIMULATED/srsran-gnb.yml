@@ -1,0 +1,41 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+networks:
+  ran:
+    external:
+      name: ran
+  rfn:
+    external:
+      name: rfn
+services:
+  gnb-nsa:
+    image: iqtlabs/srsran:latest
+    container_name: gnb-nsa
+    depends_on:
+      mme:
+        condition: service_healthy
+    cap_add:
+      - SYS_NICE
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.70
+      ran:
+        ipv4_address: 192.168.29.70
+    volumes:
+      - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
+    entrypoint:
+      - /scripts/run_rfn_enb.sh
+    command:
+      - /config/enb.conf
+      - --enb_files.rr_config=/config/virtual-nrr.conf
+      - --enb.name=dummyENB01
+      - --enb.enb_id=0x70
+      - --enb.n_prb=50
+      - --enb.mme_addr=192.168.26.20
+      - --enb.gtp_bind_addr=192.168.29.70
+      - --enb.s1c_bind_addr=192.168.29.70
+      - --rf.device_name=zmq
+      - --rf.device_args=tx_port0=tcp://*:5555,rx_port0=tcp://192.168.28.81:5554,tx_port1=tcp://*:5565,rx_port1=tcp://192.168.28.81:5564,id=gnb0,base_srate=23.04e6
