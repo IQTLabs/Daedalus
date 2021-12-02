@@ -290,10 +290,12 @@ class Daedalus():
                     {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
                     {'name': '5G UERANSIM gNodeB (gNB)'},
                     {'name': '4G srsRAN eNodeB (eNB)'},
+                    {'name': '5G srsRAN NSA gNodeB (gNB)'},
                     {'name': '4G BladeRF eNodeB (eNB)'},
                     {'name': '4G Ettus USRP B2xx eNodeB (eNB)'},
                     {'name': '4G LimeSDR eNodeB (eNB)'},
                     {'name': '4G srsRAN UE (UE)'},
+                    {'name': '5G srsRAN UE (UE)'},
                     {'name': '5G UERANSIM UE (UE)'},
                     {'name': 'Add UE IMSIs'},
                     {'name': 'Subscriber WebUI'},
@@ -574,6 +576,10 @@ class Daedalus():
                 self.compose_files += ['-f', 'SIMULATED/srsran-enb.yml']
                 self.options.append('srsran-enb')
                 build_srsran = True
+            if '5G srsRAN NSA gNodeB (gNB)' in selections:
+                self.compose_files += ['-f', 'SIMULATED/srsran-gnb.yml']
+                self.options.append('srsran-gnb-nsa')
+                build_srsran = True
             if '4G BladeRF eNodeB (eNB)' in selections:
                 self.compose_files += ['-f', 'SDR/bladerf.yml']
                 self.options.append('bladerf-enb')
@@ -596,6 +602,10 @@ class Daedalus():
             if '4G srsRAN UE (UE)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/srsran-ue.yml']
                 self.options.append('srsran-ue')
+                build_srsran = True
+            if '5G srsRAN UE (UE)' in selections:
+                self.compose_files += ['-f', 'SIMULATED/srsran-gue.yml']
+                self.options.append('srsran-ue-nsa')
                 build_srsran = True
             if '5G UERANSIM UE (UE)' in selections:
                 self.compose_files += ['-f', 'SIMULATED/ueransim-ue.yml']
