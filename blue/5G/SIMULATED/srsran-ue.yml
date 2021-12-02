@@ -33,7 +33,7 @@ services:
       - --usim.algo=milenage
       - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
       - --nas.apn=internet
-      - --rf.device_args="tx_port=tcp://*:5554,rx_port=tcp://192.168.28.60:5555,id=ue,base_srate=1.92e6"
+      - --rf.device_args=tx_port=tcp://*:5554,rx_port=tcp://192.168.28.60:5555,id=ue,base_srate=1.92e6
   ue2:
     image: iqtlabs/srsran:latest
     container_name: ue2
@@ -60,7 +60,7 @@ services:
       - --usim.algo=milenage
       - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
       - --nas.apn=internet2
-      - --rf.device_args="tx_port=tcp://*:5564,rx_port=tcp://192.168.28.60:5565,id=ue2,base_srate=1.92e6"
+      - --rf.device_args=tx_port=tcp://*:5564,rx_port=tcp://192.168.28.60:5565,id=ue2,base_srate=1.92e6
   ue3:
     image: iqtlabs/srsran:latest
     container_name: ue3
@@ -87,7 +87,7 @@ services:
       - --usim.algo=milenage
       - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
       - --nas.apn=internet
-      - --rf.device_args="tx_port=tcp://*:5574,rx_port=tcp://192.168.28.60:5575,id=ue3,base_srate=1.92e6"
+      - --rf.device_args=tx_port=tcp://*:5574,rx_port=tcp://192.168.28.60:5575,id=ue3,base_srate=1.92e6
   ue4:
     image: iqtlabs/srsran:latest
     container_name: ue4
@@ -114,4 +114,4 @@ services:
       - --usim.algo=milenage
       - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
       - --nas.apn=iot.nb
-      - --rf.device_args="tx_port=tcp://*:5584,rx_port=tcp://192.168.28.60:5585,id=ue4,base_srate=1.92e6"
+      - --rf.device_args=tx_port=tcp://*:5584,rx_port=tcp://192.168.28.60:5585,id=ue4,base_srate=1.92e6
