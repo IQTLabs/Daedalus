@@ -1,0 +1,40 @@
+# using version 2 for the gateway option with ipam
+version: '2'
+
+networks:
+  rfn:
+    external:
+      name: rfn
+
+services:
+  ue-nsa:
+    image: iqtlabs/srsran:latest
+    container_name: ue-nsa
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    devices:
+      - /dev/net/tun
+    networks:
+      rfn:
+        ipv4_address: 192.168.28.81
+    depends_on:
+      - gnb-nsa
+    volumes:
+      - "../configs/srsRAN:/config:z"
+    labels:
+      - "daedalus.namespace=primary"
+    entrypoint:
+      - /scripts/start_srsue.sh
+    command:
+      - /config/ue.conf
+      - --usim.imsi=001010000000001
+      - --usim.k=c8eba87c1074edd06885cb0486718341
+      - --usim.algo=milenage
+      - --usim.opc=17b6c0157895bcaa1efc1cef55033f5f
+      - --nas.apn=internet
+      - --rf.device_args=tx_port0=tcp://*:5554,rx_port0=tcp://192.168.28.70:5555,tx_port1=tcp://*:5564,rx_port1=tcp://192.168.28.70:5565,id=gue,base_srate=23.04e6
+      - --rrc.release=15
+      - --rat.eutra.dl_earfcn=2850
+      - --rat.nr.bands=3,78
+      - --rat.nr.nof_carriers=1

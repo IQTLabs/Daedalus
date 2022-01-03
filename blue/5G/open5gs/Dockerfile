@@ -34,7 +34,7 @@ RUN apt-get update && \
 RUN python3 -m pip install -U meson==0.59.3
 RUN apt-get install -y --no-install-recommends npm nodejs
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.3.6
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.4.0
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
