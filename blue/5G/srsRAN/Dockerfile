@@ -39,7 +39,7 @@ RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.3 \
     && cd /root/uhd/host/build \
     && cmake -DENABLE_TESTS=OFF -DENABLE_MANUAL=OFF -DENABLE_EXAMPLES=OFF -DENABLE_B100=OFF -DENABLE_USRP1=OFF -DENABLE_USRP2=OFF -DENABLE_X300=OFF -DENABLE_N320=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF -DENABLE_X400=OFF -DENABLE_MPMD=OFF -DENABLE_OCTOCLOCK=OFF ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/uhd
-RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.03 \
+RUN git clone https://github.com/Nuand/bladeRF.git -b 2021.10 \
     && mkdir -p /root/bladeRF/host/build \
     && cd /root/bladeRF/host/build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && make -j && make install && ldconfig \
