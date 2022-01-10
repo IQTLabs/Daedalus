@@ -18,6 +18,7 @@ RUN apt-get update && \
         libnghttp2-dev \
         libsctp-dev \
         libssl-dev \
+        libtalloc-dev \
         libtins-dev \
         libyaml-dev \
         lksctp-tools \
