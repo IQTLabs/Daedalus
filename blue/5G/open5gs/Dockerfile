@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -45,7 +45,7 @@ WORKDIR /open5gs
 RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make_certs.sh && \
   mkdir /certs && misc/make_certs.sh /certs
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=builder /usr/local/lib/*-linux-gnu /usr/local/lib/

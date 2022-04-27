@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as builder
+FROM ubuntu:22.04 as builder
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ARG SRS_VERSION=release_21_10
 ENV DEBIAN_FRONTEND noninteractive
@@ -60,7 +60,7 @@ RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
     && cd /root/srsRAN/build \
     && cmake -DENABLE_AVX512=OFF ../ && make -j `nproc` && make install && ldconfig
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=builder /usr/local /usr/local
