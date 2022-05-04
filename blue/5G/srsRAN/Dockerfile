@@ -55,6 +55,9 @@ RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
     && cmake ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/LimeSuite
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
+# TODO: not possible to build release 19_12 under Ubuntu 22.04 w/gcc 12,
+# as string safety checks fail. If disabled with -Wno-error, srsRAN does
+# not pass tests anyway.
 RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
     && mkdir -p /root/srsRAN/build \
     && cd /root/srsRAN/build \
