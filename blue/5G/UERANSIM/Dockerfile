@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install --no-install-recommends -yq \
      iputils-ping \
      make \
      wget
-RUN git clone https://github.com/aligungr/UERANSIM && cd /UERANSIM && git checkout v3.2.6
+RUN git clone https://github.com/aligungr/UERANSIM
 WORKDIR /UERANSIM
+RUN git checkout v3.2.6
 RUN make
 COPY scripts /scripts
 ENTRYPOINT ["/bin/sh"]
