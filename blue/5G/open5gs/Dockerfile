@@ -1,4 +1,5 @@
 FROM ubuntu:20.04 AS builder
+# TODO: mongodb doesn't yet support 22.04, due to old libssl (see https://jira.mongodb.org/browse/SERVER-62300)
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
