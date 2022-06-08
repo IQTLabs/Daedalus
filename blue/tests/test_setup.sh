@@ -2,10 +2,10 @@
 
 echo "building images..."
 
-DSVER=v1.0.8
+DSVER=v1.0.9
 
 cd blue/5G/srsRAN && \
-    docker build -t iqtlabs/srsran:latest -f Dockerfile --build-arg SRS_VERSIONS=release_21_10 . && \
+    docker build -t iqtlabs/srsran:latest -f Dockerfile . && \
     cd .. || exit 1
 cd open5gs && docker build -t iqtlabs/open5gs:latest . && cd .. || exit 1
 cd UERANSIM && docker build -t iqtlabs/ueransim:latest . && cd .. || exit 1
