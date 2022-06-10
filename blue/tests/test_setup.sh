@@ -2,7 +2,7 @@
 
 echo "building images..."
 
-DSVER=v1.0.9
+DSVER=v1.0.10
 
 cd blue/5G/srsRAN && \
     docker build -t iqtlabs/srsran:latest -f Dockerfile . && \
