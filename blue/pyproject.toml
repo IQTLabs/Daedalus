@@ -22,8 +22,8 @@ PyInquirer = "1.0.3"
 pbr = "5.9.0"
 plumbum = "1.7.2"
 
-[scripts]
-poetry = "5G.daedalus:main"
+[project.scripts]
+daedalus = "daedalus.__main__:main"
 
 [build-system]
 requires = [
@@ -33,3 +33,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 py-modules = [ "daedalus" ]
+
+[tool.setuptools.packages.find]
+where = ["5G"]

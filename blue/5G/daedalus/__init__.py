@@ -1,5 +1,5 @@
 import pkg_resources
-from imprtlib.metadata import version
+from importlib.metadata import version
 
 pkg_resources.declare_namespace(__name__)
 
