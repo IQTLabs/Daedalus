@@ -4,7 +4,7 @@ FROM debian:stable
 RUN apt-get update && apt-get install -y --no-install-recommends netbase python3-pip python3-dev python3-setuptools python3-wheel git libfuse-dev
 RUN apt-get update && apt-get install -y --no-install-recommends nfs-ganesha nfs-ganesha-vfs
 COPY confused /confused
-RUN cd confused && pip3 install -r requirements.txt
+RUN python3 -m pip install ".[confuser]"
 RUN apt-get update && apt-get install -y --no-install-recommends procps net-tools tcpdump strace
 RUN mkdir -p /real /fake /share && rm -f /etc/ganesha/*
 COPY serve.sh /serve.sh
