@@ -41,8 +41,6 @@ def test_remove_no_services():
 
 def test_start_remove_services():
     instance = Daedalus()
-    # hack conf_dir since it's not installed as a library
-    instance.set_config_dir(conf_dir='/..')
     instance.start_dovesnap()
     instance.create_networks()
     instance.compose_files = ['-f', 'core/epc.yml',
