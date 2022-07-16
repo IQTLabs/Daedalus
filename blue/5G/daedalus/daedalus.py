@@ -98,7 +98,7 @@ class Daedalus():
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v1.0.10'
+        release = 'v1.1.0'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -107,8 +107,8 @@ class Daedalus():
         sudo[rm['-rf', f'{faucet_prefix}']]()
         sudo[rm['-rf', local.cwd // 'IQTLabs-dovesnap-*']]()
         mkdir['-p', f'{faucet_prefix}/etc/faucet']()
-        cp['5G/configs/faucet/faucet.yaml', f'{faucet_prefix}/etc/faucet/']()
-        cp['5G/configs/faucet/acls.yaml', f'{faucet_prefix}/etc/faucet/']()
+        cp[f'{os.path.dirname(__file__)}/5G/configs/faucet/faucet.yaml', f'{faucet_prefix}/etc/faucet/']()
+        cp[f'{os.path.dirname(__file__)}/5G/configs/faucet/acls.yaml', f'{faucet_prefix}/etc/faucet/']()
         curl['-LJO',
              f'https://github.com/iqtlabs/dovesnap/tarball/{release}']()
         tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
@@ -526,7 +526,7 @@ class Daedalus():
         """Set the current working directory to where the configs are"""
         try:
             realpath = self._check_conf_dir(
-                os.path.dirname(__file__).split('lib')[0] + conf_dir)
+                os.path.dirname(__file__) + conf_dir)
             os.chdir(realpath)
             sudo[chown['-R', str(os.getuid()), '.']]()
         except Exception as err:  # pragma: no cover
