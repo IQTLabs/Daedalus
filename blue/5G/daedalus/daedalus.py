@@ -107,8 +107,8 @@ class Daedalus():
         sudo[rm['-rf', f'{faucet_prefix}']]()
         sudo[rm['-rf', local.cwd // 'IQTLabs-dovesnap-*']]()
         mkdir['-p', f'{faucet_prefix}/etc/faucet']()
-        cp['daedalus/5G/configs/faucet/faucet.yaml', f'{faucet_prefix}/etc/faucet/']()
-        cp['daedalus/5G/configs/faucet/acls.yaml', f'{faucet_prefix}/etc/faucet/']()
+        cp['5G/configs/faucet/faucet.yaml', f'{faucet_prefix}/etc/faucet/']()
+        cp['5G/configs/faucet/acls.yaml', f'{faucet_prefix}/etc/faucet/']()
         curl['-LJO',
              f'https://github.com/iqtlabs/dovesnap/tarball/{release}']()
         tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
