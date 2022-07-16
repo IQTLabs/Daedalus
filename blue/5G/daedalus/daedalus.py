@@ -79,21 +79,21 @@ class Daedalus():
             srsran_version = 'release_21_10'
             srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
-            with local.cwd(local.cwd / '5G/daedalus/5G/srsRAN'):
+            with local.cwd(local.cwd / 'blue/5G/daedalus/5G/srsRAN'):
                 docker.bound_command(srs_args) & FG
         if srsran_lime:
             srsran_version = 'release_19_12'
             srs_args = ['build', '-t', 'iqtlabs/srsran-lime:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
-            with local.cwd(local.cwd / '5G/daedalus/5G/srsRAN'):
+            with local.cwd(local.cwd / 'blue/5G/daedalus/5G/srsRAN'):
                 docker.bound_command(srs_args) & FG
         if ueransim:
             args = ['build', '-t', 'iqtlabs/ueransim:'+version, '.']
-            with local.cwd(local.cwd / '5G/daedalus/5G/UERANSIM'):
+            with local.cwd(local.cwd / 'blue/5G/daedalus/5G/UERANSIM'):
                 docker.bound_command(args) & FG
         if open5gs:
             args = ['build', '-t', 'iqtlabs/open5gs:'+version, '.']
-            with local.cwd(local.cwd / '5G/daedalus/5G/open5gs'):
+            with local.cwd(local.cwd / 'blue/5G/daedalus/5G/open5gs'):
                 docker.bound_command(args) & FG
 
     def start_dovesnap(self):
