@@ -4,7 +4,7 @@ echo "building images..."
 
 DSVER=v1.0.10
 
-cd blue/5G/srsRAN && \
+cd blue/5G/daedalus/5G/srsRAN && \
     docker build -t iqtlabs/srsran:latest -f Dockerfile . && \
     cd .. || exit 1
 cd open5gs && docker build -t iqtlabs/open5gs:latest . && cd .. || exit 1

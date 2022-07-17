@@ -1,0 +1,2 @@
+recursive-include 5G *.yaml
+recursive-include 5G *.yml

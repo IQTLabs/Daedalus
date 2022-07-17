@@ -1,0 +1,60 @@
+[project]
+name = "daedalus-5g"
+version = "0.10.0-dev"
+description = "A tool for creating 4G/5G environments both with SDRs and virtual simulation to run experiments in"
+authors = [
+    { name = "cglewis", email = "clewis@iqt.org" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.6"
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python"
+]
+# Requirements
+dependencies = [
+    "docker == 5.0.3",
+    "docker-compose == 1.29.2",
+    "dovesnap == 1.1.0",
+    "PyInquirer==1.0.3", 
+    "plumbum == 1.7.2",
+]
+
+[project.optional-dependencies]
+test = [
+    "attrs==21.4.0",
+    "codecov==2.1.12",
+    "pylint==2.14.4",
+    "pytype==2022.6.30",
+    "pytest==7.1.2",
+    "pytest-cov==3.0.0",
+    "ruamel.yaml==0.17.21"
+]
+generate_fs = [
+    "essential_generators",
+    "numpy"
+]
+confuser = [
+    "fusepy"
+]
+
+[project.scripts]
+daedalus = "daedalus.__main__:main"
+
+[build-system]
+requires = [
+    "setuptools >= 49.0.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [ "daedalus" ]
+package-dir = {"daedalus" = "5G/daedalus"}
+include-package-data = true
+
+[tool.setuptools.package-data]
+daedalus = ["5G/*",]
+
