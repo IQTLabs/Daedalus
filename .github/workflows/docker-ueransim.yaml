@@ -40,7 +40,7 @@ jobs:
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
       run: |
-        cd blue/5G/UERANSIM && docker buildx build \
+        cd blue/5G/daedalus/5G/UERANSIM && docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
           -t iqtlabs/ueransim:${{ steps.change_version.outputs.VERSION }} .
