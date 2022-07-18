@@ -12,11 +12,11 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 version = sys.argv[1]
-compose_files = ['../5G/core/core.yml', '../5G/core/ui.yml', '../5G/core/epc.yml',
-                 '../5G/core/upn.yml', '../5G/core/db.yml', '../5G/SIMULATED/ueransim-gnb.yml',
-                 '../5G/SIMULATED/ueransim-ue.yml', '../5G/SIMULATED/srsran-ue.yml',
-                 '../5G/SIMULATED/srsran-enb.yml', '../5G/SDR/limesdr.yml',
-                 '../5G/SDR/ettus.yml', '../5G/SDR/bladerf.yml']
+compose_files = ['../5G/daedalus/5G/core/core.yml', '../5G/daedalus/5G/core/ui.yml', '../5G/daedalus/5G/core/epc.yml',
+                 '../5G/daedalus/5G/core/upn.yml', '../5G/daedalus/5G/core/db.yml', '../5G/daedalus/5G/SIMULATED/ueransim-gnb.yml',
+                 '../5G/daedalus/5G/SIMULATED/ueransim-ue.yml', '../5G/daedalus/5G/SIMULATED/srsran-ue.yml',
+                 '../5G/daedalus/5G/SIMULATED/srsran-enb.yml', '../5G/daedalus/5G/SDR/limesdr.yml',
+                 '../5G/daedalus/5G/SDR/ettus.yml', '../5G/daedalus/5G/SDR/bladerf.yml']
 
 for compose_file in compose_files:
     # Broadly preserves formatting.
