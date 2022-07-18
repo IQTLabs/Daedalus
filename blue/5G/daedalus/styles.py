@@ -1,5 +1,3 @@
-from InquirerPy import get_style
-
 custom_style = { #get_style({
     "separator": '#6C6C6C',
     "questionmark": '#FF9D00 bold',
