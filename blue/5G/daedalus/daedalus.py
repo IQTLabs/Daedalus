@@ -16,7 +16,7 @@ from daedalus.validators import IMSIValidator
 from daedalus.validators import MCCValidator
 from daedalus.validators import MNCValidator
 from daedalus.validators import NumberValidator
-from examples import custom_style_2
+from daedalus.styles import custom_style
 from plumbum import FG  # pytype: disable=import-error
 from plumbum import local  # pytype: disable=import-error
 from plumbum import TF  # pytype: disable=import-error
@@ -31,7 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from PyInquirer import prompt
+from InquirerPy import prompt
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -98,7 +98,7 @@ class Daedalus():
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v1.1.0'
+        release = 'v1.1.1'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
@@ -269,7 +269,7 @@ class Daedalus():
         Run end user prompt with supplied questions and return the selected
         answers
         """
-        answers = prompt(questions, style=custom_style_2)
+        answers = prompt(questions, style=custom_style)
         return answers
 
     @staticmethod
@@ -282,24 +282,27 @@ class Daedalus():
                 'message': 'What services would you like to start?',
                 'choices': [
                     {'name': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
-                     'checked': True},
+                     'value': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                     'enabled': True},
                     {'name': 'Open5GS User Plane Network (UPF, SGWU)',
-                     'checked': True},
+                     'value': 'Open5GS User Plane Network (UPF, SGWU)',
+                     'enabled': True},
                     {'name': 'Subscriber Database (MongoDB)',
-                     'checked': True},
-                    {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
-                    {'name': '5G UERANSIM gNodeB (gNB)'},
-                    {'name': '4G srsRAN eNodeB (eNB)'},
-                    {'name': '5G srsRAN NSA gNodeB (gNB)'},
-                    {'name': '4G BladeRF eNodeB (eNB)'},
-                    {'name': '4G Ettus USRP B2xx eNodeB (eNB)'},
-                    {'name': '5G Ettus USRP B2xx NSA gNodeB (gNB)'},
-                    {'name': '4G LimeSDR eNodeB (eNB)'},
-                    {'name': '4G srsRAN UE (UE)'},
-                    {'name': '5G srsRAN UE (UE)'},
-                    {'name': '5G UERANSIM UE (UE)'},
-                    {'name': 'Add UE IMSIs'},
-                    {'name': 'Subscriber WebUI'},
+                     'value': 'Subscriber Database (MongoDB)',
+                     'enabled': True},
+                    {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)', 'value': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
+                    {'name': '5G UERANSIM gNodeB (gNB)', 'value': '5G UERANSIM gNodeB (gNB)'},
+                    {'name': '4G srsRAN eNodeB (eNB)', 'value': '4G srsRAN eNodeB (eNB)'},
+                    {'name': '5G srsRAN NSA gNodeB (gNB)', 'value': '5G srsRAN NSA gNodeB (gNB)'},
+                    {'name': '4G BladeRF eNodeB (eNB)', 'value': '4G BladeRF eNodeB (eNB)'},
+                    {'name': '4G Ettus USRP B2xx eNodeB (eNB)', 'value': '4G Ettus USRP B2xx eNodeB (eNB)'},
+                    {'name': '5G Ettus USRP B2xx NSA gNodeB (gNB)', 'value': '5G Ettus USRP B2xx NSA gNodeB (gNB)'},
+                    {'name': '4G LimeSDR eNodeB (eNB)', 'value': '4G LimeSDR eNodeB (eNB)'},
+                    {'name': '4G srsRAN UE (UE)', 'value': '4G srsRAN UE (UE)'},
+                    {'name': '5G srsRAN UE (UE)', 'value': '5G srsRAN UE (UE)'},
+                    {'name': '5G UERANSIM UE (UE)', 'value': '5G UERANSIM UE (UE)'},
+                    {'name': 'Add UE IMSIs', 'value': 'Add UE IMSIs'},
+                    {'name': 'Subscriber WebUI', 'value': 'Subscriber WebUI'},
                 ],
             },
         ]
@@ -448,9 +451,9 @@ class Daedalus():
                 'name': 'actions',
                 'message': 'Services have started, what would you like to do?',
                 'choices': [
-                    {'name': 'Follow logs (Ctrl-c to return to this menu)'},
-                    {'name': 'Remove services'},
-                    {'name': 'Quit (services that were not removed will continue to run)'},
+                    {'name': 'Follow logs (Ctrl-c to return to this menu)', 'value': 'Follow logs (Ctrl-c to return to this menu)'},
+                    {'name': 'Remove services', 'value': 'Remove services'},
+                    {'name': 'Quit (services that were not removed will continue to run)', 'value': 'Quit (services that were not removed will continue to run)'},
                 ],
             },
         ]

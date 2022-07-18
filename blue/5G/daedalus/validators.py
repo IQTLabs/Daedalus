@@ -3,8 +3,8 @@ Module for validating user input
 """
 import json
 
-from PyInquirer import ValidationError
-from PyInquirer import Validator
+from prompt_toolkit.validation import ValidationError
+from prompt_toolkit.validation import Validator
 
 
 class NumberValidator(Validator):
