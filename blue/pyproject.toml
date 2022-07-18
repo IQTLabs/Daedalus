@@ -18,9 +18,9 @@ classifiers = [
 dependencies = [
     "docker == 5.0.3",
     "docker-compose == 1.29.2",
-    "dovesnap == 1.1.0",
-    "PyInquirer==1.0.3", 
+    "dovesnap == 1.1.1",
     "plumbum == 1.7.2",
+    "inquirerpy == 0.3.4",
 ]
 
 [project.optional-dependencies]
