@@ -10,7 +10,7 @@ networks:
       name: ran
 services:
   gnb:
-    image: iqtlabs/ueransim:v0.11.0
+    image: iqtlabs/ueransim:latest
     container_name: gnb
     depends_on:
       nrf:
