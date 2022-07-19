@@ -19,8 +19,8 @@ jobs:
       run: |
         sudo apt-get update && \
         sudo apt-get install -yq --no-install-recommends python3-pip python3.8 python3.8-dev python3-setuptools && \
-        pip3 install wheel && \
-        cd blue && python3 setup.py sdist bdist_wheel --universal
+        pip3 install wheel build && \
+        cd blue && python3 -m build --sdist --wheel
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     - name: Publish package
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
