@@ -316,14 +316,14 @@ class Daedalus():
                 'name': 'mcc',
                 'message': f'What MCC code for {enb} would you like?',
                 'default': '001',
-                'validate': MCCValidator,
+                'validate': MCCValidator(),
             },
             {
                 'type': 'input',
                 'name': 'mnc',
                 'message': f'What MNC code for {enb} would you like?',
                 'default': '01',
-                'validate': MNCValidator,
+                'validate': MNCValidator(),
             },
         ]
 
@@ -344,7 +344,7 @@ class Daedalus():
                 'message': f'What EARFCN code for DL for {enb} would you like?',
                 'default': '3400',
                 # TODO should also validate the EARFCN wasn't already used
-                'validate': NumberValidator,
+                'validate': NumberValidator(),
                 'filter': lambda val: int(val),
             },
             {
@@ -352,14 +352,14 @@ class Daedalus():
                 'name': 'txgain',
                 'message': f'What TX gain value for {enb} would you like?',
                 'default': '80',
-                'validate': NumberValidator,
+                'validate': NumberValidator(),
             },
             {
                 'type': 'input',
                 'name': 'rxgain',
                 'message': f'What RX gain value for {enb} would you like?',
                 'default': '40',
-                'validate': NumberValidator,
+                'validate': NumberValidator(),
             },
         ]
 
@@ -432,7 +432,7 @@ class Daedalus():
                     'editor': 'nano',
                     'ext': '.json',
                 },
-                'validate': IMSIValidator,
+                'validate': IMSIValidator(),
             },
             {
                 'type': 'confirm',
