@@ -1,2 +1,6 @@
-recursive-include 5G *.yaml
 recursive-include 5G *.yml
+recursive-include 5G *.yaml
+recursive-include 5G *.conf
+recursive-include 5G *.sh
+recursive-include 5G *.json
+include 5G/core/.env
