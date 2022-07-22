@@ -12,10 +12,10 @@ import time
 import docker as dclient
 from daedalus import __file__
 from daedalus import __version__
-from daedalus.validators import IMSIValidator
-from daedalus.validators import MCCValidator
-from daedalus.validators import MNCValidator
-from daedalus.validators import NumberValidator
+from daedalus.validators import validate_imsi
+from daedalus.validators import validate_mcc
+from daedalus.validators import validate_mnc
+from daedalus.validators import validate_number
 from daedalus.styles import custom_style
 from plumbum import FG  # pytype: disable=import-error
 from plumbum import local  # pytype: disable=import-error
@@ -31,7 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from inquirer import prompt, Checkbox, Editor, List
+from inquirer import prompt, Checkbox, Editor, List, Text
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -308,56 +308,50 @@ class Daedalus():
     def global_number_questions(enb):
         """Ask which codes to use"""
         return [
-            {
-                'type': 'input',
-                'name': 'mcc',
-                'message': f'What MCC code for {enb} would you like?',
-                'default': '001',
-                'validate': MCCValidator(),
-            },
-            {
-                'type': 'input',
-                'name': 'mnc',
-                'message': f'What MNC code for {enb} would you like?',
-                'default': '01',
-                'validate': MNCValidator(),
-            },
+            Text(
+                'mcc',
+                message = f'What MCC code for {enb} would you like?',
+                default = '001',
+                validate = validate_mcc,
+            ),
+            Text(
+                'mnc',
+                message = f'What MNC code for {enb} would you like?',
+                default = '01',
+                validate = validate_mnc,
+            ),
         ]
 
     @staticmethod
     def sdr_questions(enb):
         """Ask SDR specific questions"""
         return [
-            {
-                'type': 'list',
-                'name': 'prb',
-                'message': f'Number of Physical Resource Blocks (PRB) for {enb}',
-                'choices': ['6', '15', '25', '50', '75', '100'],
-                'default': '50',
-            },
-            {
-                'type': 'input',
-                'name': 'earfcn',
-                'message': f'What EARFCN code for DL for {enb} would you like?',
-                'default': '3400',
+            List(
+                'prb',
+                message = f'Number of Physical Resource Blocks (PRB) for {enb}',
+                choices = ['6', '15', '25', '50', '75', '100'],
+                default = '50',
+            ),
+            Text(
+                'earfcn',
+                message = f'What EARFCN code for DL for {enb} would you like?',
+                default = '3400',
                 # TODO should also validate the EARFCN wasn't already used
-                'validate': NumberValidator(),
-                'filter': lambda val: int(val),
-            },
-            {
-                'type': 'input',
-                'name': 'txgain',
-                'message': f'What TX gain value for {enb} would you like?',
-                'default': '80',
-                'validate': NumberValidator(),
-            },
-            {
+                validate = validate_number,
+            ),
+            Text(
+                'txgain',
+                message = f'What TX gain value for {enb} would you like?',
+                default = '80',
+                validate = validate_number,
+            ),
+            Text(
                 'type': 'input',
                 'name': 'rxgain',
-                'message': f'What RX gain value for {enb} would you like?',
-                'default': '40',
-                'validate': NumberValidator(),
-            },
+                message = f'What RX gain value for {enb} would you like?',
+                default = '40',
+                validate = validate_number,
+            ),
         ]
 
     @staticmethod
@@ -420,39 +414,36 @@ class Daedalus():
   }]''')
 
         return [
-            {
-                'type': 'editor',
-                'name': 'imsi',
-                'message': 'Add a new IMSI (an example will be prepopulated to get you started)',
-                'default': f'{json.dumps(example_imsi, indent=2)}',
-                'eargs': {
-                    'editor': 'nano',
-                    'ext': '.json',
-                },
-                'validate': IMSIValidator(),
-            },
-            {
-                'type': 'confirm',
-                'message': 'Would you like to add another IMSI?',
-                'name': 'add_imsi',
-                'default': False,
-            },
+            Editor(
+                'imsi',
+                message = 'Add a new IMSI (an example will be prepopulated to get you started)',
+                default = f'{json.dumps(example_imsi, indent=2)}',
+                # 'eargs': {
+                #     'editor': 'nano',
+                #     'ext': '.json',
+                # },
+                validate = validate_imsi,
+            ),
+            Confirm(
+                'add_imsi',
+                message = 'Would you like to add another IMSI?',
+                default = False,
+            ),
         ]
 
     @staticmethod
     def running_questions():
         """Once services are running, ask questions of what to do next"""
         return [
-            {
-                'type': 'list',
-                'name': 'actions',
-                'message': 'Services have started, what would you like to do?',
-                'choices': [
-                    {'name': 'Follow logs (Ctrl-c to return to this menu)', 'value': 'Follow logs (Ctrl-c to return to this menu)'},
-                    {'name': 'Remove services', 'value': 'Remove services'},
-                    {'name': 'Quit (services that were not removed will continue to run)', 'value': 'Quit (services that were not removed will continue to run)'},
+            List(
+                'actions',
+                message = 'Services have started, what would you like to do?',
+                choices = [
+                    'Follow logs (Ctrl-c to return to this menu)',
+                    'Remove services',
+                    'Quit (services that were not removed will continue to run)',
                 ],
-            },
+            ),
         ]
 
     def cleanup(self):
