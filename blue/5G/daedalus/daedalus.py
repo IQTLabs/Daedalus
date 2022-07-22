@@ -31,7 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from inquirer import prompt, Checkbox, Editor, List, Text
+from inquirer import prompt, Checkbox, Confirm, Editor, List, Text
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -285,7 +285,7 @@ class Daedalus():
                     '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)',
                     '5G UERANSIM gNodeB (gNB)',
                     '4G srsRAN eNodeB (eNB)',
-                    '5G srsRAN NSA gNodeB (gNB)'
+                    '5G srsRAN NSA gNodeB (gNB)',
                     '4G BladeRF eNodeB (eNB)',
                     '4G Ettus USRP B2xx eNodeB (eNB)',
                     '5G Ettus USRP B2xx NSA gNodeB (gNB)',
@@ -346,8 +346,7 @@ class Daedalus():
                 validate = validate_number,
             ),
             Text(
-                'type': 'input',
-                'name': 'rxgain',
+                'rxgain',
                 message = f'What RX gain value for {enb} would you like?',
                 default = '40',
                 validate = validate_number,

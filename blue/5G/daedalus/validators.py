@@ -15,6 +15,7 @@ def validate_number (answers, current):
     if int(current) < 0 or int(current) > 65535:
         raise ValidationError( "",
             reason='Please enter a number between 0 and 65535')  # pragma: no cover
+    return True
 
 def validate_mcc(answers, current):
     """Specifically validate the string is a number between 000 and 999"""
@@ -26,6 +27,7 @@ def validate_mcc(answers, current):
     if int(current.lstrip('0')) < 0 or int(current.lstrip('0')) > 999 or len(current) != 3:
         raise ValidationError("",
             reason='Please enter a number between 000 and 999')  # pragma: no cover
+    return True
 
 def validate_mnc(answers, current):
     """Specifically validate the string is a number between 00 and 99"""
@@ -37,6 +39,7 @@ def validate_mnc(answers, current):
     if int(current.lstrip('0')) < 0 or int(current.lstrip('0')) > 99 or len(current) != 2:
         raise ValidationError("",
             reason='Please enter a number between 00 and 99')  # pragma: no cover
+    return True
 
 def validate_imsi(answers, current):
     """Specifically validate the string is a JSON parsable list of records"""
@@ -49,3 +52,4 @@ def validate_imsi(answers, current):
     if not isinstance(imsi, list):
         raise ValidationError("",
             reason='Must be a list of IMSI records')  # pragma: no cover
+    return True
