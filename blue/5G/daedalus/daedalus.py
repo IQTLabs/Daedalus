@@ -31,7 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from InquirerPy import prompt
+from inuirer import prompt, Checkbox, Editor
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -269,42 +269,39 @@ class Daedalus():
         Run end user prompt with supplied questions and return the selected
         answers
         """
-        answers = prompt(questions, style=custom_style)
+        answers = prompt(questions, theme=custom_style)
         return answers
 
     @staticmethod
     def main_questions():
         """Ask which services to start"""
         return [
-            {
-                'type': 'checkbox',
-                'name': 'services',
-                'message': 'What services would you like to start?',
-                'choices': [
-                    {'name': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
-                     'value': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
-                     'enabled': True},
-                    {'name': 'Open5GS User Plane Network (UPF, SGWU)',
-                     'value': 'Open5GS User Plane Network (UPF, SGWU)',
-                     'enabled': True},
-                    {'name': 'Subscriber Database (MongoDB)',
-                     'value': 'Subscriber Database (MongoDB)',
-                     'enabled': True},
-                    {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)', 'value': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
-                    {'name': '5G UERANSIM gNodeB (gNB)', 'value': '5G UERANSIM gNodeB (gNB)'},
-                    {'name': '4G srsRAN eNodeB (eNB)', 'value': '4G srsRAN eNodeB (eNB)'},
-                    {'name': '5G srsRAN NSA gNodeB (gNB)', 'value': '5G srsRAN NSA gNodeB (gNB)'},
-                    {'name': '4G BladeRF eNodeB (eNB)', 'value': '4G BladeRF eNodeB (eNB)'},
-                    {'name': '4G Ettus USRP B2xx eNodeB (eNB)', 'value': '4G Ettus USRP B2xx eNodeB (eNB)'},
-                    {'name': '5G Ettus USRP B2xx NSA gNodeB (gNB)', 'value': '5G Ettus USRP B2xx NSA gNodeB (gNB)'},
-                    {'name': '4G LimeSDR eNodeB (eNB)', 'value': '4G LimeSDR eNodeB (eNB)'},
-                    {'name': '4G srsRAN UE (UE)', 'value': '4G srsRAN UE (UE)'},
-                    {'name': '5G srsRAN UE (UE)', 'value': '5G srsRAN UE (UE)'},
-                    {'name': '5G UERANSIM UE (UE)', 'value': '5G UERANSIM UE (UE)'},
-                    {'name': 'Add UE IMSIs', 'value': 'Add UE IMSIs'},
-                    {'name': 'Subscriber WebUI', 'value': 'Subscriber WebUI'},
+            Checkbox('services',
+                message = 'What services would you like to start?',
+                choices = [
+                    '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                    'Open5GS User Plane Network (UPF, SGWU)',
+                    'Subscriber Database (MongoDB)',
+                    '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)',
+                    '5G UERANSIM gNodeB (gNB)',
+                    '4G srsRAN eNodeB (eNB)',
+                    '5G srsRAN NSA gNodeB (gNB)'
+                    '4G BladeRF eNodeB (eNB)',
+                    '4G Ettus USRP B2xx eNodeB (eNB)',
+                    '5G Ettus USRP B2xx NSA gNodeB (gNB)',
+                    '4G LimeSDR eNodeB (eNB)',
+                    '4G srsRAN UE (UE)',
+                    '5G srsRAN UE (UE)',
+                    '5G UERANSIM UE (UE)',
+                    'Add UE IMSIs',
+                    'Subscriber WebUI',
                 ],
-            },
+                default = [
+                    '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                    'Open5GS User Plane Network (UPF, SGWU)',
+                    'Subscriber Database (MongoDB)'
+                ]
+            ),
         ]
 
     @staticmethod
