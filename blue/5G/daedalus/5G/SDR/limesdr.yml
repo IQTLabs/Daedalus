@@ -7,7 +7,7 @@ networks:
       name: ran
 services:
   limesdr-enb:
-    image: iqtlabs/srsran-lime:latest
+    image: iqtlabs/srsran-lime:v0.11.1
     container_name: limesdr-enb
     depends_on:
       mme:
