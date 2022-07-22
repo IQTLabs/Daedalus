@@ -356,7 +356,7 @@ class Daedalus():
     @staticmethod
     def imsi_questions():
         """Ask IMSI specific questions"""
-        example_imsi = json.loads('''[{
+        example_imsi = '''[{
     "access_restriction_data": 32,
     "ambr": {
       "downlink": {
@@ -410,7 +410,7 @@ class Daedalus():
     ],
     "subscribed_rau_tau_timer": 12,
     "subscriber_status": 0
-  }]''')
+  }]'''
 
         return [
             Editor(
