@@ -356,67 +356,68 @@ class Daedalus():
     @staticmethod
     def imsi_questions():
         """Ask IMSI specific questions"""
-        example_imsi = '''[{
+        example_imsi = '''[{{
     "access_restriction_data": 32,
-    "ambr": {
-      "downlink": {
+    "ambr": {{
+      "downlink": {{
         "unit": 3,
         "value": 1
-      },
-      "uplink": {
+      }},
+      "uplink": {{
         "unit": 3,
         "value": 1
-      }
-    },
+      }}
+    }},
     "imsi": "001010000000012",
     "network_access_mode": 2,
-    "security": {
+    "security": {{
       "amf": "8000",
       "k": "c8eba87c1074edd06885cb0486718341",
       "op": null,
       "opc": "17b6c0157895bcaa1efc1cef55033f5f"
-    },
+    }},
     "slice": [
-      {
+      {{
         "default_indicator": true,
         "sd": "000000",
         "session": [
-          {
-            "ambr": {
-              "downlink": {
+          {{
+            "ambr": {{
+              "downlink": {{
                 "unit": 3,
                 "value": 1
-              },
-              "uplink": {
+              }},
+              "uplink": {{
                 "unit": 3,
                 "value": 1
-              }
-            },
+              }}
+            }},
             "name": "internet",
             "pcc_rule": [],
-            "qos": {
-              "arp": {
+            "qos": {{
+              "arp": {{
                 "pre_emption_capability": 1,
                 "pre_emption_vulnerability": 1,
                 "priority_level": 8
-              },
+              }},
               "index": 9
-            },
+            }},
             "type": 1
-          }
+          }}
         ],
         "sst": 1
-      }
+      }}
     ],
     "subscribed_rau_tau_timer": 12,
     "subscriber_status": 0
-  }]'''
+  }}]'''
 
         return [
             Editor(
                 'imsi',
                 message = 'Add a new IMSI (an example will be prepopulated to get you started)',
-                default = f'{json.dumps(example_imsi, indent=2)}',
+                default = example_imsi,
+                #default = f'{json.dumps(json.dumps(example_imsi, indent=2))}',
                 # 'eargs': {
                 #     'editor': 'nano',
                 #     'ext': '.json',
