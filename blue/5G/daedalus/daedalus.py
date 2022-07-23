@@ -269,7 +269,7 @@ class Daedalus():
         Run end user prompt with supplied questions and return the selected
         answers
         """
-        answers = prompt(questions theme=custom_style)
+        answers = prompt(questions, theme=custom_style)
         return answers
 
     @staticmethod
