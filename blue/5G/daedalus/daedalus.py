@@ -12,10 +12,10 @@ import time
 import docker as dclient
 from daedalus import __file__
 from daedalus import __version__
-from daedalus.validators import IMSIValidator
-from daedalus.validators import MCCValidator
-from daedalus.validators import MNCValidator
-from daedalus.validators import NumberValidator
+from daedalus.validators import validate_imsi
+from daedalus.validators import validate_mcc
+from daedalus.validators import validate_mnc
+from daedalus.validators import validate_number
 from daedalus.styles import custom_style
 from plumbum import FG  # pytype: disable=import-error
 from plumbum import local  # pytype: disable=import-error
@@ -31,7 +31,7 @@ from plumbum.cmd import mkdir  # pytype: disable=import-error
 from plumbum.cmd import rm  # pytype: disable=import-error
 from plumbum.cmd import sudo  # pytype: disable=import-error
 from plumbum.cmd import tar  # pytype: disable=import-error
-from InquirerPy import prompt
+from inquirer import prompt, Checkbox, Confirm, Editor, List, Text
 
 
 level_int = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20,
@@ -269,193 +269,181 @@ class Daedalus():
         Run end user prompt with supplied questions and return the selected
         answers
         """
-        answers = prompt(questions, style=custom_style)
+        answers = prompt(questions, theme=custom_style())
         return answers
 
     @staticmethod
     def main_questions():
         """Ask which services to start"""
         return [
-            {
-                'type': 'checkbox',
-                'name': 'services',
-                'message': 'What services would you like to start?',
-                'choices': [
-                    {'name': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
-                     'value': '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
-                     'enabled': True},
-                    {'name': 'Open5GS User Plane Network (UPF, SGWU)',
-                     'value': 'Open5GS User Plane Network (UPF, SGWU)',
-                     'enabled': True},
-                    {'name': 'Subscriber Database (MongoDB)',
-                     'value': 'Subscriber Database (MongoDB)',
-                     'enabled': True},
-                    {'name': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)', 'value': '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)'},
-                    {'name': '5G UERANSIM gNodeB (gNB)', 'value': '5G UERANSIM gNodeB (gNB)'},
-                    {'name': '4G srsRAN eNodeB (eNB)', 'value': '4G srsRAN eNodeB (eNB)'},
-                    {'name': '5G srsRAN NSA gNodeB (gNB)', 'value': '5G srsRAN NSA gNodeB (gNB)'},
-                    {'name': '4G BladeRF eNodeB (eNB)', 'value': '4G BladeRF eNodeB (eNB)'},
-                    {'name': '4G Ettus USRP B2xx eNodeB (eNB)', 'value': '4G Ettus USRP B2xx eNodeB (eNB)'},
-                    {'name': '5G Ettus USRP B2xx NSA gNodeB (gNB)', 'value': '5G Ettus USRP B2xx NSA gNodeB (gNB)'},
-                    {'name': '4G LimeSDR eNodeB (eNB)', 'value': '4G LimeSDR eNodeB (eNB)'},
-                    {'name': '4G srsRAN UE (UE)', 'value': '4G srsRAN UE (UE)'},
-                    {'name': '5G srsRAN UE (UE)', 'value': '5G srsRAN UE (UE)'},
-                    {'name': '5G UERANSIM UE (UE)', 'value': '5G UERANSIM UE (UE)'},
-                    {'name': 'Add UE IMSIs', 'value': 'Add UE IMSIs'},
-                    {'name': 'Subscriber WebUI', 'value': 'Subscriber WebUI'},
+            Checkbox('services',
+                message = 'What services would you like to start?',
+                choices = [
+                    '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                    'Open5GS User Plane Network (UPF, SGWU)',
+                    'Subscriber Database (MongoDB)',
+                    '5G Open5GS Core (NRF, AUSF, NSSF, UDM, BSF, PCF, UDR, AMF)',
+                    '5G UERANSIM gNodeB (gNB)',
+                    '4G srsRAN eNodeB (eNB)',
+                    '5G srsRAN NSA gNodeB (gNB)',
+                    '4G BladeRF eNodeB (eNB)',
+                    '4G Ettus USRP B2xx eNodeB (eNB)',
+                    '5G Ettus USRP B2xx NSA gNodeB (gNB)',
+                    '4G LimeSDR eNodeB (eNB)',
+                    '4G srsRAN UE (UE)',
+                    '5G srsRAN UE (UE)',
+                    '5G UERANSIM UE (UE)',
+                    'Add UE IMSIs',
+                    'Subscriber WebUI',
                 ],
-            },
+                default = [
+                    '4G Open5GS EPC (HSS, MME, SMF, SGWC, PCRF)',
+                    'Open5GS User Plane Network (UPF, SGWU)',
+                    'Subscriber Database (MongoDB)'
+                ]
+            ),
         ]
 
     @staticmethod
     def global_number_questions(enb):
         """Ask which codes to use"""
         return [
-            {
-                'type': 'input',
-                'name': 'mcc',
-                'message': f'What MCC code for {enb} would you like?',
-                'default': '001',
-                'validate': MCCValidator(),
-            },
-            {
-                'type': 'input',
-                'name': 'mnc',
-                'message': f'What MNC code for {enb} would you like?',
-                'default': '01',
-                'validate': MNCValidator(),
-            },
+            Text(
+                'mcc',
+                message = f'What MCC code for {enb} would you like?',
+                default = '001',
+                validate = validate_mcc,
+            ),
+            Text(
+                'mnc',
+                message = f'What MNC code for {enb} would you like?',
+                default = '01',
+                validate = validate_mnc,
+            ),
         ]
 
     @staticmethod
     def sdr_questions(enb):
         """Ask SDR specific questions"""
         return [
-            {
-                'type': 'list',
-                'name': 'prb',
-                'message': f'Number of Physical Resource Blocks (PRB) for {enb}',
-                'choices': ['6', '15', '25', '50', '75', '100'],
-                'default': '50',
-            },
-            {
-                'type': 'input',
-                'name': 'earfcn',
-                'message': f'What EARFCN code for DL for {enb} would you like?',
-                'default': '3400',
+            List(
+                'prb',
+                message = f'Number of Physical Resource Blocks (PRB) for {enb}',
+                choices = ['6', '15', '25', '50', '75', '100'],
+                default = '50',
+            ),
+            Text(
+                'earfcn',
+                message = f'What EARFCN code for DL for {enb} would you like?',
+                default = '3400',
                 # TODO should also validate the EARFCN wasn't already used
-                'validate': NumberValidator(),
-                'filter': lambda val: int(val),
-            },
-            {
-                'type': 'input',
-                'name': 'txgain',
-                'message': f'What TX gain value for {enb} would you like?',
-                'default': '80',
-                'validate': NumberValidator(),
-            },
-            {
-                'type': 'input',
-                'name': 'rxgain',
-                'message': f'What RX gain value for {enb} would you like?',
-                'default': '40',
-                'validate': NumberValidator(),
-            },
+                validate = validate_number,
+            ),
+            Text(
+                'txgain',
+                message = f'What TX gain value for {enb} would you like?',
+                default = '80',
+                validate = validate_number,
+            ),
+            Text(
+                'rxgain',
+                message = f'What RX gain value for {enb} would you like?',
+                default = '40',
+                validate = validate_number,
+            ),
         ]
 
     @staticmethod
     def imsi_questions():
         """Ask IMSI specific questions"""
-        example_imsi = json.loads('''[{
+        example_imsi = '''[{{
     "access_restriction_data": 32,
-    "ambr": {
-      "downlink": {
+    "ambr": {{
+      "downlink": {{
         "unit": 3,
         "value": 1
-      },
-      "uplink": {
+      }},
+      "uplink": {{
         "unit": 3,
         "value": 1
-      }
-    },
+      }}
+    }},
     "imsi": "001010000000012",
     "network_access_mode": 2,
-    "security": {
+    "security": {{
       "amf": "8000",
       "k": "c8eba87c1074edd06885cb0486718341",
       "op": null,
       "opc": "17b6c0157895bcaa1efc1cef55033f5f"
-    },
+    }},
     "slice": [
-      {
+      {{
         "default_indicator": true,
         "sd": "000000",
         "session": [
-          {
-            "ambr": {
-              "downlink": {
+          {{
+            "ambr": {{
+              "downlink": {{
                 "unit": 3,
                 "value": 1
-              },
-              "uplink": {
+              }},
+              "uplink": {{
                 "unit": 3,
                 "value": 1
-              }
-            },
+              }}
+            }},
             "name": "internet",
             "pcc_rule": [],
-            "qos": {
-              "arp": {
+            "qos": {{
+              "arp": {{
                 "pre_emption_capability": 1,
                 "pre_emption_vulnerability": 1,
                 "priority_level": 8
-              },
+              }},
               "index": 9
-            },
+            }},
             "type": 1
-          }
+          }}
         ],
         "sst": 1
-      }
+      }}
     ],
     "subscribed_rau_tau_timer": 12,
     "subscriber_status": 0
-  }]''')
+  }}]'''
 
         return [
-            {
-                'type': 'editor',
-                'name': 'imsi',
-                'message': 'Add a new IMSI (an example will be prepopulated to get you started)',
-                'default': f'{json.dumps(example_imsi, indent=2)}',
-                'eargs': {
-                    'editor': 'nano',
-                    'ext': '.json',
-                },
-                'validate': IMSIValidator(),
-            },
-            {
-                'type': 'confirm',
-                'message': 'Would you like to add another IMSI?',
-                'name': 'add_imsi',
-                'default': False,
-            },
+            Editor(
+                'imsi',
+                message = 'Add a new IMSI (an example will be prepopulated to get you started)',
+                default = example_imsi,
+                #default = f'{json.dumps(json.dumps(example_imsi, indent=2))}',
+                # 'eargs': {
+                #     'editor': 'nano',
+                #     'ext': '.json',
+                # },
+                validate = validate_imsi,
+            ),
+            Confirm(
+                'add_imsi',
+                message = 'Would you like to add another IMSI?',
+                default = False,
+            ),
         ]
 
     @staticmethod
     def running_questions():
         """Once services are running, ask questions of what to do next"""
         return [
-            {
-                'type': 'list',
-                'name': 'actions',
-                'message': 'Services have started, what would you like to do?',
-                'choices': [
-                    {'name': 'Follow logs (Ctrl-c to return to this menu)', 'value': 'Follow logs (Ctrl-c to return to this menu)'},
-                    {'name': 'Remove services', 'value': 'Remove services'},
-                    {'name': 'Quit (services that were not removed will continue to run)', 'value': 'Quit (services that were not removed will continue to run)'},
+            List(
+                'actions',
+                message = 'Services have started, what would you like to do?',
+                choices = [
+                    'Follow logs (Ctrl-c to return to this menu)',
+                    'Remove services',
+                    'Quit (services that were not removed will continue to run)',
                 ],
-            },
+            ),
         ]
 
     def cleanup(self):
