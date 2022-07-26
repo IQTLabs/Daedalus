@@ -10,7 +10,7 @@ networks:
       name: rfn
 services:
   enb:
-    image: iqtlabs/srsran:v0.11.1
+    image: iqtlabs/srsran:latest
     container_name: enb
     depends_on:
       mme:
