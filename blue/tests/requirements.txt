@@ -1,4 +1,4 @@
-attrs==21.4.0
+attrs==22.1.0
 codecov==2.1.12
 pylint==2.14.5
 pytest-cov==3.0.0
