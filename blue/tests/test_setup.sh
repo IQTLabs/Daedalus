@@ -1,8 +1,12 @@
 #!/bin/bash
 
-echo "building images..."
+set -e
 
-DSVER=v1.0.10
+DSVER=v1.1.1
+export FAUCET_PREFIX='/tmp/tpfaucet'
+export MIRROR_BRIDGE_OUT='tpmirrorint'
+
+echo "building images..."
 
 cd blue/5G/daedalus/5G/srsRAN && \
     docker build -t iqtlabs/srsran:latest -f Dockerfile . && \
@@ -12,18 +16,18 @@ cd UERANSIM && docker build -t iqtlabs/ueransim:latest . && cd .. || exit 1
 
 echo "starting dovesnap..."
 
-docker network prune -f && docker system prune -f || exit 1
-
-sudo ip link add tpmirrorint type veth peer name tpmirror
+docker network prune -f && docker system prune -f && docker volume prune -f
+sudo ip link add tpmirrorint type veth peer name tpmirror || true
 sudo ip link set tpmirrorint up
 sudo ip link set tpmirror up
-mkdir -p /tmp/tpfaucet/etc/faucet
-cp configs/faucet/faucet.yaml /tmp/tpfaucet/etc/faucet/
-cp configs/faucet/acls.yaml /tmp/tpfaucet/etc/faucet/
-curl -LJO https://github.com/iqtlabs/dovesnap/tarball/${DSVER}
-tar -xvf IQTLabs-dovesnap*.tar.gz
-cd IQTLabs-dovesnap*/ || exit 1
-MIRROR_BRIDGE_OUT='tpmirrorint' FAUCET_PREFIX='/tmp/tpfaucet' docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
+sudo rm -rf ${FAUCET_PREFIX}
+mkdir -p ${FAUCET_PREFIX}/etc/faucet
+cp configs/faucet/faucet.yaml ${FAUCET_PREFIX}/etc/faucet/
+cp configs/faucet/acls.yaml ${FAUCET_PREFIX}/etc/faucet/
+rm -rf IQTLabs-dovesnap* && curl -LJ https://github.com/iqtlabs/dovesnap/tarball/${DSVER} | tar zxvf -
+cd IQTLabs-dovesnap*/
+docker-compose -f docker-compose.yml -f docker-compose-standalone.yml down -v
+docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
 cd ..
 
 echo "creating networks..."
