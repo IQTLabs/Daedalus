@@ -44,12 +44,12 @@ jobs:
           --platform linux/amd64,linux/arm64 \
           --push \
           -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_22_04_01 \
+          --build-arg SRS_VERSION=release_22_04_1 \
           -f Dockerfile . && \
         docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --push \
           -t iqtlabs/srsran-lime:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_22_04_01 \
+          --build-arg SRS_VERSION=release_22_04_1 \
           -f Dockerfile .
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
