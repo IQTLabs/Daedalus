@@ -3,7 +3,7 @@
 NRFSBI=192.168.26.61:7777
 ALLREG="AMF AUSF BSF NSSF PCF SMF UDM UDR"
 
-instances=$(curl -s --http2-prior-knowledge "$NRFSBI"/nnrf-nfm/v1/nf-instances| jq -r "._links.items[].href")
+instances=$(curl -s -A "NRF" --http2-prior-knowledge "$NRFSBI"/nnrf-nfm/v1/nf-instances| jq -r "._links.items[].href")
 registered=""
 for instance in $instances ; do
     nfmeta=$(curl -s --http2-prior-knowledge "$instance" |jq -r ".nfType,.nfStatus")
