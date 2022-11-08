@@ -2,7 +2,7 @@
 
 set -e
 
-DSVER=v1.1.2
+DSVER=v1.1.4
 export FAUCET_PREFIX='/tmp/tpfaucet'
 export MIRROR_BRIDGE_OUT='tpmirrorint'
 

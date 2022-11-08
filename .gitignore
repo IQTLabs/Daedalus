@@ -1,4 +1,6 @@
-blue/5G/IQTLabs-dovesnap-*
+blue/5G/daedalus/5G/IQTLabs-dovesnap-*
+blue/AUTHORS
+blue/ChangeLog
 build
 dist
 .eggs
