@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
       with:
@@ -18,13 +17,15 @@ jobs:
         shellcheck --version && \
         /bin/bash --version && \
         for shellscript in $(find blue -type f -name "*.sh"); do /bin/bash -n "$shellscript" && shellcheck -x -e SC2069 -e SC2048 "$shellscript"; done
-    - name: unit_test
+    - name: code_check
       run: |
         ./blue/tests/install_test.sh && \
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
-        pytype . && \
-        pylint --fail-under=6.0 --disable=expression-not-assigned blue && \
-        PATH=/home/runner/.local/bin:$PATH py.test -v -vv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        timeout 900 pytype . && \
+        pylint --fail-under=6.0 --disable=expression-not-assigned blue
+    - name: unit_test
+      run: |
+        PATH=/home/runner/.local/bin:$PATH timeout 900 py.test -vvv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov

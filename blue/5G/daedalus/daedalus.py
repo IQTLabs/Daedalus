@@ -76,7 +76,7 @@ class Daedalus():
             version = 'v'+__version__
 
         if srsran:
-            srsran_version = 'release_21_10'
+            srsran_version = 'release_22_04_1'
             srs_args = ['build', '-t', 'iqtlabs/srsran:'+version, '-f', 'Dockerfile',
                         '--build-arg', f'SRS_VERSION={srsran_version}', '.']
             with local.cwd(local.cwd / 'blue/5G/daedalus/5G/srsRAN'):
@@ -98,7 +98,7 @@ class Daedalus():
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v1.1.1'
+        release = 'v1.1.4'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
