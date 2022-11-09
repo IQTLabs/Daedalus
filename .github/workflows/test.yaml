@@ -25,7 +25,7 @@ jobs:
         pylint --fail-under=6.0 --disable=expression-not-assigned blue
     - name: unit_test
       run: |
-        PATH=/home/runner/.local/bin:$PATH timeout 3600 py.test -vvv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        PATH=/home/runner/.local/bin:$PATH timeout 7200 py.test -vvv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov
