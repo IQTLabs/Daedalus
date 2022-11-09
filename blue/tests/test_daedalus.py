@@ -11,6 +11,7 @@ def test_start_remove_dovesnap():
     instance.start_dovesnap()
     instance.remove_dovesnap()
     instance.reset_cwd()
+    instance.cleanup()
 
 
 def test_build_images():
@@ -18,6 +19,7 @@ def test_build_images():
     instance.build_dockers(srsran=True, ueransim=True,
                            open5gs=True, srsran_lime=True)
     instance.reset_cwd()
+    instance.cleanup()
 
 
 def test_create_remove_networks():
@@ -27,16 +29,19 @@ def test_create_remove_networks():
     instance.remove_networks()
     instance.remove_dovesnap()
     instance.reset_cwd()
+    instance.cleanup()
 
 
 def test_start_no_services():
     instance = Daedalus()
     instance.start_services()
+    instance.cleanup()
 
 
 def test_remove_no_services():
     instance = Daedalus()
     instance.remove_services()
+    instance.cleanup()
 
 
 def test_start_remove_services():
@@ -53,28 +58,34 @@ def test_start_remove_services():
 def test_main_questions():
     instance = Daedalus()
     instance.main_questions()
+    instance.cleanup()
 
 
 def test_global_number_questions():
     instance = Daedalus()
     instance.global_number_questions('enb')
+    instance.cleanup()
 
 
 def test_sdr_questions():
     instance = Daedalus()
     instance.sdr_questions('enb')
+    instance.cleanup()
 
 
 def test_imsi_questions():
     instance = Daedalus()
     instance.imsi_questions()
+    instance.cleanup()
 
 
 def test_running_questions():
     instance = Daedalus()
     instance.running_questions()
+    instance.cleanup()
 
 
 def test_check_commands():
     instance = Daedalus()
     instance.check_commands()
+    instance.cleanup()
