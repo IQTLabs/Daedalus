@@ -23,9 +23,12 @@ jobs:
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         timeout 900 pytype . && \
         pylint --fail-under=6.0 --disable=expression-not-assigned blue
-    - name: unit_test
+    - name: unit_test_no_build
       run: |
-        PATH=/home/runner/.local/bin:$PATH timeout 7200 py.test -vvv --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
+        PATH=/home/runner/.local/bin:$PATH timeout 900 py.test -vvv -k "not build" --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc
+    - name: unit_test_build
+      run: |
+        PATH=/home/runner/.local/bin:$PATH timeout 7200 py.test -vvv -k "build" --cov-append --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
         PATH=/home/runner/.local/bin:$PATH coverage report && \
         PATH=/home/runner/.local/bin:$PATH coverage xml
     - name: Upload coverage to Codecov
