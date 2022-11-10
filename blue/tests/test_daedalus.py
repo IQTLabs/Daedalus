@@ -48,8 +48,10 @@ def test_start_remove_services():
     instance = Daedalus()
     instance.start_dovesnap()
     instance.create_networks()
-    instance.compose_files = ['-f', 'core/epc.yml',
-                              '-f', 'core/upn.yml', '-f', 'core/db.yml']
+    instance.compose_files = [
+        '-f', 'blue/5G/daedalus/5G/core/epc.yml',
+        '-f', 'blue/5G/daedalus/5G/core/upn.yml',
+        '-f', 'blue/5G/daedalus/5G/core/db.yml']
     instance.start_services()
     instance.remove_services()
     instance.cleanup()
