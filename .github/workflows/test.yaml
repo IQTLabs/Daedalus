@@ -21,7 +21,7 @@ jobs:
       run: |
         ./blue/tests/install_test.sh && \
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
-        timeout 900 pytype . && \
+        timeout 900 pytype . --exclude=blue/build && \
         pylint --fail-under=6.0 --disable=expression-not-assigned blue
     - name: unit_test_no_build
       run: |
