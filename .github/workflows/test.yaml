@@ -23,9 +23,12 @@ jobs:
         export PYTHONPATH=$PWD/blue/5G:$PYTHONPATH && \
         timeout 900 pytype . --exclude=blue/build && \
         pylint --fail-under=6.0 --disable=expression-not-assigned blue
-    - name: unit_test_no_build
+    - name: unit_test_create_remove_networks
       run: |
-        PATH=/home/runner/.local/bin:$PATH timeout 900 py.test -vvv -k "not build" --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc
+        PATH=/home/runner/.local/bin:$PATH timeout 900 py.test -vvv -k "create_remove_networks" --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc
+    - name: unit_test_no_build_no_create_remove_networks
+      run: |
+        PATH=/home/runner/.local/bin:$PATH timeout 900 py.test -vvv -k "not build and not create_remove_networks " --cov-append --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc
     - name: unit_test_build
       run: |
         PATH=/home/runner/.local/bin:$PATH timeout 7200 py.test -vvv -k "build" --cov-append --capture=tee-sys --cov-report term-missing --cov=blue/5G/daedalus -c .coveragerc && \
