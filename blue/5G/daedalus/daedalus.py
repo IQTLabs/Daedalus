@@ -153,9 +153,13 @@ class Daedalus():
                     'com.docker.network.bridge.name=ran', '-o',
                     'ovs.bridge.nat_acl=protectran', 'ran']
         docker.bound_command(dovesnap_opts + cpn_opts) & FG
+        time.sleep(5)
         docker.bound_command(dovesnap_opts + upn_opts) & FG
+        time.sleep(5)
         docker.bound_command(dovesnap_opts + rfn_opts) & FG
+        time.sleep(5)
         docker.bound_command(dovesnap_opts + ran_opts) & FG
+        time.sleep(5)
 
     def start_services(self):
         """Start selected services for the 4G/5G environment"""
