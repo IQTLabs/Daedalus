@@ -3,6 +3,7 @@
 Test module for daedalus.
 @author: Charlie Lewis
 """
+import time
 from daedalus.daedalus import Daedalus
 
 
@@ -26,6 +27,8 @@ def test_create_remove_networks():
     instance = Daedalus()
     instance.start_dovesnap()
     instance.create_networks()
+    # TODO: workaround for dovesnap not handling creating then immediately deleting networks.
+    time.sleep(5)
     instance.remove_networks()
     instance.remove_dovesnap()
     instance.reset_cwd()
