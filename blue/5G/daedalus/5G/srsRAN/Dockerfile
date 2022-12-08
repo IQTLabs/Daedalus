@@ -1,6 +1,6 @@
 FROM ubuntu:20.04 as builder
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
-ARG SRS_VERSION=release_22_04_1
+ARG SRS_VERSION=release_22_10
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -yq \
      build-essential \
