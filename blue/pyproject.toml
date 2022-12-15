@@ -18,7 +18,7 @@ classifiers = [
 dependencies = [
     "docker == 6.0.1",
     "docker-compose == 1.29.2",
-    "dovesnap == 1.1.4",
+    "dovesnap == 1.1.5",
     "plumbum == 1.7.2",
     "inquirer == 2.10.0",
 ]
@@ -27,8 +27,8 @@ dependencies = [
 test = [
     "attrs==22.1.0",
     "codecov==2.1.12",
-    "pylint==2.15.5",
-    "pytype==2022.11.10",
+    "pylint==2.15.8",
+    "pytype==2022.12.9",
     "pytest==7.2.0",
     "pytest-cov==4.0.0",
     "ruamel.yaml==0.17.21"
