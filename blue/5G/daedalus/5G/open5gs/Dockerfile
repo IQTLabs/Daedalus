@@ -6,6 +6,7 @@ RUN apt-get update && \
         bison \
         build-essential \
         ca-certificates \
+        cmake \
         flex \
         git \
         gnupg \
@@ -36,15 +37,15 @@ RUN apt-get update && \
         nodejs && \
     apt-get clean
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.5.8
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.0
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
 WORKDIR /open5gs
-# TODO: provide certs externally; open5gs will use locally built certs for now via make_certs.sh in this image.
-RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make_certs.sh && \
-  mkdir /certs && misc/make_certs.sh /certs
+# TODO: provide certs externally; open5gs will use locally built certs for now via make-certs.sh in this image.
+RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make-certs.sh && \
+  mkdir /certs && misc/make-certs.sh /certs
 
 FROM ubuntu:20.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
