@@ -1,6 +1,10 @@
 {
+  "constraints": {
+    "poetry": "==1.1.15"
+  },
   "extends": [
-    "config:base"
+    "config:base",
+    "docker:enableMajor"
   ],
   "ignorePaths": []
 }
