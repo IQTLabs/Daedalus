@@ -6,3 +6,5 @@ dist
 .eggs
 *.egg-info
 __pycache__
+IQTLabs-dovesnap-*
+.coverage
