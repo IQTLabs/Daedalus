@@ -49,11 +49,6 @@ RUN git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2 \
     && cd /root/SoapySDR/build \
     && cmake ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/SoapySDR
-RUN git clone https://github.com/myriadrf/LimeSuite.git -b v20.10.0 \
-    && mkdir -p /root/LimeSuite/build \
-    && cd /root/LimeSuite/build \
-    && cmake ../ && make -j `nproc` && make install && ldconfig \
-    && cd /root && rm -rf /root/LimeSuite
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
 # TODO: not possible to build release 19_12 under Ubuntu 22.04 w/gcc 12,
 # as string safety checks fail. If disabled with -Wno-error, srsRAN does
