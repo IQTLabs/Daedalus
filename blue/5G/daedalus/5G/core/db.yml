@@ -24,7 +24,7 @@ services:
       - 0.0.0.0
     hostname: mongodb
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
       interval: 30s
       timeout: 10s
       retries: 5
