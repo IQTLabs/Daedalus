@@ -18,7 +18,7 @@ def test_start_remove_dovesnap():
 def test_build_images():
     instance = Daedalus()
     instance.build_dockers(srsran=True, ueransim=True,
-                           open5gs=True, srsran_lime=True)
+                           open5gs=True)
     instance.reset_cwd()
     instance.cleanup()
 
