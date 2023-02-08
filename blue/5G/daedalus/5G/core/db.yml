@@ -11,7 +11,7 @@ networks:
 
 services:
   mongodb:
-    image: mongo:4.4.6-bionic
+    image: mongo:jammy
     container_name: "mongodb"
     volumes:
       - mongodb_data:/data/db
@@ -36,7 +36,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   mongodbloader:
-    image: mongo:4.4.6-bionic
+    image: mongo:jammy
     depends_on:
       mongodb:
         condition: service_healthy
