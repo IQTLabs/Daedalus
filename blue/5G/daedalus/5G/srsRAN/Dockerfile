@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as builder
+FROM ubuntu:22.04 as builder
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ARG SRS_VERSION=release_22_10
 ENV DEBIAN_FRONTEND noninteractive
@@ -50,15 +50,12 @@ RUN git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2 \
     && cmake ../ && make -j `nproc` && make install && ldconfig \
     && cd /root && rm -rf /root/SoapySDR
 RUN /usr/local/lib/uhd/utils/uhd_images_downloader.py -t "b2|usb"
-# TODO: not possible to build release 19_12 under Ubuntu 22.04 w/gcc 12,
-# as string safety checks fail. If disabled with -Wno-error, srsRAN does
-# not pass tests anyway.
 RUN git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION} \
     && mkdir -p /root/srsRAN/build \
     && cd /root/srsRAN/build \
     && cmake -DENABLE_AVX512=OFF ../ && make -j `nproc` && make install && ldconfig
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=builder /usr/local /usr/local
