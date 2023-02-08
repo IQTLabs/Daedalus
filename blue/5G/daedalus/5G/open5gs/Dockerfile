@@ -1,11 +1,11 @@
-FROM ubuntu:20.04 AS builder
-# TODO: mongodb doesn't yet support 22.04, due to old libssl (see https://jira.mongodb.org/browse/SERVER-62300)
+FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        bison \
         build-essential \
         ca-certificates \
+        gnupg \
+        bison \
         cmake \
         flex \
         git \
@@ -24,7 +24,6 @@ RUN apt-get update && \
         libtins-dev \
         libyaml-dev \
         lksctp-tools \
-        mongodb-clients \
         netbase \
         net-tools \
         ninja-build \
@@ -47,7 +46,7 @@ WORKDIR /open5gs
 RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make-certs.sh && \
   mkdir /certs && misc/make-certs.sh /certs
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=builder /usr/local/lib/*-linux-gnu /usr/local/lib/
