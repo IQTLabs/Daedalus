@@ -11,7 +11,7 @@ networks:
 
 services:
   mongodb:
-    image: mongo:4.4.6-bionic
+    image: mongo:jammy
     container_name: "mongodb"
     volumes:
       - mongodb_data:/data/db
@@ -24,7 +24,7 @@ services:
       - 0.0.0.0
     hostname: mongodb
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
       interval: 30s
       timeout: 10s
       retries: 5
@@ -36,7 +36,7 @@ services:
       - "dovesnap.faucet.mirror=true"
       - "daedalus.namespace=primary"
   mongodbloader:
-    image: mongo:4.4.6-bionic
+    image: mongo:jammy
     depends_on:
       mongodb:
         condition: service_healthy
