@@ -52,3 +52,13 @@ upf:
   pfcp:
     - addr: 192.168.27.41
       apn: [internet, internet2, iot.nb]
+
+sbi:
+    server:
+      cacert: /certs/ca.crt
+      key: /certs/smf.key
+      cert: /certs/smf.crt
+    client:
+      cacert: /certs/ca.crt
+      key: /certs/smf.key
+      cert: /certs/smf.crt
