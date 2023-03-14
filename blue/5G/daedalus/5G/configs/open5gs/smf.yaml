@@ -9,6 +9,12 @@ logger:
     gtpv2: 1
     gtp: 1
 
+sbi:
+  server:
+    no_tls: true
+  client:
+    no_tls: true
+
 smf:
   freeDiameter:
     identity: smf.localdomain
