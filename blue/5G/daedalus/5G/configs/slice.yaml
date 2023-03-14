@@ -11,6 +11,16 @@ logger:
 parameter:
   no_ipv6: true
 
+sbi:
+    server:
+      cacert: /certs/ca.crt
+      key: /certs/nrf.key
+      cert: /certs/nrf.crt
+    client:
+      cacert: /certs/ca.crt
+      key: /certs/nrf.key
+      cert: /certs/nrf.crt
+
 mme:
     freeDiameter:
       identity: mme.localdomain
