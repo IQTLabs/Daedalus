@@ -11,6 +11,12 @@ logger:
 parameter:
   no_ipv6: true
 
+sbi:
+  server:
+    no_tls: true
+  client:
+    no_tls: true
+
 mme:
     freeDiameter:
       identity: mme.localdomain
