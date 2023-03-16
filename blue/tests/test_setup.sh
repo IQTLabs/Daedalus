@@ -26,8 +26,8 @@ cp configs/faucet/faucet.yaml ${FAUCET_PREFIX}/etc/faucet/
 cp configs/faucet/acls.yaml ${FAUCET_PREFIX}/etc/faucet/
 rm -rf IQTLabs-dovesnap* && curl -LJ https://github.com/iqtlabs/dovesnap/tarball/${DSVER} | tar zxvf -
 cd IQTLabs-dovesnap*/
-docker-compose -f docker-compose.yml -f docker-compose-standalone.yml down -v
-docker-compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose-standalone.yml down -v
+docker compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
 cd ..
 
 echo "creating networks..."
