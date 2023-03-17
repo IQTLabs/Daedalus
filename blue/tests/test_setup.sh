@@ -2,17 +2,36 @@
 
 set -e
 
-DSVER=v1.1.8
 export FAUCET_PREFIX='/tmp/tpfaucet'
 export MIRROR_BRIDGE_OUT='tpmirrorint'
+DSVER=$(grep -E "dovesnap == " blue/pyproject.toml | grep -Eo "[0-9\.]+")
 
-echo "building images..."
+if [[ "$DSVER" = "" ]] ; then
+    echo "cannot get dovesnap version"
+    exit 1
+fi
+
+D5GVER=$(grep -E "^version\s+=\s+\"[^\"]+\"" blue/pyproject.toml)
+
+if [[ "$D5GVER" = "" ]] ; then
+    echo "cannot get daedalus version"
+    exit 1
+fi
+
+if [[ "$D5GVER" =~ \"(.+)\" ]] ; then
+    D5GVER=v${BASH_REMATCH[1]}
+else
+    echo "cannot parse daedalus from $D5GVER"
+    exit 1
+fi
+
+echo "building images for ${D5GVER} with dovesnap ${DSVER}..."
 
 cd blue/5G/daedalus/5G/srsRAN && \
-    docker build -t iqtlabs/srsran:latest -f Dockerfile . && \
+    docker build -t iqtlabs/srsran:latest -t "iqtlabs/srsran:$D5GVER" -f Dockerfile . && \
     cd .. || exit 1
-cd open5gs && docker build -t iqtlabs/open5gs:latest . && cd .. || exit 1
-cd UERANSIM && docker build -t iqtlabs/ueransim:latest . && cd .. || exit 1
+cd open5gs && docker build -t iqtlabs/open5gs:latest -t "iqtlabs/open5gs:$D5GVER" . && cd .. || exit 1
+cd UERANSIM && docker build -t iqtlabs/ueransim:latest -t "iqtlabs/ueransim:$D5GVER" . && cd .. || exit 1
 
 echo "starting dovesnap..."
 
@@ -24,7 +43,7 @@ sudo rm -rf ${FAUCET_PREFIX}
 mkdir -p ${FAUCET_PREFIX}/etc/faucet
 cp configs/faucet/faucet.yaml ${FAUCET_PREFIX}/etc/faucet/
 cp configs/faucet/acls.yaml ${FAUCET_PREFIX}/etc/faucet/
-rm -rf IQTLabs-dovesnap* && curl -LJ https://github.com/iqtlabs/dovesnap/tarball/${DSVER} | tar zxvf -
+rm -rf IQTLabs-dovesnap* && curl -LJ "https://github.com/iqtlabs/dovesnap/tarball/v${DSVER}" | tar zxvf -
 cd IQTLabs-dovesnap*/
 docker compose -f docker-compose.yml -f docker-compose-standalone.yml down -v
 docker compose -f docker-compose.yml -f docker-compose-standalone.yml up -d --build
