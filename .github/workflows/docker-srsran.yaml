@@ -45,5 +45,5 @@ jobs:
           --push \
           -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
           --build-arg SRS_VERSION=release_22_10 \
-          -f Dockerfile . && \
+          -f Dockerfile .
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
