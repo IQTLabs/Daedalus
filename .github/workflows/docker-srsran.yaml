@@ -35,15 +35,19 @@ jobs:
       run: |
         echo "${DOCKER_PASSWORD}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
-
-    - name: Build and push platforms
-      env:
-        DOCKER_CLI_EXPERIMENTAL: enabled
-      run: |
-        cd blue/5G/daedalus/5G/srsRAN && docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }} \
-          --build-arg SRS_VERSION=release_22_10 \
-          -f Dockerfile .
+    - name: Build and push amd64
+      uses: docker/build-push-action@v4
+      with:
+        context: blue/5G/daedalus/5G/srsRAN
+        platforms: linux/amd64
+        push: true
+        tags: iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }}
+      if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
+    - name: Build and push arm64
+      uses: docker/build-push-action@v4
+      with:
+        context: blue/5G/daedalus/5G/srsRAN
+        platforms: linux/arm64
+        push: true
+        tags: iqtlabs/srsran:${{ steps.change_version.outputs.VERSION }}
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'

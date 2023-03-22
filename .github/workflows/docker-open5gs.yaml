@@ -37,11 +37,10 @@ jobs:
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
 
     - name: Build and push platforms
-      env:
-        DOCKER_CLI_EXPERIMENTAL: enabled
-      run: |
-        cd blue/5G/daedalus/5G/open5gs && docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --push \
-          -t iqtlabs/open5gs:${{ steps.change_version.outputs.VERSION }} .
+      uses: docker/build-push-action@v4
+      with:
+        context: blue/5G/daedalus/5G/open5gs
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: iqtlabs/open5gs:${{ steps.change_version.outputs.VERSION }}
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
