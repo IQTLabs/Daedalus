@@ -1,14 +1,15 @@
 FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        bison \
         build-essential \
         ca-certificates \
-        gnupg \
-        bison \
         cmake \
         flex \
         git \
+        gnupg \
         gnupg \
         libbson-dev \
         libcurl4-gnutls-dev \
@@ -24,17 +25,16 @@ RUN apt-get update && \
         libtins-dev \
         libyaml-dev \
         lksctp-tools \
-        netbase \
+        meson \
         net-tools \
+        netbase \
         ninja-build \
+        nodejs \
+        npm \
         pkg-config \
         python3-pip \
         python3-setuptools \
-        python3-wheel \
-        meson \
-        npm \
-        nodejs && \
-    apt-get clean
+        python3-wheel
 
 RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.1
 WORKDIR /open5gs
@@ -49,15 +49,29 @@ RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' mi
 FROM ubuntu:22.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
-COPY --from=builder /usr/local/lib/*-linux-gnu /usr/local/lib/
-COPY --from=builder /usr/lib/*-linux-gnu /usr/lib/
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /certs /certs
+COPY --from=builder /open5gs/webui /webui
+RUN ln -s /usr/local/lib/*/freeDiameter /freeDiameter
+WORKDIR /usr/local/var/log/open5gs
+RUN touch smf.log
+COPY scripts /scripts
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
-        jq \
         iproute2 \
         iptables \
         iputils-ping \
+        jq \
+        libbson-1.0-0 \
+        libcurl3-gnutls \
+        libidn12 \
+        libmicrohttpd12 \
+        libmongoc-1.0-0 \
+        libtalloc2 \
+        libtins4.0 \
+        libyaml-0.2 \
         lksctp-tools \
         net-tools \
         openvswitch-switch \
@@ -66,12 +80,3 @@ RUN apt-get update && \
     apt-get clean
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y --no-install-recommends npm nodejs
-COPY --from=builder /certs /certs
-COPY --from=builder /usr/local/bin/open5gs* /usr/local/bin/
-COPY --from=builder /open5gs/webui /webui
-COPY --from=builder /usr/local/lib/*/freeDiameter /freeDiameter
-COPY --from=builder /usr/lib/libtins* /usr/lib/
-COPY scripts /scripts
-RUN mkdir -p /usr/local/var/log/open5gs
-WORKDIR /usr/local/var/log/open5gs
-RUN touch smf.log
