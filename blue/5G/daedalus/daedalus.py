@@ -24,7 +24,6 @@ from plumbum.cmd import chown  # pytype: disable=import-error
 from plumbum.cmd import cp  # pytype: disable=import-error
 from plumbum.cmd import curl  # pytype: disable=import-error
 from plumbum.cmd import docker  # pytype: disable=import-error
-from plumbum.cmd import docker_compose  # pytype: disable=import-error
 from plumbum.cmd import ip  # pytype: disable=import-error
 from plumbum.cmd import ls  # pytype: disable=import-error
 from plumbum.cmd import mkdir  # pytype: disable=import-error
@@ -103,14 +102,14 @@ class Daedalus():
              f'https://github.com/iqtlabs/dovesnap/tarball/{release}']()
         tar['-xvf', local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
         rm[local.cwd // 'IQTLabs-dovesnap-*.tar.gz']()
-        args = ['-f', 'docker-compose.yml', '-f',
+        args = ['compose', '-f', 'docker-compose.yml', '-f',
                 'docker-compose-standalone.yml', 'up', '-d', '--build']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         with local.env(MIRROR_BRIDGE_OUT='tpmirrorint',
                        FAUCET_PREFIX=f'{faucet_prefix}'):
             with local.cwd(dovesnap_dir[0]):
                 try:
-                    docker_compose.bound_command(args) & FG
+                    docker.bound_command(args) & FG
                 except Exception as err:  # pragma: no cover
                     logging.error(
                         'Failed to start dovesnap because: %s\nCleaning up and quitting.', err)
@@ -154,7 +153,7 @@ class Daedalus():
     def start_services(self):
         """Start selected services for the 4G/5G environment"""
         if len(self.compose_files) > 0:
-            compose_up = self.compose_files + ['up', '-d', '--build']
+            compose_up = ['compose'] + self.compose_files + ['up', '-d', '--build']
             smf = ''
             if 'core' in self.options:
                 smf = '5GC'
@@ -168,7 +167,7 @@ class Daedalus():
                            ETTUS_TXGAIN=self.ettus_txgain,
                            ETTUS_RXGAIN=self.ettus_rxgain):
                 try:
-                    docker_compose.bound_command(compose_up) & FG
+                    docker.bound_command(compose_up) & FG
                 except Exception as err:  # pragma: no cover
                     logging.error(
                         'Failed to start services because: %s\nCleaning up and quitting.', err)
@@ -179,9 +178,9 @@ class Daedalus():
     def follow_logs(self):
         """Follow logs from selected services using Docker"""
         if len(self.compose_files) > 0:
-            compose_logs = self.compose_files + ['logs', '-f']
+            compose_logs = ['compose'] + self.compose_files + ['logs', '-f']
             try:
-                docker_compose.bound_command(compose_logs) & TF(None, FG=True)
+                docker.bound_command(compose_logs) & TF(None, FG=True)
             except Exception as err:  # pragma: no cover
                 logging.error(
                     'Failed to follow logs because: %s\nReturning to menu in 3 seconds.', err)
@@ -192,7 +191,7 @@ class Daedalus():
     @staticmethod
     def remove_dovesnap():
         """Remove the Dovesnap containers"""
-        args = ['-f', 'docker-compose.yml', '-f', 'docker-compose-standalone.yml',
+        args = ['compose', '-f', 'docker-compose.yml', '-f', 'docker-compose-standalone.yml',
                 'down', '--volumes', '--remove-orphans']
         dovesnap_dir = local.cwd // 'IQTLabs-dovesnap-*'
         if len(dovesnap_dir) == 0:
@@ -200,7 +199,7 @@ class Daedalus():
         with local.cwd(dovesnap_dir[0]):
             logging.debug('Removing Dovesnap services')
             try:
-                docker_compose.bound_command(args) & FG
+                docker.bound_command(args) & FG
             except Exception as err:  # pragma: no cover
                 logging.debug('%s', err)
         # ensure the dovesnap network has been removed
@@ -244,10 +243,10 @@ class Daedalus():
         """Remove the services started as Docker containers"""
         if len(self.compose_files) > 0:
             logging.debug('Removing Daedalus services')
-            compose_down = self.compose_files + \
+            compose_down = ['compose'] + self.compose_files + \
                 ['down', '--volumes', '--remove-orphans']
             try:
-                docker_compose.bound_command(compose_down) & FG
+                docker.bound_command(compose_down) & FG
             except Exception as err:  # pragma: no cover
                 logging.debug('%s', err)
         else:
@@ -464,7 +463,6 @@ class Daedalus():
         cp['--version']()
         curl['--version']()
         docker['--version']()
-        docker_compose['--version']()
         ip['-V']()
         ls['--version']()
         mkdir['--version']()
