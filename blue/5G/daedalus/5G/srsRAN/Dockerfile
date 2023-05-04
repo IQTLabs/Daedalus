@@ -1,13 +1,13 @@
 FROM ubuntu:22.04 as cloner
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
-ARG SRS_VERSION=release_22_10
+ARG SRS_VERSION=release_23_04
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install --no-install-recommends -yq ca-certificates git
 WORKDIR /src
-RUN git clone https://github.com/EttusResearch/uhd.git -b v4.1.0.3 && \
-  git clone https://github.com/Nuand/bladeRF.git -b 2021.10 && \
-  git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.7.2 && \
+RUN git clone https://github.com/EttusResearch/uhd.git -b v4.4.0.0 && \
+  git clone https://github.com/Nuand/bladeRF.git -b 2023.02 && \
+  git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.8.1 && \
   git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION}
 
 FROM ubuntu:22.04 as depbuilder
