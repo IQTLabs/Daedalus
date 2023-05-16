@@ -11,7 +11,7 @@ Please run:
 sudo update-alternatives --set iptables /usr/sbin/iptables-legacy && sudo nft flush ruleset
 ```
 
-And then reboot, before installing Dovesnap.
+And then reboot, before installing Daedalus.
 
 ## Background
 
