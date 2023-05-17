@@ -1,6 +1,18 @@
 Daedalus
 ==========
 
+*NOTE: Ubuntu 22.04 compatibility*
+
+Daedalus uses Dovesnap, which currently requires iptables-legeacy.
+
+Please run:
+
+```
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy && sudo nft flush ruleset
+```
+
+And then reboot, before installing Daedalus.
+
 ## Background
 
 A 5G core network can experience attacks from the radio (RAN) and the Data-Network side of the architecture. In most cases, the defense strategy for a 5G core-network is similar to that of securing an enterprise network. However, there are subtle differences between a 5G and an enterprise network that make the defenses different for each.
