@@ -36,7 +36,7 @@ RUN apt-get update && \
         python3-setuptools \
         python3-wheel
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.3
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.4
 WORKDIR /open5gs
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
