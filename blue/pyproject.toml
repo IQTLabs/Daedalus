@@ -30,7 +30,7 @@ test = [
     "pytype==2023.5.24",
     "pytest==7.3.1",
     "pytest-cov==4.1.0",
-    "ruamel.yaml==0.17.26"
+    "ruamel.yaml==0.17.28"
 ]
 generate_fs = [
     "essential_generators",
