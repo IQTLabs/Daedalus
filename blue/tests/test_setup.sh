@@ -4,14 +4,14 @@ set -e
 
 export FAUCET_PREFIX='/tmp/tpfaucet'
 export MIRROR_BRIDGE_OUT='tpmirrorint'
-DSVER=$(grep -E "dovesnap == " blue/pyproject.toml | grep -Eo "[0-9\.]+")
+DSVER=$(grep -E "dovesnap\s*==\s*" blue/pyproject.toml | grep -Eo "[0-9\.]+")
 
 if [[ "$DSVER" = "" ]] ; then
     echo "cannot get dovesnap version"
     exit 1
 fi
 
-D5GVER=$(grep -E "^version\s+=\s+\"[^\"]+\"" blue/pyproject.toml)
+D5GVER=$(grep -E "^version\s*=\s*\"[^\"]+\"" blue/pyproject.toml)
 
 if [[ "$D5GVER" = "" ]] ; then
     echo "cannot get daedalus version"
