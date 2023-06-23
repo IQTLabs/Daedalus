@@ -1,6 +1,6 @@
 FROM ubuntu:22.04 as cloner
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
-ARG SRS_VERSION=release_23_04
+ARG SRS_VERSION=release_23_04_1
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install --no-install-recommends -yq ca-certificates git
