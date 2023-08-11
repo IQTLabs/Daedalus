@@ -17,7 +17,7 @@ classifiers = [
 # Requirements
 dependencies = [
     "docker == 6.1.3",
-    "dovesnap ==1.1.14",
+    "dovesnap ==1.1.15",
     "plumbum ==1.8.2",
     "inquirer == 3.1.3",
 ]
