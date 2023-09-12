@@ -37,7 +37,7 @@ jobs:
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
 
     - name: Build and push platforms
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: blue/5G/daedalus/5G/open5gs
         platforms: linux/amd64,linux/arm64
