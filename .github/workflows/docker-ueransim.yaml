@@ -36,7 +36,7 @@ jobs:
         echo "${DOCKER_PASSWORD}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       if: github.repository == 'iqtlabs/daedalus' && github.event_name == 'push'
     - name: Build and push platforms
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: blue/5G/daedalus/5G/UERANSIM
         platforms: linux/amd64,linux/arm64
