@@ -2,7 +2,11 @@ FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt install -y ca-certificates curl gnupg
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+# hadolint ignore=DL3008
+RUN apt-get install -y --no-install-recommends \
         bison \
         build-essential \
         ca-certificates \
@@ -36,8 +40,10 @@ RUN apt-get update && \
         python3-setuptools \
         python3-wheel
 
-RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.4
+# TODO: 2.6.5 + npm build fix, to be fixed in 2.6.6
+RUN git clone https://github.com/open5gs/open5gs.git
 WORKDIR /open5gs
+RUN git checkout 2962d6cbed27f9f4606647888e661787bc5813e0
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
@@ -49,6 +55,8 @@ RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' mi
 FROM ubuntu:22.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
+COPY --from=builder /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg
+COPY --from=builder /etc/apt/sources.list.d/nodesource.list /etc/apt/sources.list.d/nodesource.list
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /certs /certs
 COPY --from=builder /open5gs/webui /webui
@@ -73,10 +81,10 @@ RUN apt-get update && \
         libtins4.0 \
         libyaml-0.2 \
         lksctp-tools \
+        nodejs \
+        npm \
         net-tools \
         openvswitch-switch \
         tcpdump \
         tshark && \
     apt-get clean
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y --no-install-recommends npm nodejs
