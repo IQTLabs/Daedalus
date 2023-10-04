@@ -11,6 +11,10 @@ logger:
 parameter:
   no_ipv6: true
 
+time:
+  t3512:
+    value: 540     # 9 mintues * 60 = 540 seconds
+
 sbi:
   server:
     no_tls: true
