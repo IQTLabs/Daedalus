@@ -40,10 +40,8 @@ RUN apt-get install -y --no-install-recommends \
         python3-setuptools \
         python3-wheel
 
-# TODO: 2.6.5 + npm build fix, to be fixed in 2.6.6
-RUN git clone https://github.com/open5gs/open5gs.git
+RUN git clone https://github.com/open5gs/open5gs.git -b v2.6.6
 WORKDIR /open5gs
-RUN git checkout 2962d6cbed27f9f4606647888e661787bc5813e0
 RUN meson build && ninja -C build install
 WORKDIR /open5gs/webui
 RUN npm install && npm run build
