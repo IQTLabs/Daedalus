@@ -12,7 +12,7 @@ networks:
 services:
   nrf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     depends_on:
       hss:
         condition: service_started
@@ -39,7 +39,7 @@ services:
       - "daedalus.namespace=primary"
   ausf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: ausf
     hostname: ausf
     entrypoint:
@@ -57,7 +57,7 @@ services:
       - "daedalus.namespace=primary"
   nssf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: nssf
     hostname: nssf
     entrypoint:
@@ -75,7 +75,7 @@ services:
       - "daedalus.namespace=primary"
   udm:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: udm
     hostname: udm
     entrypoint:
@@ -93,7 +93,7 @@ services:
       - "daedalus.namespace=primary"
   bsf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: bsf
     hostname: bsf
     entrypoint:
@@ -111,7 +111,7 @@ services:
       - "daedalus.namespace=primary"
   pcf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: pcf
     hostname: pcf
     environment:
@@ -136,7 +136,7 @@ services:
       - "daedalus.namespace=primary"
   udr:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: udr
     hostname: udr
     environment:
@@ -161,7 +161,7 @@ services:
       - "daedalus.namespace=primary"
   amf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: amf
     hostname: amf
     depends_on:

@@ -9,7 +9,7 @@ networks:
 services:
   hss:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     depends_on:
       mongodbloader:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
       - "daedalus.namespace=primary"
   pcrf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     depends_on:
       mongodb:
         condition: service_healthy
@@ -61,7 +61,7 @@ services:
       - "daedalus.namespace=primary"
   mme:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     container_name: mme
     hostname: mme
     depends_on:
@@ -88,7 +88,7 @@ services:
       - "daedalus.namespace=primary"
   smf:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     depends_on:
       sgwc:
         condition: service_started
@@ -107,7 +107,7 @@ services:
       - "daedalus.namespace=primary"
   sgwc:
     restart: always
-    image: iqtlabs/open5gs:v0.11.7
+    image: iqtlabs/open5gs:latest
     depends_on:
       mme:
         condition: service_started
