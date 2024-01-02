@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    "attrs==23.1.0",
+    "attrs==23.2.0",
     "codecov==2.1.13",
     "pylint==3.0.3",
     "pytype==2023.12.18",
