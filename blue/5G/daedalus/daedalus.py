@@ -87,7 +87,7 @@ class Daedalus():
 
     def start_dovesnap(self):
         """Start Dovesnap components in Docker containers"""
-        release = 'v1.1.8'
+        release = 'v1.1.20'
         faucet_prefix = '/tmp/tpfaucet'
         sudo[ip['link', 'add', 'tpmirrorint', 'type', 'veth',
                 'peer', 'name', 'tpmirror']](retcode=(0, 2))
