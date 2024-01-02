@@ -28,7 +28,7 @@ test = [
     "codecov==2.1.13",
     "pylint==3.0.3",
     "pytype==2023.12.18",
-    "pytest==7.4.3",
+    "pytest==7.4.4",
     "pytest-cov==4.1.0",
     "ruamel.yaml~=0.17"
 ]
