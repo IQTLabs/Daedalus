@@ -9,6 +9,9 @@ jobs:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       with:
         fetch-depth: 0
+    - name: yamllint
+      run: |
+        sudo apt-get -yq update && sudo apt-get -yq install yamllint && yamllint -s $(find blue/5G -name *yaml) || true
     - name: shell_test
       run: |
         wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
@@ -37,7 +40,17 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3.1.6
       if: github.repository == 'iqtlabs/daedalus'
-  integration_tests:
+  open5gs_config_test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - name: open5gs config dump
+        run: |
+          cd blue/5G/daedalus/5G/open5gs && docker build -f Dockerfile . -t open5gs && cd ../../5G/configs && \
+          docker run --privileged -v $(pwd)/slice.yaml:/tmp/slice.yaml -t open5gs bash -c "for i in /usr/local/bin/open5gs-* ; do echo \$i ; timeout 5s \$i -d -c /tmp/slice.yaml || true ; cat /usr/local/var/log/open5gs/*log || true ; done"
+          cd open5gs && docker run --privileged -v $(pwd)/smf.yaml:/tmp/smf.yaml -t open5gs bash -c "/usr/local/bin/open5gs-smfd -d -c /tmp/smf.yaml" || true
+  srsran_integration_tests:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
@@ -48,9 +61,21 @@ jobs:
           cd blue && sudo python3 setup.py install && cd ..
       - name: srsran_enb_ue_int_test
         run: |
+          ROOT=$(pwd) && \
           ./blue/tests/test_setup.sh && \
-          ./blue/tests/test_srsran_enb_ue.sh
+          ./blue/tests/test_srsran_enb_ue.sh || $ROOT/blue/tests/dump_docker.sh
+  ueransim_integration_tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - name: setup_int_tests
+        run: |
+          ./blue/tests/install_test.sh && \
+          cd blue && sudo python3 setup.py install && cd ..
       - name: ueransim_gnb_ue_int_test
         run: |
+          ROOT=$(pwd) && \
           ./blue/tests/test_setup.sh && \
-          ./blue/tests/test_ueransim_gnb_ue.sh
+          ./blue/tests/test_ueransim_gnb_ue.sh || $ROOT/blue/tests/dump_docker.sh
+
