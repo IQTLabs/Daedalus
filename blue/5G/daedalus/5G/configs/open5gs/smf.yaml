@@ -49,7 +49,7 @@ smf:
     - addr: 10.12.0.1/16
       apn: iot.nb
       dev: ogstap3
-    - addr: 10.50.0.1/16 # FALLBACK SUBNET
+    - addr: 10.50.0.1/16  # FALLBACK SUBNET
   dns:
     - 8.8.8.8
     - 8.8.4.4
