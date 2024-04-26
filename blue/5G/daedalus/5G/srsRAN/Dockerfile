@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as cloner
+FROM ubuntu:24.04 as cloner
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ARG SRS_VERSION=release_23_11
 ENV DEBIAN_FRONTEND noninteractive
@@ -10,7 +10,7 @@ RUN git clone https://github.com/EttusResearch/uhd.git -b v4.4.0.0 && \
   git clone https://github.com/pothosware/SoapySDR.git -b soapy-sdr-0.8.1 && \
   git clone https://github.com/srsRAN/srsRAN.git -b ${SRS_VERSION}
 
-FROM ubuntu:22.04 as depbuilder
+FROM ubuntu:24.04 as depbuilder
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install --no-install-recommends -yq \
@@ -47,7 +47,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_F
 WORKDIR /src/SoapySDR/build
 RUN cmake -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" -DBUILD_SHARED_LIBS=OFF ../ && make -j "$(nproc)" && make install && ldconfig
 
-FROM ubuntu:22.04 as srsbuilder
+FROM ubuntu:24.04 as srsbuilder
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install --no-install-recommends -yq \
@@ -73,7 +73,7 @@ COPY --from=depbuilder /usr/local /usr/local/
 WORKDIR /src/srsRAN/build
 RUN cmake -DENABLE_AVX512=OFF -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" -DBUILD_SHARED_LIBS=OFF ../ && make -j "$(nproc)" && make install && ldconfig
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=srsbuilder /usr/local /usr/local

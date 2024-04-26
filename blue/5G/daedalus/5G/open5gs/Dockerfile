@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:24.04 AS builder
 ENV DEBIAN_FRONTEND noninteractive
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -50,7 +50,7 @@ WORKDIR /open5gs
 RUN sed -r -i 's/C=\w+/C=NZ/g;s/ST=\w+/ST=UpperHutt/g;s/L=\w+/L=Wellington/g' misc/make-certs.sh && \
   mkdir /certs && misc/make-certs.sh /certs
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainers="Charlie Lewis <clewis@iqt.org>"
 ENV DEBIAN_FRONTEND noninteractive
 COPY --from=builder /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg
